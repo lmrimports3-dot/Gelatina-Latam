@@ -7,7 +7,6 @@ interface TransitionProps {
 
 const Transition: React.FC<TransitionProps> = ({ onNext }) => {
   useEffect(() => {
-    // Scroll to top when this component mounts
     window.scrollTo(0, 0);
   }, []);
 
@@ -44,7 +43,10 @@ const Transition: React.FC<TransitionProps> = ({ onNext }) => {
         </div>
 
         <button 
-          onClick={() => onNext()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onNext();
+          }}
           className="w-full bg-gray-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-gray-800 active:scale-95 transition-all"
         >
           Entendido, continuar

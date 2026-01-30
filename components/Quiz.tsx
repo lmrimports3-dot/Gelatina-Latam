@@ -76,7 +76,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     subtext: "Entender esto nos ayuda a crear tu protocolo ideal",
     type: 'card',
     options: [
-      { id: 'life1', label: "Afecta mi autoestima", subtext: "Me siento insegura con mi cuerpo", icon: "💔" },
+      { id: 'life1', label: "Afecta mi autoestima", subtext: "Me siento insegura con mi corpo", icon: "💔" },
       { id: 'life2', label: "Afecta mi salud", subtext: "Siento cansancio, dolores y falta de energía", icon: "🏥" },
       { id: 'life3', label: "Afecta mis relaciones", subtext: "Evito encuentros y situaciones sociales", icon: "👥" },
       { id: 'life4', label: "Afecta mi rutina", subtext: "Dificultad para hacer tareas simples", icon: "📅" }
@@ -260,7 +260,9 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     });
   };
 
-  const handleOptionSelect = (optionId: string, optionLabel: string) => {
+  const handleOptionSelect = (e: React.MouseEvent, optionId: string, optionLabel: string) => {
+    e.stopPropagation(); // Prevenir captura do script de tracking
+
     if (currentQuestion.type === 'multi') {
       setSelectedMulti(prev => 
         prev.includes(optionId) 
@@ -285,7 +287,9 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevenir captura do script de tracking
+
     if (currentQuestion.type === 'multi' && selectedMulti.length === 0) return;
     if (currentQuestion.type === 'input' && !userName.trim()) return;
 
@@ -436,7 +440,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                </div>
             </div>
 
-            <button onClick={handleContinue} className="w-full py-5 bg-[#d946ef] hover:bg-[#c026d3] text-white font-black text-lg rounded-2xl shadow-xl active:scale-95 transition-all">
+            <button onClick={(e) => handleContinue(e)} className="w-full py-5 bg-[#d946ef] hover:bg-[#c026d3] text-white font-black text-lg rounded-2xl shadow-xl active:scale-95 transition-all">
               Continuar
             </button>
           </div>
@@ -482,7 +486,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
               </div>
 
               <button 
-                onClick={handleContinue}
+                onClick={(e) => handleContinue(e)}
                 className="w-full btn-gradient py-5 rounded-2xl text-white font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
               >
                 Ver mi Protocolo Personalizado
@@ -503,7 +507,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
               </p>
 
               <button 
-                onClick={handleContinue}
+                onClick={(e) => handleContinue(e)}
                 className="w-full max-w-[340px] py-5 bg-[#10b981] hover:bg-[#059669] text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-100 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 ¡SÍ! ¡Quiero esa transformación! 🔥
@@ -581,7 +585,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                     </div>
                   </div>
                 </div>
-                <button onClick={handleContinue} className="w-full mt-6 py-5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-200 active:scale-95 transition-all flex items-center justify-center gap-2"><span>✓ ¡Sí, me comprometo!</span></button>
+                <button onClick={(e) => handleContinue(e)} className="w-full mt-6 py-5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-200 active:scale-95 transition-all flex items-center justify-center gap-2"><span>✓ ¡Sí, me comprometo!</span></button>
               </div>
             )}
 
@@ -592,13 +596,13 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   <span className="text-xl font-bold text-gray-400">kg</span>
                 </div>
                 <div className="flex items-center gap-4 mb-4">
-                  <button onClick={() => adjustTargetWeight(-5)} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
-                  <button onClick={() => adjustTargetWeight(-1)} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
-                  <button onClick={() => adjustTargetWeight(1)} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
-                  <button onClick={() => adjustTargetWeight(5)} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
+                  <button onClick={(e) => { e.stopPropagation(); adjustTargetWeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
+                  <button onClick={(e) => { e.stopPropagation(); adjustTargetWeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
+                  <button onClick={(e) => { e.stopPropagation(); adjustTargetWeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
+                  <button onClick={(e) => { e.stopPropagation(); adjustTargetWeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
                 <div className="w-full max-w-[200px] flex justify-between text-[11px] font-bold text-gray-300 uppercase tracking-widest mt-2"><span>40 kg</span><span>{weight - 1} kg</span></div>
-                <button onClick={handleContinue} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
+                <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
               </div>
             )}
 
@@ -609,13 +613,13 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   <span className="text-xl font-bold text-gray-400">{currentQuestion.type === 'weight' ? 'kg' : 'cm'}</span>
                 </div>
                 <div className="flex items-center gap-4 mb-4">
-                  <button onClick={() => currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5)} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
-                  <button onClick={() => currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1)} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
-                  <button onClick={() => currentQuestion.type === 'weight' ? adjustWeight(1) : adjustHeight(1)} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
-                  <button onClick={() => currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5)} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
+                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
+                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
+                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(1) : adjustHeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
+                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
                 <div className="w-full max-w-[200px] flex justify-between text-[11px] font-bold text-gray-300 uppercase tracking-widest mt-2"><span>{currentQuestion.type === 'weight' ? '45 kg' : '140 cm'}</span><span>{currentQuestion.type === 'weight' ? '150 kg' : '200 cm'}</span></div>
-                <button onClick={handleContinue} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
+                <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
               </div>
             )}
 
@@ -635,14 +639,14 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   </div>
                 </div>
                 <div className="w-full bg-purple-50 border border-purple-100 p-5 rounded-2xl mb-8"><p className="text-sm leading-relaxed text-gray-700"><span className="font-bold text-purple-700">Cómo funciona:</span> La receta casera activa el <span className="font-bold">GLP-1</span>, la misma hormona que logra el efecto del Mounjaro, ¡pero de forma 100% natural!</p></div>
-                <button onClick={handleContinue} className="w-full py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">¡Entendido! Continuar 🚀</button>
+                <button onClick={(e) => handleContinue(e)} className="w-full py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">¡Entendido! Continuar 🚀</button>
               </div>
             )}
 
             {currentQuestion.type === 'image' && (
               <div className="grid grid-cols-2 gap-3 w-full max-w-[340px]">
                 {currentQuestion.options.map((option) => (
-                  <button key={option.id} onClick={() => handleOptionSelect(option.id, option.label)} className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-md active:scale-95 transition-transform group">
+                  <button key={option.id} onClick={(e) => handleOptionSelect(e, option.id, option.label)} className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-md active:scale-95 transition-transform group">
                     <img src={option.image} alt={option.label} className="w-full h-full object-cover"/>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center pb-3"><span className="text-white text-[13px] font-bold tracking-tight">{option.label}</span></div>
                     {answers[currentQuestion.id] === option.label && <div className="absolute inset-0 border-4 border-purple-500 rounded-xl bg-purple-500/10"></div>}
@@ -654,7 +658,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
             {(currentQuestion.type === 'text' || currentQuestion.type === 'card') && (
               <div className="w-full space-y-3">
                 {currentQuestion.options.map((option) => (
-                  <button key={option.id} onClick={() => handleOptionSelect(option.id, option.label)} className={`w-full flex items-center justify-between border border-gray-200 rounded-2xl bg-white hover:border-purple-300 hover:bg-purple-50 transition-all active:scale-[0.98] group ${currentQuestion.type === 'card' ? 'p-4 gap-4' : 'p-5'}`}>
+                  <button key={option.id} onClick={(e) => handleOptionSelect(e, option.id, option.label)} className={`w-full flex items-center justify-between border border-gray-200 rounded-2xl bg-white hover:border-purple-300 hover:bg-purple-50 transition-all active:scale-[0.98] group ${currentQuestion.type === 'card' ? 'p-4 gap-4' : 'p-5'}`}>
                     {currentQuestion.type === 'card' && <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 group-hover:bg-purple-100 transition-colors">{option.icon}</div>}
                     <div className="flex-1 text-left">
                       <p className="text-sm font-bold text-gray-900">{option.label}</p>
@@ -671,7 +675,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
             {currentQuestion.type === 'multi' && (
               <div className={`grid gap-3 w-full max-sm ${currentQuestion.columns === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
                 {currentQuestion.options.map((option) => (
-                  <button key={option.id} onClick={() => handleOptionSelect(option.id, option.label)} className={`relative flex items-center justify-between p-4 border rounded-xl transition-all active:scale-[0.98] ${selectedMulti.includes(option.id) ? 'border-purple-500 bg-purple-50 ring-1 ring-purple-500' : 'border-gray-200 bg-white shadow-sm'}`}>
+                  <button key={option.id} onClick={(e) => handleOptionSelect(e, option.id, option.label)} className={`relative flex items-center justify-between p-4 border rounded-xl transition-all active:scale-[0.98] ${selectedMulti.includes(option.id) ? 'border-purple-500 bg-purple-50 ring-1 ring-purple-500' : 'border-gray-200 bg-white shadow-sm'}`}>
                     <div className={`flex items-center ${currentQuestion.columns === 2 ? 'flex-col gap-2 p-2 text-center' : 'gap-3'}`}>
                       <span className={`${currentQuestion.columns === 2 ? 'text-2xl' : 'text-xl'}`}>{option.icon}</span>
                       <span className="text-[13px] font-bold text-gray-800 leading-tight">{option.label}</span>
@@ -686,8 +690,21 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
             {currentQuestion.type === 'input' && (
               <div className="w-full max-w-sm mt-4">
-                <input type="text" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Escribí tu primer nombre" className="w-full p-4 text-center border-2 border-purple-400 rounded-xl focus:ring-2 focus:ring-purple-200 focus:outline-none font-bold text-gray-700 placeholder:font-medium placeholder:text-gray-300" autoFocus />
-                <button onClick={handleContinue} disabled={!userName.trim()} className={`w-full mt-6 py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${userName.trim() ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-300 cursor-not-allowed opacity-60'}`}>Continuar</button>
+                <input 
+                  type="text" 
+                  value={userName} 
+                  onChange={(e) => setUserName(e.target.value)} 
+                  placeholder="Escribí tu primer nombre" 
+                  className="w-full p-4 text-center border-2 border-purple-400 rounded-xl focus:ring-2 focus:ring-purple-200 focus:outline-none font-bold text-gray-700 placeholder:font-medium placeholder:text-gray-300" 
+                  autoFocus 
+                />
+                <button 
+                  onClick={(e) => handleContinue(e)} 
+                  disabled={!userName.trim()} 
+                  className={`w-full mt-6 py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${userName.trim() ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-300 cursor-not-allowed opacity-60'}`}
+                >
+                  Continuar
+                </button>
               </div>
             )}
           </>
@@ -696,7 +713,13 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
       {currentQuestion.type === 'multi' && (
         <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-md flex justify-center border-t border-gray-100">
-          <button onClick={handleContinue} disabled={selectedMulti.length === 0} className={`w-full max-w-sm py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${selectedMulti.length > 0 ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-300 cursor-not-allowed opacity-60'}`}>Continuar</button>
+          <button 
+            onClick={(e) => handleContinue(e)} 
+            disabled={selectedMulti.length === 0} 
+            className={`w-full max-w-sm py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${selectedMulti.length > 0 ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-300 cursor-not-allowed opacity-60'}`}
+          >
+            Continuar
+          </button>
         </div>
       )}
     </div>

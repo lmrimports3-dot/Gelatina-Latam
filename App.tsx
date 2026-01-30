@@ -12,54 +12,84 @@ const App: React.FC = () => {
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-    // 1. Meta Pixel
-    if (!(window as any).fbq) {
-      (function(f:any,b:any,e:any,v:any,n?:any,t?:any,s?:any)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}
-      )(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
-      (window as any).fbq('init', '1516015499464507');
-    }
-    (window as any).fbq('track', 'PageView');
+    if (typeof window === 'undefined') return;
 
-    // 2. UTMify Pixel
-    if (!(window as any).pixelId) {
-      (window as any).pixelId = "69702fa1c5b721d69dce91ef";
-      const utmifyPixel = document.createElement("script");
-      utmifyPixel.async = true;
-      utmifyPixel.defer = true;
-      utmifyPixel.src = "https://cdn.utmify.com.br/scripts/pixel/pixel.js";
-      document.head.appendChild(utmifyPixel);
+    // 1. Injeção Dinâmica do Tailwind CDN (Evita erro de produção na Vercel)
+    if (!document.getElementById('tailwind-cdn')) {
+      const tw = document.createElement('script');
+      tw.id = 'tailwind-cdn';
+      tw.src = 'https://cdn.tailwindcss.com';
+      document.head.appendChild(tw);
     }
 
-    // 3. UTMify Capture (Latest.js)
-    const utmifyCapture = document.createElement("script");
-    utmifyCapture.src = "https://cdn.utmify.com.br/scripts/utms/latest.js";
-    utmifyCapture.setAttribute("data-utmify-prevent-xcod-sck", "");
-    utmifyCapture.setAttribute("data-utmify-prevent-subids", "");
-    utmifyCapture.async = true;
-    utmifyCapture.defer = true;
-    document.head.appendChild(utmifyCapture);
-    
-    // Cleanup noscript fallback (optional, added to body via DOM)
-    const noscript = document.createElement('noscript');
-    const img = document.createElement('img');
-    img.height = 1;
-    img.width = 1;
-    img.style.display = 'none';
-    img.src = "https://www.facebook.com/tr?id=1516015499464507&ev=PageView&noscript=1";
-    noscript.appendChild(img);
-    document.body.appendChild(noscript);
+    const timer = setTimeout(() => {
+      // 2. Meta Pixel
+      if (!(window as any).fbq) {
+        (function(f:any,b:any,e:any,v:any,n?:any,t?:any,s?:any)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}
+        )(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        (window as any).fbq('init', '1516015499464507');
+      }
+      (window as any).fbq('track', 'PageView');
 
+      // 3. UTMify Pixel
+      if (!(window as any).pixelId) {
+        (window as any).pixelId = "69702fa1c5b721d69dce91ef";
+        const utmifyPixel = document.createElement("script");
+        utmifyPixel.async = true;
+        utmifyPixel.defer = true;
+        utmifyPixel.src = "https://cdn.utmify.com.br/scripts/pixel/pixel.js";
+        document.head.appendChild(utmifyPixel);
+      }
+
+      // 4. UTMify Capture
+      const utmifyCapture = document.createElement("script");
+      utmifyCapture.src = "https://cdn.utmify.com.br/scripts/utms/latest.js";
+      utmifyCapture.setAttribute("data-utmify-prevent-xcod-sck", "");
+      utmifyCapture.setAttribute("data-utmify-prevent-subids", "");
+      utmifyCapture.async = true;
+      utmifyCapture.defer = true;
+      document.head.appendChild(utmifyCapture);
+      
+      if (!document.getElementById('fb-noscript')) {
+        const noscript = document.createElement('noscript');
+        noscript.id = 'fb-noscript';
+        noscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1516015499464507&ev=PageView&noscript=1"/>`;
+        document.body.appendChild(noscript);
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleNext = (data?: any) => {
-    if (data && typeof data.preventDefault !== 'function' && !data.nativeEvent) {
-      setUserData(data);
+    // BLOQUEIO ABSOLUTO: Se for um evento ou elemento DOM (circular), descartar.
+    if (data && (
+      data.nativeEvent || 
+      data instanceof Event || 
+      data instanceof Node || 
+      typeof data.preventDefault === 'function' ||
+      data.target
+    )) {
+      data = null; 
+    }
+
+    if (data && typeof data === 'object') {
+      try {
+        // Sanitização Profunda: Remove qualquer referência circular ou Node antes de salvar.
+        const sanitized = JSON.parse(JSON.stringify(data, (key, value) => {
+          if (value instanceof Node || value instanceof Event) return undefined;
+          return value;
+        }));
+        setUserData(sanitized);
+      } catch (e) {
+        console.warn("Circular reference detected and blocked.");
+      }
     }
 
     switch (currentStep) {
@@ -91,10 +121,10 @@ const App: React.FC = () => {
       </header>
 
       <main className="w-full flex-1 flex flex-col items-center">
-        {currentStep === AppStep.LANDING && <Landing onNext={handleNext} />}
-        {currentStep === AppStep.TRANSITION && <Transition onNext={handleNext} />}
-        {currentStep === AppStep.QUIZ && <Quiz onNext={handleNext} />}
-        {currentStep === AppStep.CALCULATING && <LoadingResult onComplete={handleNext} />}
+        {currentStep === AppStep.LANDING && <Landing onNext={() => handleNext()} />}
+        {currentStep === AppStep.TRANSITION && <Transition onNext={() => handleNext()} />}
+        {currentStep === AppStep.QUIZ && <Quiz onNext={(data) => handleNext(data)} />}
+        {currentStep === AppStep.CALCULATING && <LoadingResult onComplete={() => handleNext()} />}
         {currentStep === AppStep.RESULT && <ResultAnalysis userData={userData} onNext={() => {}} />}
       </main>
     </div>
