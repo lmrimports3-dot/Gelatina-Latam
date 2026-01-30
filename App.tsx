@@ -14,16 +14,8 @@ const App: React.FC = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // 1. Injeção Dinâmica do Tailwind CDN (Evita erro de produção na Vercel)
-    if (!document.getElementById('tailwind-cdn')) {
-      const tw = document.createElement('script');
-      tw.id = 'tailwind-cdn';
-      tw.src = 'https://cdn.tailwindcss.com';
-      document.head.appendChild(tw);
-    }
-
     const timer = setTimeout(() => {
-      // 2. Meta Pixel
+      // 1. Meta Pixel
       if (!(window as any).fbq) {
         (function(f:any,b:any,e:any,v:any,n?:any,t?:any,s?:any)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -37,7 +29,7 @@ const App: React.FC = () => {
       }
       (window as any).fbq('track', 'PageView');
 
-      // 3. UTMify Pixel
+      // 2. UTMify Pixel
       if (!(window as any).pixelId) {
         (window as any).pixelId = "69702fa1c5b721d69dce91ef";
         const utmifyPixel = document.createElement("script");
@@ -47,7 +39,7 @@ const App: React.FC = () => {
         document.head.appendChild(utmifyPixel);
       }
 
-      // 4. UTMify Capture
+      // 3. UTMify Capture
       const utmifyCapture = document.createElement("script");
       utmifyCapture.src = "https://cdn.utmify.com.br/scripts/utms/latest.js";
       utmifyCapture.setAttribute("data-utmify-prevent-xcod-sck", "");
@@ -72,7 +64,7 @@ const App: React.FC = () => {
     if (data && (
       data.nativeEvent || 
       data instanceof Event || 
-      data instanceof Node || 
+      (typeof Node !== 'undefined' && data instanceof Node) || 
       typeof data.preventDefault === 'function' ||
       data.target
     )) {
@@ -81,9 +73,9 @@ const App: React.FC = () => {
 
     if (data && typeof data === 'object') {
       try {
-        // Sanitização Profunda: Remove qualquer referência circular ou Node antes de salvar.
         const sanitized = JSON.parse(JSON.stringify(data, (key, value) => {
-          if (value instanceof Node || value instanceof Event) return undefined;
+          if (typeof Node !== 'undefined' && value instanceof Node) return undefined;
+          if (value instanceof Event) return undefined;
           return value;
         }));
         setUserData(sanitized);
