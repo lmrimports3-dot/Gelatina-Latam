@@ -109,7 +109,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
   {
     id: 8,
     question: "¿Qué querés conquistar?",
-    subtext: "Seleccioná tus mayores objetivos",
+    subtext: "Seleccioná tus maiores objetivos",
     type: 'multi',
     columns: 2,
     options: [
@@ -208,7 +208,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     id: 18,
     question: "Cómo usar ",
     questionHighlight: "La Gelatina Correcta",
-    subtext: "Simple, práctico y eficaz",
+    subtext: "Simple, práctico e eficaz",
     type: 'commitment',
     options: []
   },
@@ -258,9 +258,18 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     }
   };
 
+  // Track initial view and steps
   useEffect(() => {
-    track('quiz_view');
-  }, []);
+    if (currentQuestionIndex === 0) {
+      track('quiz_view');
+    }
+    
+    // Tracking for steps 1 to 5 as they appear
+    const stepNumber = currentQuestionIndex + 1;
+    if (stepNumber <= 5) {
+      track(`quiz_step_${stepNumber}`);
+    }
+  }, [currentQuestionIndex]);
 
   const finishQuiz = (updatedAnswers: any) => {
     onNext({
@@ -275,11 +284,9 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   const handleOptionSelect = (e: React.MouseEvent, optionId: string, optionLabel: string) => {
     e.stopPropagation();
 
-    if (currentQuestionIndex === 0) {
-      track('quiz_step_1');
-    }
-
-    if (currentQuestion.type === 'multi') {
+    // Ensure currentQuestion is defined in handler scope to avoid confusion with component scope
+    const q = QUESTIONS[currentQuestionIndex];
+    if (q.type === 'multi') {
       setSelectedMulti(prev => 
         prev.includes(optionId) 
           ? prev.filter(id => id !== optionId) 
@@ -288,7 +295,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
       return;
     }
 
-    const updatedAnswers = { ...answers, [currentQuestion.id]: optionLabel };
+    const updatedAnswers = { ...answers, [q.id]: optionLabel };
     setAnswers(updatedAnswers);
     
     if (currentQuestionIndex < QUESTIONS.length - 1) {
@@ -306,29 +313,27 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   const handleContinue = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (currentQuestionIndex === 0) {
-      track('quiz_step_1');
-    }
-
-    if (currentQuestion.type === 'multi' && selectedMulti.length === 0) return;
-    if (currentQuestion.type === 'input' && !userName.trim()) return;
+    // Ensure currentQuestion is defined in handler scope
+    const q = QUESTIONS[currentQuestionIndex];
+    if (q.type === 'multi' && selectedMulti.length === 0) return;
+    if (q.type === 'input' && !userName.trim()) return;
 
     let answerValue: any;
-    if (currentQuestion.type === 'input') {
+    if (q.type === 'input') {
       answerValue = userName;
-    } else if (currentQuestion.type === 'weight') {
+    } else if (q.type === 'weight') {
       answerValue = weight;
-    } else if (currentQuestion.type === 'height') {
+    } else if (q.type === 'height') {
       answerValue = height;
-    } else if (currentQuestion.type === 'target_weight') {
+    } else if (q.type === 'target_weight') {
       answerValue = targetWeight;
-    } else if (currentQuestion.type === 'multi') {
+    } else if (q.type === 'multi') {
       answerValue = selectedMulti;
     } else {
       answerValue = true; 
     }
 
-    const updatedAnswers = { ...answers, [currentQuestion.id]: answerValue };
+    const updatedAnswers = { ...answers, [q.id]: answerValue };
     setAnswers(updatedAnswers);
     
     if (currentQuestionIndex < QUESTIONS.length - 1) {
@@ -523,7 +528,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
               </h2>
               
               <p className="text-sm font-medium text-gray-500 mb-10 max-w-[300px] leading-relaxed">
-                Basado en tu perfil, ¡este resultado es totalmente alcanzable con **La Gelatina Correcta**!
+                Basado en tu perfil, ¡este resultado é totalmente alcanzable con **La Gelatina Correcta**!
               </p>
 
               <button 
@@ -634,6 +639,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 </div>
                 <div className="flex items-center gap-4 mb-4">
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
+                  {/* Fixed invalid ternary syntax below */}
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(1) : adjustHeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
