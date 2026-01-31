@@ -15,21 +15,7 @@ const App: React.FC = () => {
     if (typeof window === 'undefined') return;
 
     const timer = setTimeout(() => {
-      // 1. Meta Pixel
-      if (!(window as any).fbq) {
-        (function(f:any,b:any,e:any,v:any,n?:any,t?:any,s?:any)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}
-        )(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
-        (window as any).fbq('init', '1516015499464507');
-      }
-      (window as any).fbq('track', 'PageView');
-
-      // 2. UTMify Pixel
+      // 1. UTMify Pixel
       if (!(window as any).pixelId) {
         (window as any).pixelId = "69702fa1c5b721d69dce91ef";
         const utmifyPixel = document.createElement("script");
@@ -39,7 +25,7 @@ const App: React.FC = () => {
         document.head.appendChild(utmifyPixel);
       }
 
-      // 3. UTMify Capture
+      // 2. UTMify Capture
       const utmifyCapture = document.createElement("script");
       utmifyCapture.src = "https://cdn.utmify.com.br/scripts/utms/latest.js";
       utmifyCapture.setAttribute("data-utmify-prevent-xcod-sck", "");
@@ -47,13 +33,6 @@ const App: React.FC = () => {
       utmifyCapture.async = true;
       utmifyCapture.defer = true;
       document.head.appendChild(utmifyCapture);
-      
-      if (!document.getElementById('fb-noscript')) {
-        const noscript = document.createElement('noscript');
-        noscript.id = 'fb-noscript';
-        noscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1516015499464507&ev=PageView&noscript=1"/>`;
-        document.body.appendChild(noscript);
-      }
     }, 1500);
 
     return () => clearTimeout(timer);
