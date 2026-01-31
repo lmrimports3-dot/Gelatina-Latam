@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface QuizOption {
   label: string;
@@ -84,7 +84,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
   },
   {
     id: 6,
-    question: "¿Estás feliz con tu apariencia actual?",
+    question: "¿Estás feliz con tu aparência actual?",
     subtext: "Sincerate con vos misma",
     type: 'card',
     options: [
@@ -188,7 +188,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
   {
     id: 16,
     question: "¿Cuánta agua bebés por día?",
-    subtext: "La hidratación es fundamental para la quema de grasa",
+    subtext: "La hidratación é fundamental para la quema de grasa",
     type: 'card',
     options: [
       { id: 'water1', label: "Casi nada", icon: "🥤" },
@@ -250,6 +250,18 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   const [height, setHeight] = useState(165);
   const [targetWeight, setTargetWeight] = useState(60);
 
+  // Tracking Helper
+  const track = (name: string) => {
+    if (typeof window !== 'undefined') {
+      if ((window as any).fbq) (window as any).fbq('trackCustom', name);
+      if ((window as any).utmify?.track) (window as any).utmify.track(name);
+    }
+  };
+
+  useEffect(() => {
+    track('quiz_view');
+  }, []);
+
   const finishQuiz = (updatedAnswers: any) => {
     onNext({
       ...updatedAnswers,
@@ -261,7 +273,11 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   };
 
   const handleOptionSelect = (e: React.MouseEvent, optionId: string, optionLabel: string) => {
-    e.stopPropagation(); // Prevenir captura do script de tracking
+    e.stopPropagation();
+
+    if (currentQuestionIndex === 0) {
+      track('quiz_step_1');
+    }
 
     if (currentQuestion.type === 'multi') {
       setSelectedMulti(prev => 
@@ -288,7 +304,11 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   };
 
   const handleContinue = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevenir captura do script de tracking
+    e.stopPropagation();
+
+    if (currentQuestionIndex === 0) {
+      track('quiz_step_1');
+    }
 
     if (currentQuestion.type === 'multi' && selectedMulti.length === 0) return;
     if (currentQuestion.type === 'input' && !userName.trim()) return;
@@ -411,7 +431,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 <h3 className="text-[13px] font-black text-red-900 uppercase">Señales de alerta identificadas:</h3>
               </div>
               <ul className="space-y-2">
-                {['Metabolismo desacelerado', 'Riesgo de acumulación de grasa visceral', 'Hormonas de saciedad desreguladas'].map((item, i) => (
+                {['Metabolismo desacelerado', 'Riesgo de acumulación de grasa visceral', 'Hormonas de saciedade desreguladas'].map((item, i) => (
                   <li key={i} className="flex items-center gap-2 text-xs font-bold text-red-700/80">
                     <span className="w-1.5 h-1.5 bg-red-400 rounded-full"></span>
                     {item}

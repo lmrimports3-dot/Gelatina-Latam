@@ -17,6 +17,18 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
   const name = userData?.name || 'Amiga';
   const [timeLeft, setTimeLeft] = useState(900); // 15 minutes in seconds
 
+  // Tracking Helper
+  const track = (name: string) => {
+    if (typeof window !== 'undefined') {
+      if ((window as any).fbq) (window as any).fbq('trackCustom', name);
+      if ((window as any).utmify?.track) (window as any).utmify.track(name);
+    }
+  };
+
+  useEffect(() => {
+    track('quiz_result_view');
+  }, []);
+
   useEffect(() => {
     if (timeLeft <= 0) return;
     const timer = setInterval(() => {
@@ -32,18 +44,17 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
   };
 
   const handleCheckoutClick = () => {
+    track('quiz_cta_click');
     try {
       const url = new URL(CHECKOUT_URL);
       const currentParams = new URLSearchParams(window.location.search);
       
-      // Append all current UTMs and tracking params to the checkout URL
       currentParams.forEach((value, key) => {
         url.searchParams.set(key, value);
       });
 
       window.open(url.toString(), '_blank', 'noopener,noreferrer');
     } catch (e) {
-      // Fallback in case of URL parsing issues
       window.open(CHECKOUT_URL, '_blank', 'noopener,noreferrer');
     }
   };
