@@ -167,9 +167,9 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
             <p className="text-[10px] font-black text-gray-500 uppercase">POR APENAS</p>
             <div className="flex items-baseline justify-center gap-1">
               <span className="text-2xl font-black text-purple-600">US$</span>
-              <span className="text-5xl font-black text-purple-600 tracking-tighter">2.99</span>
+              <span className="text-5xl font-black text-purple-600 tracking-tighter">3.99</span>
             </div>
-            <p className="text-[10px] font-bold text-gray-400 mt-1">O US$ 2.99 AL CONTADO</p>
+            <p className="text-[10px] font-bold text-gray-400 mt-1">O US$ 3.99 AL CONTADO</p>
           </div>
 
           {/* CTA 1 */}
@@ -288,11 +288,11 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
                 <div className="h-px bg-gray-100 my-4"></div>
                 <div className="flex justify-between items-center text-sm font-black">
                     <span className="text-purple-600">La Gelatina Correcta</span>
-                    <span className="text-purple-600">US$ 2.99</span>
+                    <span className="text-purple-600">US$ 3.99</span>
                 </div>
             </div>
             <p className="text-[10px] text-center text-gray-500 font-medium leading-relaxed">
-                Mientras otros métodos cuestan fortunas por mes, vos garantizás **La Gelatina Correcta** por apenas US$ 2.99. Una inversión accesible para un resultado certero y sin efectos secundarios.
+                Mientras otros métodos cuestan fortunas por mes, vos garantizás **La Gelatina Correcta** por apenas US$ 3.99. Una inversión accesible para un resultado certero y sin efectos secundarios.
             </p>
         </div>
       </div>
@@ -305,7 +305,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
             <p className="text-[10px] font-black text-gray-400 uppercase line-through mb-1">de US$ 19.90</p>
             <div className="flex items-baseline justify-center gap-1 mb-8">
               <span className="text-2xl font-black text-purple-600">US$</span>
-              <span className="text-6xl font-black text-purple-600 tracking-tighter">2.99</span>
+              <span className="text-6xl font-black text-purple-600 tracking-tighter">3.99</span>
             </div>
             <button onClick={handleCheckoutClick} className="w-full py-5 bg-[#d946ef] text-white font-black text-lg rounded-2xl shadow-xl active:scale-95 transition-all mb-4 uppercase">
               Comprar La Gelatina Correcta
