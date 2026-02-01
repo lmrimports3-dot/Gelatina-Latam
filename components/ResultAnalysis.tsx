@@ -11,7 +11,7 @@ interface ResultAnalysisProps {
   onNext: () => void;
 }
 
-const CHECKOUT_URL = "https://www.ggcheckout.com/checkout/v3/dpCTw65YospDkrg0ZDRd";
+const CHECKOUT_URL = "https://pay.hotmart.com/F104206698P?checkoutMode=10&bid=1769983129587";
 
 const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
   const name = userData?.name || 'Amiga';
@@ -88,7 +88,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
             </div>
             <div className="flex justify-between items-center relative z-10">
               <div className="flex flex-col items-center gap-1">
-                <span className="text-[10px] font-black text-purple-600">25%</span>
+                <span className="text-column font-black text-purple-600">25%</span>
                 <div className="w-3 h-3 bg-purple-600 rounded-full border-2 border-white shadow-sm"></div>
               </div>
               <div className="flex flex-col items-center gap-1">
