@@ -98,7 +98,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
         </p>
 
         {/* 📊 BLOCO VISUAL DE RESULTADO SIMULADO */}
-        <div className="w-full space-y-4 mb-4">
+        <div className="w-full space-y-4 mb-8">
           {[
             { label: "Primeiros resultados", text: "Redução do inchaço", icon: "✨", color: "bg-purple-50", textCol: "text-purple-700" },
             { label: "Em 2 semanas", text: "Leveza e melhora digestiva", icon: "🕒", color: "bg-blue-50", textCol: "text-blue-700" },
@@ -113,6 +113,16 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
             </div>
           ))}
         </div>
+
+        {/* 🆕 NOVO CTA NA PRIMEIRA DOBRA */}
+        <button 
+          onClick={handleCheckoutClick} 
+          className="w-full py-5 btn-gradient text-white font-black text-lg rounded-2xl shadow-2xl active:scale-95 transition-all uppercase flex items-center justify-center gap-2 mb-2"
+        >
+          <span>Acessar meu protocolo agora</span>
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+        </button>
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Início imediato</p>
       </section>
 
       {/* ⭐ SEÇÃO 1 — PROVA SOCIAL MASSIVA (CARROSSEL ESTILO GOOGLE) */}
@@ -218,7 +228,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
 
       {/* 💰 SEÇÃO 4 — ANCORAGEM DE VALOR */}
       <section className="w-full px-6 py-12 bg-gray-900 text-white rounded-[40px] mb-16">
-        <h2 className="text-lg font-black text-center mb-8 uppercase tracking-tighter">Resumo do seu Investimento</h2>
+        <h2 className="text-lg font-black text-center mb-8 uppercase tracking-tighter">Sua Oferta Especial</h2>
         <div className="w-full space-y-3 mb-10 px-4">
           <div className="flex justify-between text-sm opacity-60">
             <span>Protocolo Gelatina Noturna</span>
@@ -244,12 +254,18 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
 
         <div className="w-full bg-white/5 rounded-3xl p-8 text-center border border-white/10">
           <p className="text-[12px] font-black text-purple-400 uppercase mb-4 tracking-[0.2em]">Sua Oferta Exclusiva</p>
-          <div className="flex items-baseline justify-center gap-1">
+          <div className="flex items-baseline justify-center gap-1 mb-6">
             <span className="text-sm font-black text-purple-400 mr-1">Por apenas</span>
             <span className="text-2xl font-black text-purple-400">R$</span>
-            <span className="text-6xl font-black text-purple-400 tracking-tighter">49,00</span>
+            <span className="text-6xl font-black text-purple-400 tracking-tighter">19,90</span>
           </div>
-          <p className="text-[10px] font-bold text-gray-500 mt-4 uppercase tracking-widest">Pagamento único • Acesso vitalício</p>
+          
+          <button onClick={handleCheckoutClick} className="w-full py-5 btn-gradient text-white font-black text-xl rounded-2xl shadow-2xl active:scale-95 transition-all uppercase flex items-center justify-center gap-2 mb-4 animate-pulse">
+            <span>EU QUERO ESSA OFERTA</span>
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+          </button>
+
+          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Pagamento único • Acesso vitalício</p>
         </div>
       </section>
 
