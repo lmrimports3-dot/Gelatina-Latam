@@ -83,14 +83,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white overflow-x-hidden">
-      <header className="w-full bg-white flex justify-center sticky top-0 z-50 border-b border-gray-100 shadow-sm h-[100px] items-center px-4">
-         <img 
-            src="https://ik.imagekit.io/ekdmcxqtr/ChatGPT%20Image%2030%20de%20jan.%20de%202026,%2011_35_41.png" 
-            alt="La Gelatina Correcta Logo" 
-            className="h-20 md:h-24 w-auto object-contain transition-all" 
-         />
-      </header>
-
       <main className="w-full flex-1 flex flex-col items-center">
         {currentStep === AppStep.LANDING && <Landing onNext={() => handleNext()} />}
         {currentStep === AppStep.TRANSITION && <Transition onNext={() => handleNext()} />}

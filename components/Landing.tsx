@@ -8,59 +8,41 @@ interface LandingProps {
 const Landing: React.FC<LandingProps> = ({ onNext }) => {
   return (
     <div className="w-full max-w-lg mx-auto flex flex-col items-center px-6 py-10">
-      <div className="relative mb-8 w-64 h-64 bg-white rounded-3xl shadow-2xl flex items-center justify-center p-4">
+      {/* Headline principal */}
+      <h1 className="text-xl md:text-2xl font-extrabold text-center text-gray-900 leading-tight mb-6">
+        <span className="text-red-600">⚠️ ATENÇÃO:</span> Relatos recentes associam as <span className="text-purple-600">CANETAS para emagrecer</span> e o uso de <span className="text-purple-600">Mounjaro</span> a efeitos colaterais que estão preocupando especialistas.
+      </h1>
+
+      {/* Imagen principal */}
+      <div className="relative mb-8 w-full bg-white rounded-3xl shadow-2xl flex items-center justify-center p-1 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-pink-50 to-transparent rounded-3xl -z-10"></div>
         <img 
-          src="https://ik.imagekit.io/ekdmcxqtr/e9e0639c-6c94-4464-ab97-8e369eb06fdf.png" 
-          alt="Gelatina" 
-          className="rounded-2xl object-cover w-full h-full float-animation shadow-lg"
+          src="https://ik.imagekit.io/ekdmcxqtr/Design%20sem%20nome.png" 
+          alt="Alerta Saúde" 
+          className="rounded-2xl w-full h-auto float-animation shadow-sm"
         />
       </div>
 
-      <h1 className="text-2xl md:text-3xl font-extrabold text-center text-gray-900 leading-tight mb-4">
-        ¿Estás luchando contra la <span className="text-purple-600">panza inflamada</span> y la <span className="text-pink-500">grasa localizada</span>?
-      </h1>
-
-      <p className="text-lg text-center text-gray-600 font-medium mb-3">
-        Descubrí cómo activar tu metabolismo y reducir grasa visible usando la receta correcta de la gelatina.
+      {/* Transição para oferta */}
+      <p className="text-[15px] text-center text-gray-700 mb-10 max-w-[360px] leading-relaxed font-semibold">
+        👉 Enquanto métodos agressivos assustam cada vez mais pessoas, milhares estão migrando para o <span className="font-black text-purple-700 bg-purple-100 px-2 py-0.5 rounded-lg border border-purple-200 shadow-sm">Truque da Gelatina Noturna</span> — uma rotina simples que faz a barriga desinchar enquanto você dorme.
       </p>
 
-      <p className="text-sm text-center text-gray-500 mb-8 max-w-[320px]">
-        Un método natural que miles de mujeres ya están usando para dejar de acumular grasa, incluso después de los 40.
-      </p>
-
+      {/* CTA Principal */}
       <button 
         onClick={(e) => {
           e.stopPropagation();
           onNext();
         }}
-        className="w-full btn-gradient text-white font-extrabold text-xl py-5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all mb-6 flex flex-col items-center justify-center"
+        className="w-full btn-gradient text-white font-extrabold text-lg py-5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all mb-3 flex flex-col items-center justify-center uppercase"
       >
-        <span>Quiero saber si funciona para mí</span>
-        <span className="text-2xl mt-1">🔥</span>
+        <span>🔥 QUERO DESINCHAR MINHA BARRIGA AGORA</span>
       </button>
 
-      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-xs font-bold text-gray-500 mb-6">
-        <div className="flex items-center gap-1">
-          <span className="text-purple-600 text-lg">✓</span>
-          <span>Más de 127.000 mujeres ya probaron</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="text-purple-600 text-lg">✓</span>
-          <span>100% natural</span>
-        </div>
-      </div>
-      
-      <div className="flex items-center gap-1 text-xs font-bold text-gray-500 mb-8">
-        <span className="text-purple-600 text-lg">✓</span>
-        <span>Sin inyecciones ni dietas extremas</span>
-      </div>
-
-      <div className="w-full border-t border-gray-100 pt-6 text-center">
-        <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-          Ingredientes simples • Preparación rápida • Método personalizado
-        </p>
-      </div>
+      {/* Micro copy */}
+      <p className="text-[11px] font-bold text-gray-400 text-center uppercase tracking-tight mb-8">
+        ⏱ LEVA MENOS DE 2 MINUTOS • TESTE GRATUITO • RESULTADO PERSONALIZADO
+      </p>
     </div>
   );
 };

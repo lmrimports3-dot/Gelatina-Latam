@@ -6,10 +6,10 @@ interface LoadingResultProps {
 }
 
 const STEPS = [
-  "Analizando tus respuestas...",
-  "Comparando perfiles metabólicos...",
-  "Calculando dosis de gelatina...",
-  "Finalizando tu plan personalizado..."
+  "Analisando suas respostas...",
+  "Comparando perfis metabólicos...",
+  "Calculando doses de gelatina...",
+  "Finalizando seu plano personalizado..."
 ];
 
 const LoadingResult: React.FC<LoadingResultProps> = ({ onComplete }) => {
@@ -41,7 +41,7 @@ const LoadingResult: React.FC<LoadingResultProps> = ({ onComplete }) => {
 
   return (
     <div className="w-full max-w-lg mx-auto flex flex-col items-center justify-center px-6 py-20 min-h-screen animate-fadeIn">
-      {/* Circular Spinner (Top) */}
+      {/* Circular Spinner */}
       <div className="relative w-24 h-24 mb-10">
         <svg className="w-full h-full animate-spin">
           <circle
@@ -59,17 +59,17 @@ const LoadingResult: React.FC<LoadingResultProps> = ({ onComplete }) => {
         </svg>
       </div>
 
-      {/* Headline & Subheadline */}
+      {/* Headline */}
       <div className="text-center mb-10">
         <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-2 px-4">
-          Preparando tu protocolo personalizado...
+          Preparando seu protocolo personalizado...
         </h2>
         <p className="text-[15px] font-bold text-purple-400">
-          Preparando la receta ideal de **La Gelatina Correcta** para vos...
+          Preparando a receita ideal da **Gelatina Noturna** para você...
         </p>
       </div>
 
-      {/* Progress Bar & Percentage */}
+      {/* Progress Bar */}
       <div className="w-full max-w-xs flex flex-col items-center">
         <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-3">
           <div 
@@ -80,7 +80,7 @@ const LoadingResult: React.FC<LoadingResultProps> = ({ onComplete }) => {
         <span className="text-xs font-black text-gray-500">{progress}%</span>
       </div>
 
-      {/* Dynamic Cycling Message (Bottom) */}
+      {/* Dynamic Cycling Message */}
       <div className="mt-12 h-6">
         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">
           {STEPS[stepIndex]}

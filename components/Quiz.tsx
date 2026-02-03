@@ -22,223 +22,244 @@ interface GenericQuizQuestion {
 const QUESTIONS: GenericQuizQuestion[] = [
   {
     id: 1,
-    question: "¿Cuál es tu ",
-    questionHighlight: "edad?",
-    subtext: "Esto nos ayuda a personalizar tu protocolo",
+    question: "Qual é a sua ",
+    questionHighlight: "idade?",
+    subtext: "Isso nos ajuda a personalizar seu protocolo",
     type: 'text',
     options: [
-      { id: 'age1', label: "18 - 27 años" },
-      { id: 'age2', label: "28 - 39 años" },
-      { id: 'age3', label: "40 - 54 años" },
-      { id: 'age4', label: "54+ años" }
+      { id: 'age1', label: "18 - 27 anos" },
+      { id: 'age2', label: "28 - 39 anos" },
+      { id: 'age3', label: "40 - 54 anos" },
+      { id: 'age4', label: "54+ anos" }
     ]
   },
   {
     id: 2,
-    question: "¿Cómo clasificás ",
-    questionHighlight: "tu cuerpo?",
-    subtext: "Seleccioná la opción que mejor te describa",
+    question: "Como você classificaria ",
+    questionHighlight: "seu corpo?",
+    subtext: "Selecione a opção que melhor te descreve",
     type: 'image',
     options: [
-      { id: 'body1', label: "Medio", image: "https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(4).png" },
+      { id: 'body1', label: "Normal", image: "https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(4).png" },
       { id: 'body2', label: "Plus Size", image: "https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(5).png" },
-      { id: 'body3', label: "Por encima del peso", image: "https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(6).png" },
-      { id: 'body4', label: "Sobrepeso", image: "https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(7).png" }
+      { id: 'body3', label: "Acima do peso", image: "https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(6).png" },
+      { id: 'body4', label: "Muita barriga", image: "https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(7).png" }
     ]
   },
   {
     id: 3,
-    question: "¿Cuáles son las áreas donde más ",
-    questionHighlight: "querés perder grasa?",
-    subtext: "Seleccioná todas las que apliquen",
+    question: "Em quais áreas você mais ",
+    questionHighlight: "quer perder gordura?",
+    subtext: "Selecione todas que se aplicam",
     type: 'multi',
     columns: 2,
     options: [
-      { id: 'area1', label: "Caderas", icon: "🦵" },
-      { id: 'area2', label: "Brazos", icon: "💪" },
-      { id: 'area3', label: "Panza", icon: "🎯" },
-      { id: 'area4', label: "Muslos", icon: "🦵" },
+      { id: 'area1', label: "Quadril", icon: "🦵" },
+      { id: 'area2', label: "Braços", icon: "💪" },
+      { id: 'area3', label: "Barriga", icon: "🎯" },
+      { id: 'area4', label: "Pernas", icon: "🦵" },
       { id: 'area5', label: "Glúteos", icon: "🍑" },
-      { id: 'area6', label: "Todo el cuerpo", icon: "✨" }
+      { id: 'area6', label: "Todo o corpo", icon: "✨" }
     ]
   },
   {
     id: 4,
-    question: "¿Cuál es tu ",
-    questionHighlight: "nombre?",
-    subtext: "Queremos conocerte mejor 💖",
+    question: "Qual é o seu ",
+    questionHighlight: "nome?",
+    subtext: "Queremos te conhecer melhor 💖",
     type: 'input',
     options: []
   },
   {
     id: 5,
-    question: "¿Cómo afecta el peso tu vida?",
-    subtext: "Entender esto nos ayuda a crear tu protocolo ideal",
+    question: "Como o peso afeta sua vida?",
+    subtext: "Entender isso nos ajuda a criar seu protocolo ideal",
     type: 'card',
     options: [
-      { id: 'life1', label: "Afecta mi autoestima", subtext: "Me siento insegura con mi corpo", icon: "💔" },
-      { id: 'life2', label: "Afecta mi salud", subtext: "Siento cansancio, dolores y falta de energía", icon: "🏥" },
-      { id: 'life3', label: "Afecta mis relaciones", subtext: "Evito encuentros y situaciones sociales", icon: "👥" },
-      { id: 'life4', label: "Afecta mi rutina", subtext: "Dificultad para hacer tareas simples", icon: "📅" }
+      { id: 'life1', label: "Afeta minha autoestima", subtext: "Sinto-me insegura com meu corpo", icon: "💔" },
+      { id: 'life2', label: "Afeta minha saúde", subtext: "Sinto cansaço e falta de energia", icon: "🏥" },
+      { id: 'life3', label: "Afeta meus relacionamentos", subtext: "Evito encontros sociais", icon: "👥" },
+      { id: 'life4', label: "Afeta minha rotina", subtext: "Dificuldade para tarefas simples", icon: "📅" }
     ]
   },
   {
     id: 6,
-    question: "¿Estás feliz con tu aparência actual?",
-    subtext: "Sincerate con vos misma",
+    question: "Você está feliz com sua aparência atual?",
+    subtext: "Seja sincera com você mesma",
     type: 'card',
     options: [
-      { id: 'hap1', label: "No estoy feliz", icon: "😔" },
-      { id: 'hap2', label: "Podría estar mejor", icon: "🙄" },
-      { id: 'hap3', label: "Estoy trabajando en eso", icon: "💪" }
+      { id: 'hap1', label: "Não estou feliz", icon: "😔" },
+      { id: 'hap2', label: "Poderia estar melhor", icon: "🙄" },
+      { id: 'hap3', label: "Estou trabalhando nisso", icon: "💪" }
     ]
   },
   {
     id: 7,
-    question: "¿Qué te impide adelgazar?",
-    subtext: "Seleccioná todos los obstáculos que enfrentás",
+    question: "O que te impede de emagrecer?",
+    subtext: "Selecione seus maiores obstáculos",
     type: 'multi',
     columns: 1,
     options: [
-      { id: 'bar1', label: "Falta de tiempo", icon: "⏰" },
-      { id: 'bar2', label: "Falta de autocontrol", icon: "🍫" },
-      { id: 'bar3', label: "Cuestiones económicas", icon: "💰" },
-      { id: 'bar4', label: "Falta de constancia", icon: "📉" }
+      { id: 'bar1', label: "Falta de tempo", icon: "⏰" },
+      { id: 'bar2', label: "Falta de autocontrole", icon: "🍫" },
+      { id: 'bar3', label: "Questões financeiras", icon: "💰" },
+      { id: 'bar4', label: "Falta de constância", icon: "📉" }
     ]
   },
   {
     id: 8,
-    question: "¿Qué querés conquistar?",
-    subtext: "Seleccioná tus maiores objetivos",
+    question: "O que você quer conquistar?",
+    subtext: "Selecione seus maiores objetivos",
     type: 'multi',
     columns: 2,
     options: [
-      { id: 'goal1', label: "Tener más energía", icon: "⚡" },
-      { id: 'goal2', label: "Usar la ropa que amo", icon: "👗" },
-      { id: 'goal3', label: "Mejorar mi autoestima", icon: "💖" },
-      { id: 'goal4', label: "Tener más salud", icon: "💪" },
-      { id: 'goal5', label: "Sentirme más liviana", icon: "🦋" },
-      { id: 'goal6', label: "Recibir elogios", icon: "🌟" }
+      { id: 'goal1', label: "Ter mais energia", icon: "⚡" },
+      { id: 'goal2', label: "Usar as roupas que amo", icon: "👗" },
+      { id: 'goal3', label: "Melhorar autoestima", icon: "💖" },
+      { id: 'goal4', label: "Ter mais saúde", icon: "💪" },
+      { id: 'goal5', label: "Sentir-me mais leve", icon: "🦋" },
+      { id: 'goal6', label: "Receber elogios", icon: "🌟" }
     ]
   },
   {
     id: 9,
-    question: "¡Buenísimo, [nombre]! 🎉",
-    subtext: "Sin esfuerzo ni dietas pesadas: **La Gelatina Correcta** hace el trabajo pesado por vos, activando la quema de grasa con ingredientes caseros que preparás en minutos.",
+    question: "Ótimo, [nome]! 🎉",
+    subtext: "Sem esforço nem dietas pesadas: **A Gelatina Noturna** faz o trabalho pesado por você, ativando a queima de gordura com ingredientes caseiros que você prepara em minutos.",
     type: 'info',
     options: []
   },
   {
     id: 10,
-    question: "¿Cuál es tu peso actual?",
-    subtext: "Sé sincera para obtener un resultado preciso",
+    question: "Qual seu peso atual?",
+    subtext: "Seja sincera para obter um resultado preciso",
     type: 'weight',
     options: []
   },
   {
     id: 11,
-    question: "¿Cuál es tu altura?",
-    subtext: "Necesitamos esto para calcular tu IMC",
+    question: "Qual sua altura?",
+    subtext: "Precisamos disso para calcular seu IMC",
     type: 'height',
     options: []
   },
   {
     id: 12,
-    question: "¿Cuál es tu peso deseado?",
-    subtext: "¿Cuál es el peso que soñás alcanzar?",
+    question: "Qual seu peso desejado?",
+    subtext: "Qual é o peso que você sonha alcançar?",
     type: 'target_weight',
     options: []
   },
   {
     id: 13,
-    question: "¿Cuántos embarazos tuviste?",
-    subtext: "Esto influye en tu metabolismo",
-    type: 'card',
+    question: "Você já tentou alguma dessas ",
+    questionHighlight: "soluções?",
+    subtext: "Isso nos ajuda a entender sua jornada",
+    type: 'multi',
+    columns: 1,
     options: [
-      { id: 'preg0', label: "Nunca estuve embarazada", icon: "🚫" },
-      { id: 'preg1', label: "1 embarazo", icon: "1️⃣" },
-      { id: 'preg2', label: "2 embarazos", icon: "2️⃣" },
-      { id: 'preg3', label: "3 o más embarazos", icon: "👶" }
+      { id: 'sol1', label: "Dietas restritivas", icon: "🥗" },
+      { id: 'sol2', label: "Chás ou receitas naturais", icon: "🍵" },
+      { id: 'sol3', label: "Exercícios específicos", icon: "🏃‍♀️" },
+      { id: 'sol4', label: "Remédios / canetas para emagrecer", icon: "💉" },
+      { id: 'sol5', label: "Ainda não tentei nada", icon: "✨" }
     ]
   },
   {
     id: 14,
-    question: "¿Cómo es tu rutina diaria?",
-    subtext: "Vamos a adaptar el protocolo a tu día a día",
+    question: "Quantas gravidezes você teve?",
+    subtext: "Isso influencia no seu metabolismo",
     type: 'card',
     options: [
-      { id: 'routine1', label: "Trabajo fuera de casa", icon: "🏢" },
-      { id: 'routine2', label: "Hago home office", icon: "🏠" },
-      { id: 'routine3', label: "Cuido la casa / familia", icon: "👪" },
-      { id: 'routine4', label: "Estudio", icon: "📚" }
+      { id: 'preg0', label: "Nunca engravidei", icon: "🚫" },
+      { id: 'preg1', label: "1 gravidez", icon: "1️⃣" },
+      { id: 'preg2', label: "2 gravidezes", icon: "2️⃣" },
+      { id: 'preg3', label: "3 ou mais gravidezes", icon: "👶" }
     ]
   },
   {
     id: 15,
-    question: "¿Cuántas horas dormís por noche?",
-    subtext: "El sueño influye directamente en el adelgazamiento",
+    question: "Como é sua rotina diária?",
+    subtext: "Vamos adaptar o protocolo ao seu dia a dia",
+    type: 'card',
+    options: [
+      { id: 'routine1', label: "Trabalho fora de casa", icon: "🏢" },
+      { id: 'routine2', label: "Faço home office", icon: "🏠" },
+      { id: 'routine3', label: "Cuido da casa / família", icon: "👪" },
+      { id: 'routine4', label: "Estudo", icon: "📚" }
+    ]
+  },
+  {
+    id: 16,
+    question: "Quantas horas dorme por noite?",
+    subtext: "O sono influencia diretamente no emagrecimento",
     type: 'card',
     options: [
       { id: 'sleep1', label: "Menos de 5 horas", icon: "😴" },
       { id: 'sleep2', label: "5 a 7 horas", icon: "🌙" },
       { id: 'sleep3', label: "7 a 9 horas", icon: "😊" },
-      { id: 'sleep4', label: "Más de 9 horas", icon: "💤" }
-    ]
-  },
-  {
-    id: 16,
-    question: "¿Cuánta agua bebés por día?",
-    subtext: "La hidratación é fundamental para la quema de grasa",
-    type: 'card',
-    options: [
-      { id: 'water1', label: "Casi nada", icon: "🥤" },
-      { id: 'water2', label: "Menos de 1 litro", icon: "💧" },
-      { id: 'water3', label: "1 a 2 litros", icon: "💦" },
-      { id: 'water4', label: "Más de 2 litros", icon: "🌊" }
+      { id: 'sleep4', label: "Mais de 9 horas", icon: "💤" }
     ]
   },
   {
     id: 17,
-    question: "Resultado de tu análisis, [nombre]",
-    subtext: "Analizamos tu perfil basado en tus respuestas.",
+    question: "Quanto de água bebe por dia?",
+    subtext: "A hidratação é fundamental para a queima de gordura",
+    type: 'card',
+    options: [
+      { id: 'water1', label: "Quase nada", icon: "🥤" },
+      { id: 'water2', label: "Menos de 1 litro", icon: "💧" },
+      { id: 'water3', label: "1 a 2 litros", icon: "💦" },
+      { id: 'water4', label: "Mais de 2 litros", icon: "🌊" }
+    ]
+  },
+  {
+    id: 18,
+    question: "Resultado da sua análise, [nome]",
+    subtext: "Analisamos seu perfil baseado nas suas respostas.",
     type: 'analysis_summary',
     options: []
   },
   {
-    id: 18,
-    question: "Cómo usar ",
-    questionHighlight: "La Gelatina Correcta",
-    subtext: "Simple, práctico e eficaz",
+    id: 19,
+    question: "Como usar ",
+    questionHighlight: "A Gelatina Noturna",
+    subtext: "Simples, prático e eficaz",
     type: 'commitment',
     options: []
   },
   {
-    id: 19,
-    question: "¿Cuál es el ",
-    questionHighlight: "cuerpo de tus sueños?",
-    subtext: "¿Cómo te imaginás de acá a 30 días?",
+    id: 20,
+    question: "Qual o ",
+    questionHighlight: "corpo dos seus sonhos?",
+    subtext: "Como você se imagina daqui a 30 dias?",
     type: 'card',
     options: [
-      { id: 'dream1', label: "En forma y definida", icon: "💪" },
-      { id: 'dream2', label: "Natural y saludable", icon: "🌸" }
+      { id: 'dream1', label: "Em forma e definida", icon: "💪" },
+      { id: 'dream2', label: "Natural e saudável", icon: "🌸" }
     ]
   },
   {
-    id: 20,
-    question: "[nombre], ¿te gustaría perder entre ",
-    questionHighlight: "8 y 14 kilos",
-    subtext: "Basado en tu perfil, ¡este resultado es totalmente alcanzable con **La Gelatina Correcta**!",
+    id: 21,
+    question: "[nome], gostaria de perder entre ",
+    questionHighlight: "8 e 14 quilos?",
+    subtext: "Baseado no seu perfil, este resultado é totalmente alcançável com a **Gelatina Noturna**!",
     type: 'transformation_offer',
     options: []
   },
   {
-    id: 21,
-    question: "Historias de ",
-    questionHighlight: "Transformación",
-    subtext: "Mirá quién ya transformó su cuerpo con **La Gelatina Correcta**",
+    id: 22,
+    question: "Histórias de ",
+    questionHighlight: "Transformação",
+    subtext: "Veja quem já transformou o corpo com a **Gelatina Noturna**",
     type: 'transformation_stories',
     options: []
   }
+];
+
+const TRANSFORMATION_IMAGES = [
+  "https://ik.imagekit.io/ekdmcxqtr/img_0136%20(3).png",
+  "https://ik.imagekit.io/ekdmcxqtr/img_0136%20(2).png",
+  "https://ik.imagekit.io/ekdmcxqtr/img_0136%20(1).png"
 ];
 
 const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => {
@@ -249,6 +270,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   const [weight, setWeight] = useState(75);
   const [height, setHeight] = useState(165);
   const [targetWeight, setTargetWeight] = useState(60);
+  const [carouselIndex, setCarouselIndex] = useState(0);
 
   // Tracking Helper
   const track = (name: string) => {
@@ -258,16 +280,24 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     }
   };
 
-  // Track initial view and steps
   useEffect(() => {
     if (currentQuestionIndex === 0) {
       track('quiz_view');
     }
-    
-    // Tracking for steps 1 to 5 as they appear
     const stepNumber = currentQuestionIndex + 1;
     if (stepNumber <= 5) {
       track(`quiz_step_${stepNumber}`);
+    }
+  }, [currentQuestionIndex]);
+
+  // Carousel Effect
+  useEffect(() => {
+    const q = QUESTIONS[currentQuestionIndex];
+    if (q.type === 'transformation_stories') {
+      const interval = setInterval(() => {
+        setCarouselIndex((prev) => (prev + 1) % TRANSFORMATION_IMAGES.length);
+      }, 3000);
+      return () => clearInterval(interval);
     }
   }, [currentQuestionIndex]);
 
@@ -283,8 +313,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
   const handleOptionSelect = (e: React.MouseEvent, optionId: string, optionLabel: string) => {
     e.stopPropagation();
-
-    // Ensure currentQuestion is defined in handler scope to avoid confusion with component scope
     const q = QUESTIONS[currentQuestionIndex];
     if (q.type === 'multi') {
       setSelectedMulti(prev => 
@@ -294,10 +322,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
       );
       return;
     }
-
     const updatedAnswers = { ...answers, [q.id]: optionLabel };
     setAnswers(updatedAnswers);
-    
     if (currentQuestionIndex < QUESTIONS.length - 1) {
       setTimeout(() => {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -312,12 +338,9 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
   const handleContinue = (e: React.MouseEvent) => {
     e.stopPropagation();
-
-    // Ensure currentQuestion is defined in handler scope
     const q = QUESTIONS[currentQuestionIndex];
     if (q.type === 'multi' && selectedMulti.length === 0) return;
     if (q.type === 'input' && !userName.trim()) return;
-
     let answerValue: any;
     if (q.type === 'input') {
       answerValue = userName;
@@ -332,10 +355,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     } else {
       answerValue = true; 
     }
-
     const updatedAnswers = { ...answers, [q.id]: answerValue };
     setAnswers(updatedAnswers);
-    
     if (currentQuestionIndex < QUESTIONS.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedMulti([]); 
@@ -345,48 +366,27 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   };
 
   const adjustWeight = (amount: number) => {
-    setWeight(prev => {
-      const newVal = prev + amount;
-      return Math.min(Math.max(newVal, 45), 150);
-    });
+    setWeight(prev => Math.min(Math.max(prev + amount, 45), 150));
   };
 
   const adjustHeight = (amount: number) => {
-    setHeight(prev => {
-      const newVal = prev + amount;
-      return Math.min(Math.max(newVal, 140), 220);
-    });
+    setHeight(prev => Math.min(Math.max(prev + amount, 140), 220));
   };
 
   const adjustTargetWeight = (amount: number) => {
-    setTargetWeight(prev => {
-      const newVal = prev + amount;
-      return Math.min(Math.max(newVal, 40), weight - 1);
-    });
+    setTargetWeight(prev => Math.min(Math.max(prev + amount, 40), weight - 1));
   };
 
   const currentQuestion = QUESTIONS[currentQuestionIndex];
-  const totalSteps = 24; 
-  
-  const stepMap: Record<number, number> = {
-    17: 18,
-    18: 19,
-    19: 21,
-    20: 22,
-    21: 23
-  };
-  const currentStep = stepMap[currentQuestion.id] || (currentQuestionIndex + 2); 
-  
-  const progressMap: Record<number, number> = { 
-    2: 8, 3: 13, 4: 17, 5: 21, 6: 25, 7: 29, 8: 33, 9: 38, 10: 42, 11: 46, 12: 50, 13: 54, 14: 58, 15: 63, 16: 67, 18: 75, 19: 79, 21: 88, 22: 92, 23: 96 
-  };
-  const progressPercentage = progressMap[currentStep] || 75;
+  const totalSteps = QUESTIONS.length + 3; 
+  const currentStep = currentQuestionIndex + 3;
+  const progressPercentage = Math.round((currentStep / totalSteps) * 100);
 
   let displayQuestion = currentQuestion.question;
   if (currentQuestion.id === 5) {
     displayQuestion = `${answers[4] || 'Amiga'}, ${currentQuestion.question}`;
-  } else if (currentQuestion.id === 9 || currentQuestion.id === 20 || currentQuestion.id === 17) {
-    displayQuestion = currentQuestion.question.replace('[nombre]', answers[4] || 'Amiga');
+  } else if (currentQuestion.id === 9 || currentQuestion.id === 21 || currentQuestion.id === 18) {
+    displayQuestion = currentQuestion.question.replace('[nome]', answers[4] || 'Amiga');
   }
 
   const calculateBMI = () => {
@@ -397,15 +397,15 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   
   const getBMICategory = (bmi: string) => {
     const b = parseFloat(bmi);
-    if (b < 18.5) return { label: 'Bajo peso', color: 'text-blue-500' };
+    if (b < 18.5) return { label: 'Baixo peso', color: 'text-blue-500' };
     if (b < 25) return { label: 'Normal', color: 'text-green-500' };
     if (b < 30) return { label: 'Sobrepeso', color: 'text-orange-500' };
-    return { label: 'Obesidad', color: 'text-red-500' };
+    return { label: 'Obesidade', color: 'text-red-500' };
   };
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-white pb-24 relative">
-      <div className="w-full px-4 pt-4 pb-2 sticky top-[100px] bg-white z-10">
+      <div className="w-full px-4 pt-4 pb-2 sticky top-0 bg-white z-10">
         <div className="flex justify-between items-end mb-1 px-1">
           <span className="text-[11px] font-bold text-gray-700">Etapa {currentStep} de {totalSteps}</span>
           <span className="text-[11px] font-bold text-purple-600">{progressPercentage}%</span>
@@ -422,21 +422,21 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
         {currentQuestion.type === 'analysis_summary' ? (
           <div className="w-full flex flex-col items-center animate-fadeIn">
             <h2 className="text-[20px] md:text-[22px] font-extrabold text-gray-900 leading-tight mb-8 text-center">
-              Resultado de tu análisis, <span className="text-purple-600 lowercase">{answers[4] || 'Amiga'}</span>
+              Resultado da sua análise, <span className="text-purple-600 lowercase">{answers[4] || 'Amiga'}</span>
             </h2>
 
             <div className="w-full bg-white rounded-3xl p-8 shadow-lg border border-gray-100 flex flex-col items-center mb-6">
                <span className="text-6xl font-black text-purple-600 tracking-tighter mb-2">{calculateBMI()}</span>
-               <p className="text-sm font-bold text-gray-400">Su IMC: <span className={`font-black uppercase tracking-tight ${getBMICategory(calculateBMI()).color}`}>{getBMICategory(calculateBMI()).label}</span></p>
+               <p className="text-sm font-bold text-gray-400">Seu IMC: <span className={`font-black uppercase tracking-tight ${getBMICategory(calculateBMI()).color}`}>{getBMICategory(calculateBMI()).label}</span></p>
             </div>
 
             <div className="w-full bg-red-50 border border-red-100 rounded-3xl p-6 mb-6">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-lg">⚠️</span>
-                <h3 className="text-[13px] font-black text-red-900 uppercase">Señales de alerta identificadas:</h3>
+                <h3 className="text-[13px] font-black text-red-900 uppercase">Sinais de alerta identificados:</h3>
               </div>
               <ul className="space-y-2">
-                {['Metabolismo desacelerado', 'Riesgo de acumulación de grasa visceral', 'Hormonas de saciedade desreguladas'].map((item, i) => (
+                {['Metabolismo desacelerado', 'Risco de acúmulo de gordura visceral', 'Hormônios da saciedade desregulados'].map((item, i) => (
                   <li key={i} className="flex items-center gap-2 text-xs font-bold text-red-700/80">
                     <span className="w-1.5 h-1.5 bg-red-400 rounded-full"></span>
                     {item}
@@ -447,18 +447,18 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
             <div className="w-full bg-purple-50 border border-purple-100 rounded-3xl p-6 mb-8">
                <p className="text-[13px] font-medium text-gray-700 leading-relaxed text-center">
-                 <span className="text-purple-600 font-black">El secreto para secar:</span> no es comer menos, es activar el GLP-1. ¡**La Gelatina Correcta** actúa como un "interruptor" hormonal natural!
+                 <span className="text-purple-600 font-black">O segredo para secar:</span> não é comer menos, é ativar o GLP-1. A **Gelatina Noturna** atua como um "interruptor" hormonal natural!
                </p>
             </div>
 
             <div className="w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-50 mb-10">
                <div className="flex h-64">
                  <img src="https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(7).png" alt="Antes" className="w-1/2 object-cover border-r-2 border-white" />
-                 <img src="https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(4).png" alt="Después" className="w-1/2 object-cover" />
+                 <img src="https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(4).png" alt="Depois" className="w-1/2 object-cover" />
                </div>
                <div className="p-5 text-center">
-                 <p className="text-[14px] font-black text-gray-900 mb-1">"¡Bajé 12kg en 5 semanas!"</p>
-                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{answers[4] || 'Amiga'}, 32 años - Buenos Aires</p>
+                 <p className="text-[14px] font-black text-gray-900 mb-1">"Perdi 12kg em 5 semanas!"</p>
+                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{answers[4] || 'Amiga'}, 32 anos - São Paulo</p>
                  <div className="flex justify-center gap-1 mt-2">
                     {[1,2,3,4,5].map(s => <span key={s} className="text-orange-400 text-sm">★</span>)}
                  </div>
@@ -473,40 +473,42 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
           <div className="w-full flex flex-col items-center animate-fadeIn">
              <div className="text-center mb-8">
                 <h2 className="text-[22px] md:text-[24px] font-extrabold text-gray-900 leading-tight">
-                  Historias de <span className="text-purple-600">Transformación</span>
+                  Histórias de <span className="text-purple-600">Transformação</span>
                 </h2>
                 <p className="text-sm font-medium text-gray-500 mt-2">
-                  Mirá quién ya transformó su cuerpo con **La Gelatina Correcta**
+                  Veja quem já transformou o corpo com a **Gelatina Noturna**
                 </p>
               </div>
 
-              <div className="space-y-6 w-full mb-10">
-                <div className="bg-white rounded-3xl shadow-lg border border-gray-50 overflow-hidden">
-                  <div className="h-64 w-full">
+              <div className="w-full mb-10 relative px-2">
+                {/* Alterado para aspect-auto e object-contain para não cortar a imagem */}
+                <div className="w-full min-h-[400px] bg-white rounded-[40px] shadow-2xl overflow-hidden border border-gray-50 relative flex items-center justify-center">
+                  {TRANSFORMATION_IMAGES.map((img, idx) => (
                     <img 
-                      src="https://ik.imagekit.io/ekdmcxqtr/carousel_antes_depois_4.jpg?updatedAt=1769185371770" 
-                      alt="Transformación 1" 
-                      className="w-full h-full object-cover" 
+                      key={idx}
+                      src={img} 
+                      alt={`Transformação ${idx + 1}`} 
+                      className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-1000 ease-in-out ${carouselIndex === idx ? 'opacity-100' : 'opacity-0'}`} 
                     />
-                  </div>
-                  <div className="p-4">
-                    <p className="text-sm font-black text-gray-900 mb-0.5">"Increíble... ¡Bajé 7kg en 3 semanas!"</p>
-                    <p className="text-[10px] font-bold text-gray-400">Giovanna, 34 - Buenos Aires</p>
+                  ))}
+                  
+                  {/* Overlay Gradiente Inferior suave */}
+                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
+                  
+                  {/* Indicadores (Dots) */}
+                  <div className="absolute bottom-6 inset-x-0 flex justify-center gap-2">
+                    {TRANSFORMATION_IMAGES.map((_, idx) => (
+                      <div 
+                        key={idx} 
+                        className={`h-2 rounded-full transition-all duration-500 ${carouselIndex === idx ? 'w-8 bg-purple-600' : 'w-2 bg-purple-200'}`}
+                      ></div>
+                    ))}
                   </div>
                 </div>
-
-                <div className="bg-white rounded-3xl shadow-lg border border-gray-50 overflow-hidden">
-                  <div className="h-64 w-full">
-                    <img 
-                      src="https://ik.imagekit.io/ekdmcxqtr/carousel_antes_depois_1.jpg?updatedAt=1769185371443" 
-                      alt="Transformación 2" 
-                      className="w-full h-full object-cover" 
-                    />
-                  </div>
-                  <div className="p-4">
-                    <p className="text-sm font-black text-gray-900 mb-0.5">"¡Por fin logré desinflamar mi panza!"</p>
-                    <p className="text-[10px] font-bold text-gray-400">Romina, 41 - Córdoba</p>
-                  </div>
+                
+                {/* Badge Flutuante */}
+                <div className="absolute -top-3 -right-1 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg rotate-12 z-20">
+                  RESULTADO REAL ✨
                 </div>
               </div>
 
@@ -514,7 +516,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 onClick={(e) => handleContinue(e)}
                 className="w-full btn-gradient py-5 rounded-2xl text-white font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
               >
-                Ver mi Protocolo Personalizado
+                Ver meu Protocolo Personalizado
               </button>
           </div>
         ) : currentQuestion.type === 'transformation_offer' ? (
@@ -524,18 +526,18 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
               </div>
               
               <h2 className="text-[20px] md:text-[22px] font-extrabold text-gray-900 leading-tight mb-3">
-                <span className="lowercase">{answers[4] || 'Amiga'}</span>, ¿te gustaría perder entre <span className="text-purple-600">8 y 14 kilos</span> en pocas semanas?
+                <span className="lowercase">{answers[4] || 'Amiga'}</span>, você gostaria de perder entre <span className="text-purple-600">8 e 14 quilos</span> em poucas semanas?
               </h2>
               
               <p className="text-sm font-medium text-gray-500 mb-10 max-w-[300px] leading-relaxed">
-                Basado en tu perfil, ¡este resultado é totalmente alcanzable con **La Gelatina Correcta**!
+                Baseado no seu perfil, este resultado é totalmente alcançável com a **Gelatina Noturna**!
               </p>
 
               <button 
                 onClick={(e) => handleContinue(e)}
                 className="w-full max-w-[340px] py-5 bg-[#10b981] hover:bg-[#059669] text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-100 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
-                ¡SÍ! ¡Quiero esa transformación! 🔥
+                SIM! Eu quero essa transformação! 🔥
               </button>
            </div>
         ) : (
@@ -557,60 +559,34 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex items-center gap-4">
                   <div className="w-12 h-12 bg-orange-400 rounded-xl flex items-center justify-center text-white text-2xl flex-shrink-0">✨</div>
                   <div>
-                    <span className="text-[10px] font-bold text-purple-600 uppercase">Paso 1</span>
-                    <h3 className="text-sm font-black text-gray-900 leading-none mb-1">Prepará la gelatina</h3>
-                    <p className="text-[11px] text-gray-500">Seguí la receta simple de la app</p>
+                    <span className="text-[10px] font-bold text-purple-600 uppercase">Passo 1</span>
+                    <h3 className="text-sm font-black text-gray-900 leading-none mb-1">Prepare a gelatina</h3>
+                    <p className="text-[11px] text-gray-500">Siga a receita simples do app</p>
                   </div>
                 </div>
                 <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex flex-col gap-3">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center text-white text-2xl flex-shrink-0">🕒</div>
                     <div>
-                      <span className="text-[10px] font-bold text-purple-600 uppercase">Paso 2</span>
-                      <h3 className="text-sm font-black text-gray-900 leading-none mb-1">Consumila 2 veces al día</h3>
-                      <p className="text-[11px] text-gray-500">Una a la mañana y otra antes de dormir</p>
+                      <span className="text-[10px] font-bold text-purple-600 uppercase">Passo 2</span>
+                      <h3 className="text-sm font-black text-gray-900 leading-none mb-1">Consuma 2 vezes ao dia</h3>
+                      <p className="text-[11px] text-gray-500">Uma de manhã e outra antes de dormir</p>
                     </div>
                   </div>
                   <div className="flex gap-2 ml-16">
-                    <span className="px-3 py-1 bg-purple-100 rounded-full text-[10px] font-bold text-purple-700">☀️ Mañana</span>
-                    <span className="px-3 py-1 bg-purple-100 rounded-full text-[10px] font-bold text-purple-700">🌙 Noche</span>
+                    <span className="px-3 py-1 bg-purple-100 rounded-full text-[10px] font-bold text-purple-700">☀️ Manhã</span>
+                    <span className="px-3 py-1 bg-purple-100 rounded-full text-[10px] font-bold text-purple-700">🌙 Noite</span>
                   </div>
                 </div>
                 <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex items-center gap-4">
                   <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white text-2xl flex-shrink-0">📅</div>
                   <div>
-                    <span className="text-[10px] font-bold text-purple-600 uppercase">Paso 3</span>
-                    <h3 className="text-sm font-black text-gray-900 leading-none mb-1">Seguilo por 30 días</h3>
-                    <p className="text-[11px] text-gray-500">El protocolo completo para ver resultados</p>
+                    <span className="text-[10px] font-bold text-purple-600 uppercase">Passo 3</span>
+                    <h3 className="text-sm font-black text-gray-900 leading-none mb-1">Siga por 30 dias</h3>
+                    <p className="text-[11px] text-gray-500">O protocolo completo para ver resultados</p>
                   </div>
                 </div>
-                <div className="mt-4 bg-purple-50 rounded-2xl p-6 border border-purple-100">
-                  <div className="flex items-center justify-between relative px-2">
-                    <div className="absolute top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-orange-300 via-purple-300 to-purple-400 -translate-y-1/2 -z-0"></div>
-                    <div className="flex flex-col items-center gap-2 relative z-10">
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-purple-100 text-lg">☀️</div>
-                      <div className="text-center">
-                        <p className="text-[10px] font-bold text-gray-900 leading-none">Mañana</p>
-                        <p className="text-[8px] text-gray-500 font-medium">En ayunas</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-center gap-2 relative z-10">
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-purple-100 text-lg">✨</div>
-                      <div className="text-center">
-                        <p className="text-[10px] font-bold text-gray-900 leading-none">Día</p>
-                        <p className="text-[8px] text-gray-500 font-medium">Sin hambre</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-center gap-2 relative z-10">
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-purple-100 text-lg">🌙</div>
-                      <div className="text-center">
-                        <p className="text-[10px] font-bold text-gray-900 leading-none">Noche</p>
-                        <p className="text-[8px] text-gray-500 font-medium">Antes de dormir</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <button onClick={(e) => handleContinue(e)} className="w-full mt-6 py-5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-200 active:scale-95 transition-all flex items-center justify-center gap-2"><span>✓ ¡Sí, me comprometo!</span></button>
+                <button onClick={(e) => handleContinue(e)} className="w-full mt-6 py-5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2"><span>✓ Sim, eu me comprometo!</span></button>
               </div>
             )}
 
@@ -626,7 +602,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   <button onClick={(e) => { e.stopPropagation(); adjustTargetWeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
                   <button onClick={(e) => { e.stopPropagation(); adjustTargetWeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
-                <div className="w-full max-w-[200px] flex justify-between text-[11px] font-bold text-gray-300 uppercase tracking-widest mt-2"><span>40 kg</span><span>{weight - 1} kg</span></div>
                 <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
               </div>
             )}
@@ -639,24 +614,21 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 </div>
                 <div className="flex items-center gap-4 mb-4">
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
-                  {/* Fixed invalid ternary syntax below */}
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(1) : adjustHeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
-                <div className="w-full max-w-[200px] flex justify-between text-[11px] font-bold text-gray-300 uppercase tracking-widest mt-2"><span>{currentQuestion.type === 'weight' ? '45 kg' : '140 cm'}</span><span>{currentQuestion.type === 'weight' ? '150 kg' : '200 cm'}</span></div>
                 <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
               </div>
             )}
 
             {currentQuestion.type === 'info' && (
               <div className="w-full flex flex-col items-center animate-fadeIn">
-                <p className="text-[15px] text-gray-600 text-center leading-relaxed mb-8 px-2">Sin esfuerzo ni dietas pesadas: <span className="font-bold text-purple-600">La Gelatina Correcta</span> hace el trabajo pesado por vos, activando la quema de grasa con ingredientes caseros que preparás en minutos.</p>
                 <div className="relative mb-10 w-full max-w-[280px]">
                   <div className="bg-gray-50 rounded-3xl p-6 flex flex-col items-center shadow-sm">
                     <img src="https://ik.imagekit.io/ekdmcxqtr/e9e0639c-6c94-4464-ab97-8e369eb06fdf.png" alt="Gelatina" className="w-32 h-32 object-cover rounded-2xl shadow-lg mb-6 rotate-3"/>
                     <div className="flex items-center justify-between w-full px-4 gap-2">
-                      <div className="flex flex-col items-center"><div className="text-2xl mb-1">👤</div><span className="text-[10px] font-bold text-gray-400 uppercase">Vos</span></div>
+                      <div className="flex flex-col items-center"><div className="text-2xl mb-1">👤</div><span className="text-[10px] font-bold text-gray-400 uppercase">Você</span></div>
                       <div className="text-purple-300 text-xl animate-pulse">→</div>
                       <div className="flex flex-col items-center"><div className="text-2xl mb-1">🍮</div><span className="text-[10px] font-bold text-purple-600 uppercase">Gelatina</span></div>
                       <div className="text-purple-300 text-xl animate-pulse">→</div>
@@ -664,8 +636,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                     </div>
                   </div>
                 </div>
-                <div className="w-full bg-purple-50 border border-purple-100 p-5 rounded-2xl mb-8"><p className="text-sm leading-relaxed text-gray-700"><span className="font-bold text-purple-700">Cómo funciona:</span> La receta casera activa el <span className="font-bold">GLP-1</span>, la misma hormona que logra el efecto del Mounjaro, ¡pero de forma 100% natural!</p></div>
-                <button onClick={(e) => handleContinue(e)} className="w-full py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">¡Entendido! Continuar 🚀</button>
+                <div className="w-full bg-purple-50 border border-purple-100 p-5 rounded-2xl mb-8"><p className="text-sm leading-relaxed text-gray-700"><span className="font-bold text-purple-700">Como funciona:</span> A receita caseira ativa o <span className="font-bold">GLP-1</span>, o mesmo hormônio do Ozempic, mas de forma 100% natural!</p></div>
+                <button onClick={(e) => handleContinue(e)} className="w-full py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">Entendido! Continuar 🚀</button>
               </div>
             )}
 
@@ -720,7 +692,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   type="text" 
                   value={userName} 
                   onChange={(e) => setUserName(e.target.value)} 
-                  placeholder="Escribí tu primer nombre" 
+                  placeholder="Escreva seu primeiro nome" 
                   className="w-full p-4 text-center border-2 border-purple-400 rounded-xl focus:ring-2 focus:ring-purple-200 focus:outline-none font-bold text-gray-700 placeholder:font-medium placeholder:text-gray-300" 
                   autoFocus 
                 />
@@ -742,7 +714,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
           <button 
             onClick={(e) => handleContinue(e)} 
             disabled={selectedMulti.length === 0} 
-            className={`w-full max-w-sm py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${selectedMulti.length > 0 ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-300 cursor-not-allowed opacity-60'}`}
+            className={`w-full max-sm py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${selectedMulti.length > 0 ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-300 cursor-not-allowed opacity-60'}`}
           >
             Continuar
           </button>
