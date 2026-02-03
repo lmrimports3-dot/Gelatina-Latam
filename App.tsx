@@ -4,6 +4,7 @@ import Landing from './components/Landing';
 import Transition from './components/Transition';
 import Quiz from './components/Quiz';
 import LoadingResult from './components/LoadingResult';
+import AttentionAudio from './components/AttentionAudio';
 import ResultAnalysis from './components/ResultAnalysis';
 import { AppStep } from './types';
 
@@ -74,6 +75,9 @@ const App: React.FC = () => {
         setCurrentStep(AppStep.CALCULATING);
         break;
       case AppStep.CALCULATING:
+        setCurrentStep(AppStep.ATTENTION_AUDIO);
+        break;
+      case AppStep.ATTENTION_AUDIO:
         setCurrentStep(AppStep.RESULT);
         break;
       default:
@@ -88,6 +92,7 @@ const App: React.FC = () => {
         {currentStep === AppStep.TRANSITION && <Transition onNext={() => handleNext()} />}
         {currentStep === AppStep.QUIZ && <Quiz onNext={(data) => handleNext(data)} />}
         {currentStep === AppStep.CALCULATING && <LoadingResult onComplete={() => handleNext()} />}
+        {currentStep === AppStep.ATTENTION_AUDIO && <AttentionAudio onNext={() => handleNext()} />}
         {currentStep === AppStep.RESULT && <ResultAnalysis userData={userData} onNext={() => {}} />}
       </main>
     </div>
