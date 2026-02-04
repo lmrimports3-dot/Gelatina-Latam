@@ -6,6 +6,7 @@ interface AttentionAudioProps {
 }
 
 const AUDIO_URL = "https://diplomatic-blush-gjqli2jfsx.edgeone.app/gelatina%20br_%20%7Bhappy%7DOi,%20tudo....mp3";
+const UNLOCK_DELAY_MS = 28000; // Tempo fixo para liberar o botão (aprox. 60% do áudio)
 
 const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -16,8 +17,11 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   const [trackedHalf, setTrackedHalf] = useState(false);
   const [trackedFull, setTrackedFull] = useState(false);
   const [trackedStarted, setTrackedStarted] = useState(false);
+  const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const unlockTimerRef = useRef<any>(null);
+  const visualProgressIntervalRef = useRef<any>(null);
 
   const trackCustom = (eventName: string) => {
     if (typeof window !== 'undefined') {
@@ -28,52 +32,67 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    return () => {
+      if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current);
+      if (visualProgressIntervalRef.current) clearInterval(visualProgressIntervalRef.current);
+    };
   }, []);
+
+  const startUnlockSequence = () => {
+    if (hasStartedPlayback) return;
+    setHasStartedPlayback(true);
+
+    // SOLUÇÃO iOS: Temporizador fixo para desbloqueio independente da duração do áudio
+    unlockTimerRef.current = setTimeout(() => {
+      setIsUnlocked(true);
+    }, UNLOCK_DELAY_MS);
+
+    // Simulação visual de progresso para garantir que a barra ande no iOS
+    const startTime = Date.now();
+    visualProgressIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const calculatedProgress = Math.min((elapsed / UNLOCK_DELAY_MS) * 60, 60);
+      
+      // Apenas atualizamos se o iOS não estiver enviando eventos nativos (ou se estiverem em 0)
+      setProgress(prev => Math.max(prev, calculatedProgress));
+      
+      // Tracking de 50% baseado no tempo real caso o evento de áudio falhe
+      if (calculatedProgress >= 50 && !trackedHalf) {
+        trackCustom('AudioHalf');
+        setTrackedHalf(true);
+      }
+    }, 100);
+  };
 
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
     const current = audioRef.current.currentTime;
-    let total = audioRef.current.duration;
+    const total = audioRef.current.duration;
     
-    // Fallback para quando o browser ainda não calculou a duração ou reporta Infinity
-    if (!total || isNaN(total) || total === Infinity) {
-      // Tenta pegar a duração novamente se o áudio estiver tocando
-      total = duration > 0 ? duration : 0;
-    } else if (duration !== total) {
-      setDuration(total);
+    if (isNaN(total) || total === 0) return;
+
+    const percent = (current / total) * 100;
+    // No Desktop os eventos funcionam, então o progresso será mais preciso aqui
+    setProgress(prev => Math.max(prev, percent));
+    setCurrentTime(current);
+    setDuration(total);
+
+    // Tracking 50%
+    if (percent >= 50 && !trackedHalf) {
+      trackCustom('AudioHalf');
+      setTrackedHalf(true);
     }
 
-    setCurrentTime(current);
-
-    if (total > 0) {
-      const percent = (current / total) * 100;
-      setProgress(percent);
-
-      // Desbloqueia em 60%
-      if (percent >= 60 && !isUnlocked) {
-        setIsUnlocked(true);
-      }
-
-      // Tracking 50%
-      if (percent >= 50 && !trackedHalf) {
-        trackCustom('AudioHalf');
-        setTrackedHalf(true);
-      }
-
-      // Tracking 100%
-      if (percent >= 99 && !trackedFull) {
-        trackCustom('AudioCompleted');
-        setTrackedFull(true);
-      }
+    // Tracking 100%
+    if (percent >= 99 && !trackedFull) {
+      trackCustom('AudioCompleted');
+      setTrackedFull(true);
     }
   };
 
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
-      const d = audioRef.current.duration;
-      if (d && !isNaN(d) && d !== Infinity) {
-        setDuration(d);
-      }
+      setDuration(audioRef.current.duration);
     }
   };
 
@@ -90,6 +109,7 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
         trackCustom('AudioStarted');
         setTrackedStarted(true);
       }
+      startUnlockSequence();
     }
     setIsPlaying(!isPlaying);
   };
@@ -103,7 +123,7 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   };
 
   const formatTime = (time: number) => {
-    if (isNaN(time) || time === Infinity || time < 0) return "0:00";
+    if (isNaN(time) || time === 0) return "0:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -131,7 +151,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
           src={AUDIO_URL}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
-          onDurationChange={handleLoadedMetadata}
           className="hidden"
           preload="auto"
         />
@@ -154,7 +173,7 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
         <div className="w-full space-y-2">
           <div className="flex justify-between text-[10px] font-black text-gray-400 uppercase tracking-widest">
             <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
+            <span>{duration > 0 ? formatTime(duration) : "0:46"}</span>
           </div>
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden relative">
             <div 
