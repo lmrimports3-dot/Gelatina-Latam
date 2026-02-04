@@ -11,7 +11,7 @@ interface ResultAnalysisProps {
   onNext: () => void;
 }
 
-const CHECKOUT_URL = "https://pay.hotmart.com/F104206698P?checkoutMode=10&bid=1769983129587";
+const CHECKOUT_URL = "https://lastlink.com/p/CDD52DF74/checkout-payment";
 
 const REVIEWS = [
   { name: "Carla", age: 34, city: "Curitiba", text: "Meu inchaço sumiu em 10 dias. Hoje minha barriga está visivelmente mais chapada.", img: "https://randomuser.me/api/portraits/women/32.jpg" },
