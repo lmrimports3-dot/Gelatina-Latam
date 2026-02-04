@@ -33,35 +33,47 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
     const current = audioRef.current.currentTime;
-    const total = audioRef.current.duration;
+    let total = audioRef.current.duration;
     
-    if (isNaN(total) || total === 0) return;
+    // Fallback para quando o browser ainda não calculou a duração ou reporta Infinity
+    if (!total || isNaN(total) || total === Infinity) {
+      // Tenta pegar a duração novamente se o áudio estiver tocando
+      total = duration > 0 ? duration : 0;
+    } else if (duration !== total) {
+      setDuration(total);
+    }
 
-    const percent = (current / total) * 100;
-    setProgress(percent);
     setCurrentTime(current);
 
-    // Desbloqueia em 60%
-    if (percent >= 60 && !isUnlocked) {
-      setIsUnlocked(true);
-    }
+    if (total > 0) {
+      const percent = (current / total) * 100;
+      setProgress(percent);
 
-    // Tracking 50%
-    if (percent >= 50 && !trackedHalf) {
-      trackCustom('AudioHalf');
-      setTrackedHalf(true);
-    }
+      // Desbloqueia em 60%
+      if (percent >= 60 && !isUnlocked) {
+        setIsUnlocked(true);
+      }
 
-    // Tracking 100%
-    if (percent >= 99 && !trackedFull) {
-      trackCustom('AudioCompleted');
-      setTrackedFull(true);
+      // Tracking 50%
+      if (percent >= 50 && !trackedHalf) {
+        trackCustom('AudioHalf');
+        setTrackedHalf(true);
+      }
+
+      // Tracking 100%
+      if (percent >= 99 && !trackedFull) {
+        trackCustom('AudioCompleted');
+        setTrackedFull(true);
+      }
     }
   };
 
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
-      setDuration(audioRef.current.duration);
+      const d = audioRef.current.duration;
+      if (d && !isNaN(d) && d !== Infinity) {
+        setDuration(d);
+      }
     }
   };
 
@@ -91,7 +103,7 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   };
 
   const formatTime = (time: number) => {
-    if (isNaN(time)) return "0:00";
+    if (isNaN(time) || time === Infinity || time < 0) return "0:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -119,6 +131,7 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
           src={AUDIO_URL}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
+          onDurationChange={handleLoadedMetadata}
           className="hidden"
           preload="auto"
         />
