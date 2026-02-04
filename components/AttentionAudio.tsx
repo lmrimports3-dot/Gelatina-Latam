@@ -6,14 +6,14 @@ interface AttentionAudioProps {
 }
 
 const AUDIO_URL = "https://diplomatic-blush-gjqli2jfsx.edgeone.app/gelatina%20br_%20%7Bhappy%7DOi,%20tudo....mp3";
-const UNLOCK_DELAY_MS = 28000; // Tempo fixo para liberar o botão (aprox. 60% do áudio)
+const UNLOCK_DELAY_MS = 28000; // Tempo visual para a barra de progresso (aprox. 60% do áudio)
 
 const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(true); // O botão agora inicia habilitado por padrão em todos os dispositivos
   const [trackedHalf, setTrackedHalf] = useState(false);
   const [trackedFull, setTrackedFull] = useState(false);
   const [trackedStarted, setTrackedStarted] = useState(false);
@@ -42,21 +42,14 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
     if (hasStartedPlayback) return;
     setHasStartedPlayback(true);
 
-    // SOLUÇÃO iOS: Temporizador fixo para desbloqueio independente da duração do áudio
-    unlockTimerRef.current = setTimeout(() => {
-      setIsUnlocked(true);
-    }, UNLOCK_DELAY_MS);
-
-    // Simulação visual de progresso para garantir que a barra ande no iOS
+    // Simulação visual de progresso continua funcionando como elemento informativo
     const startTime = Date.now();
     visualProgressIntervalRef.current = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const calculatedProgress = Math.min((elapsed / UNLOCK_DELAY_MS) * 60, 60);
       
-      // Apenas atualizamos se o iOS não estiver enviando eventos nativos (ou se estiverem em 0)
       setProgress(prev => Math.max(prev, calculatedProgress));
       
-      // Tracking de 50% baseado no tempo real caso o evento de áudio falhe
       if (calculatedProgress >= 50 && !trackedHalf) {
         trackCustom('AudioHalf');
         setTrackedHalf(true);
@@ -72,18 +65,15 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
     if (isNaN(total) || total === 0) return;
 
     const percent = (current / total) * 100;
-    // No Desktop os eventos funcionam, então o progresso será mais preciso aqui
     setProgress(prev => Math.max(prev, percent));
     setCurrentTime(current);
     setDuration(total);
 
-    // Tracking 50%
     if (percent >= 50 && !trackedHalf) {
       trackCustom('AudioHalf');
       setTrackedHalf(true);
     }
 
-    // Tracking 100%
     if (percent >= 99 && !trackedFull) {
       trackCustom('AudioCompleted');
       setTrackedFull(true);
