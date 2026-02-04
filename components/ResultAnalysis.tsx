@@ -226,6 +226,42 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
         </div>
       </section>
 
+      {/* 📱 SEÇÃO 3.5 — O QUE VOCÊ VAI RECEBER (NOVA SEÇÃO) */}
+      <section className="w-full px-6 py-16 bg-white border-t border-gray-50">
+        <h2 className="text-2xl font-black text-center mb-4">O que você vai receber</h2>
+        <p className="text-sm text-gray-500 font-medium text-center mb-10 px-4 leading-relaxed">
+          Você vai receber tudo que precisa para começar hoje mesmo e transformar suas noites com o Truque da Gelatina Noturna!
+        </p>
+
+        <div className="w-full bg-purple-50 rounded-[40px] p-6 mb-8 border border-purple-100 shadow-inner overflow-hidden relative">
+          {/* Background decoration dots */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-full -mr-16 -mt-16 opacity-50"></div>
+          
+          <img 
+            src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_ki4ot9ki4ot9ki4o.png" 
+            alt="Mockup do App" 
+            className="w-full h-auto rounded-3xl shadow-2xl mb-10 relative z-10 hover:scale-[1.02] transition-transform duration-500"
+          />
+          
+          <div className="space-y-4 relative z-10">
+            {[
+              "**Aplicativo 100% completo** com interface simples e fácil de usar",
+              "**Acompanhamento passo a passo** para preparar suas gelatinas noturnas",
+              "**Receitas exclusivas e testadas** que aceleram os resultados",
+              "**Alertas e lembretes automáticos** para não perder nenhum dia do protocolo",
+              "**Suporte rápido** para qualquer dúvida durante o uso"
+            ].map((bullet, i) => (
+              <div key={i} className="flex items-start gap-3 bg-white/70 backdrop-blur-sm p-4 rounded-2xl border border-white/50 shadow-sm">
+                <span className="text-emerald-500 text-lg flex-shrink-0">✅</span>
+                <p className="text-[13px] text-gray-700 leading-tight">
+                  {bullet.split('**').map((part, index) => index % 2 === 1 ? <strong key={index} className="font-black text-gray-900">{part}</strong> : part)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 💰 SEÇÃO 4 — ANCORAGEM DE VALOR */}
       <section className="w-full px-6 py-12 bg-gray-900 text-white rounded-[40px] mb-16">
         <h2 className="text-lg font-black text-center mb-8 uppercase tracking-tighter">Sua Oferta Especial</h2>
