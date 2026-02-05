@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 
 interface QuizOption {
@@ -341,6 +340,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   const [isIntermediateAudioUnlocked, setIsIntermediateAudioUnlocked] = useState(false);
   
   const intermediateAudioRef = useRef<HTMLAudioElement | null>(null);
+  const audioPlayTimestamp = useRef<number | null>(null);
 
   // Tracking Helper
   const track = (name: string) => {
@@ -384,6 +384,31 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
       setCarouselIndex(0);
     }
   }, [currentQuestionIndex]);
+
+  // Fallback Timer for iOS Safari Compatibility
+  useEffect(() => {
+    const q = QUESTIONS[currentQuestionIndex];
+    if (q.type !== 'intermediate_audio' || isIntermediateAudioUnlocked) return;
+
+    const fallbackInterval = setInterval(() => {
+      const audio = intermediateAudioRef.current;
+      if (!audio || !audioPlayTimestamp.current || !isIntermediateAudioPlaying) return;
+
+      const elapsed = (Date.now() - audioPlayTimestamp.current) / 1000;
+      const duration = audio.duration;
+
+      // Se a duração for válida, usamos ela. Caso contrário, Safari falhou mas o timer continua.
+      // A gelatina noturna áudio intermediário tem aprox 32 segundos.
+      const estimatedDuration = (duration && !isNaN(duration) && duration !== Infinity) ? duration : 32;
+
+      if (elapsed >= estimatedDuration - 10) {
+        setIsIntermediateAudioUnlocked(true);
+        clearInterval(fallbackInterval);
+      }
+    }, 1000);
+
+    return () => clearInterval(fallbackInterval);
+  }, [currentQuestionIndex, isIntermediateAudioPlaying, isIntermediateAudioUnlocked]);
 
   const finishQuiz = (updatedAnswers: any) => {
     onNext({
@@ -456,6 +481,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedMulti([]); 
       setIsIntermediateAudioUnlocked(false); // Reset para próximos passos
+      audioPlayTimestamp.current = null;
     } else {
       finishQuiz(updatedAnswers);
     }
@@ -503,7 +529,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-white pb-24 relative">
-      {/* Barra de progresso visível, mas sem as labels de texto */}
       <div className="w-full px-4 pt-4 pb-2 sticky top-0 bg-white z-10">
         <div className="w-full bg-gray-100 h-[6px] rounded-full overflow-hidden">
           <div 
@@ -585,9 +610,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                       className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-1000 ease-in-out ${carouselIndex === idx ? 'opacity-100' : 'opacity-0'}`} 
                     />
                   ))}
-                  
                   <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
-                  
                   <div className="absolute bottom-6 inset-x-0 flex justify-center gap-2">
                     {TRANSFORMATION_IMAGES.map((_, idx) => (
                       <div 
@@ -597,7 +620,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                     ))}
                   </div>
                 </div>
-                
                 <div className="absolute -top-3 -right-1 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg rotate-12 z-20">
                   RESULTADO REAL ✨
                 </div>
@@ -615,15 +637,12 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
               <div className="w-20 h-20 bg-pink-50 rounded-full flex items-center justify-center mb-8 shadow-sm">
                 <span className="text-4xl">🎯</span>
               </div>
-              
               <h2 className="text-[20px] md:text-[22px] font-extrabold text-gray-900 leading-tight mb-3">
                 <span className="lowercase">{answers[4] || 'Amiga'}</span>, você gostaria de perder entre <span className="text-purple-600">8 e 14 quilos</span> em poucas semanas?
               </h2>
-              
               <p className="text-sm font-medium text-gray-500 mb-10 max-w-[300px] leading-relaxed">
                 Baseado no seu perfil, este resultado é totalmente alcançável com a **Gelatina Noturna**!
               </p>
-
               <button 
                 onClick={(e) => handleContinue(e)}
                 className="w-full max-w-[340px] py-5 bg-[#10b981] hover:bg-[#059669] text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-100 active:scale-95 transition-all flex items-center justify-center gap-2"
@@ -658,11 +677,18 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                       setIsIntermediateAudioUnlocked(true);
                     }
                   }}
-                  onEnded={() => setIsIntermediateAudioPlaying(false)}
+                  onPlay={() => {
+                    if (!audioPlayTimestamp.current) {
+                      audioPlayTimestamp.current = Date.now();
+                    }
+                  }}
+                  onEnded={() => {
+                    setIsIntermediateAudioPlaying(false);
+                    setIsIntermediateAudioUnlocked(true);
+                  }}
                   className="hidden"
                   preload="auto"
                 />
-
                 <button 
                   onClick={() => {
                     const audio = intermediateAudioRef.current;
@@ -670,6 +696,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                       if (audio.paused) {
                         audio.play().then(() => {
                           setIsIntermediateAudioPlaying(true);
+                          if (!audioPlayTimestamp.current) audioPlayTimestamp.current = Date.now();
                         }).catch(err => {
                           console.error("Audio playback failed:", err);
                         });
@@ -688,44 +715,10 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                     <svg className="w-8 h-8 fill-current ml-1" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                   )}
                 </button>
-
                 <p className="text-[11px] font-bold text-purple-400 uppercase tracking-tighter">
                   {isIntermediateAudioPlaying ? "Ouvindo mensagem..." : "Clique no play para ouvir"}
                 </p>
               </div>
-          </div>
-        ) : currentQuestion.type === 'results_proof_carousel' ? (
-          <div className="w-full flex flex-col items-center animate-fadeIn">
-            <div className="text-center mb-8">
-              <h2 className="text-[22px] md:text-[24px] font-extrabold text-gray-900 leading-tight mb-4">
-                {currentQuestion.question}
-              </h2>
-              <p className="text-[15px] font-bold text-gray-700 leading-relaxed px-2">
-                {currentQuestion.subtext}
-              </p>
-            </div>
-
-            <div className="w-full relative mb-8 overflow-hidden h-auto min-h-[300px]">
-                <div className="relative w-full h-[400px] rounded-[32px] overflow-hidden shadow-lg border border-gray-100">
-                    {PROOF_IMAGES.map((src, i) => (
-                      <img 
-                        key={i}
-                        src={src} 
-                        alt={`Resultado Real ${i + 1}`} 
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${carouselIndex === i ? 'opacity-100' : 'opacity-0'}`} 
-                      />
-                    ))}
-                </div>
-                <div className="flex justify-center gap-1.5 mt-4">
-                    {PROOF_IMAGES.map((_, i) => (
-                      <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${carouselIndex === i ? 'bg-purple-600 w-4' : 'bg-purple-200'}`}></div>
-                    ))}
-                </div>
-            </div>
-
-            <p className="text-[14px] text-gray-600 font-medium text-center mb-10 leading-relaxed px-4">
-              Esses resultados aconteceram após seguir o protocolo noturno do jeito correto, respeitando o corpo e o ritmo digestivo.
-            </p>
           </div>
         ) : (
           <>
@@ -803,73 +796,9 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
                   <button onClick={(e) => { e.stopPropagation(); adjustWeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
-                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
+                  <button onClick={(e) => { e.stopPropagation(); adjustWeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
                 <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
-              </div>
-            )}
-
-            {currentQuestion.type === 'info' && (
-              <div className="w-full flex flex-col items-center animate-fadeIn">
-                <div className="relative mb-10 w-full max-w-[280px]">
-                  <div className="bg-gray-50 rounded-3xl p-6 flex flex-col items-center shadow-sm">
-                    <img src="https://ik.imagekit.io/ekdmcxqtr/e9e0639c-6c94-4464-ab97-8e369eb06fdf.png" alt="Gelatina" className="w-32 h-32 object-cover rounded-2xl shadow-lg mb-6 rotate-3"/>
-                    <div className="flex items-center justify-between w-full px-4 gap-2">
-                      <div className="flex flex-col items-center"><div className="text-2xl mb-1">👤</div><span className="text-[10px] font-bold text-gray-400 uppercase">Você</span></div>
-                      <div className="text-purple-300 text-xl animate-pulse">→</div>
-                      <div className="flex flex-col items-center"><div className="text-2xl mb-1">🍮</div><span className="text-[10px] font-bold text-purple-600 uppercase">Gelatina</span></div>
-                      <div className="text-purple-300 text-xl animate-pulse">→</div>
-                      <div className="flex flex-col items-center"><div className="text-2xl mb-1">✨</div><span className="text-[10px] font-bold text-gray-400 uppercase">Objetivo</span></div>
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full bg-purple-50 border border-purple-100 p-5 rounded-2xl mb-8"><p className="text-sm leading-relaxed text-gray-700"><span className="font-bold text-purple-700">Como funciona:</span> A receita caseira ativa o <span className="font-bold">GLP-1</span>, o mesmo hormônio do Ozempic, mas de forma 100% natural!</p></div>
-                <button onClick={(e) => handleContinue(e)} className="w-full py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">Entendido! Continuar 🚀</button>
-              </div>
-            )}
-
-            {currentQuestion.type === 'image' && (
-              <div className="grid grid-cols-2 gap-3 w-full max-w-[340px]">
-                {currentQuestion.options.map((option) => (
-                  <button key={option.id} onClick={(e) => handleOptionSelect(e, option.id, option.label)} className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-md active:scale-95 transition-transform group">
-                    <img src={option.image} alt={option.label} className="w-full h-full object-cover"/>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center pb-3"><span className="text-white text-[13px] font-bold tracking-tight">{option.label}</span></div>
-                    {answers[currentQuestion.id] === option.label && <div className="absolute inset-0 border-4 border-purple-500 rounded-xl bg-purple-500/10"></div>}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {(currentQuestion.type === 'text' || currentQuestion.type === 'card') && (
-              <div className="w-full space-y-3">
-                {currentQuestion.options.map((option) => (
-                  <button key={option.id} onClick={(e) => handleOptionSelect(e, option.id, option.label)} className={`w-full flex items-center justify-between border border-gray-200 rounded-2xl bg-white hover:border-purple-300 hover:bg-purple-50 transition-all active:scale-[0.98] group ${currentQuestion.type === 'card' ? 'p-4 gap-4' : 'p-5'}`}>
-                    {currentQuestion.type === 'card' && <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 group-hover:bg-purple-100 transition-colors">{option.icon}</div>}
-                    <div className="flex-1 text-left">
-                      <p className="text-sm font-bold text-gray-900">{option.label}</p>
-                      {option.subtext && <p className="text-[11px] text-gray-500 font-medium mt-0.5">{option.subtext}</p>}
-                    </div>
-                    <div className="w-5 h-5 border-2 border-gray-300 rounded-full group-hover:border-purple-500 transition-colors flex items-center justify-center flex-shrink-0">
-                      {answers[currentQuestion.id] === option.label && <div className="w-2.5 h-2.5 bg-purple-600 rounded-full"></div>}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {currentQuestion.type === 'multi' && (
-              <div className={`grid gap-3 w-full max-sm ${currentQuestion.columns === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                {currentQuestion.options.map((option) => (
-                  <button key={option.id} onClick={(e) => handleOptionSelect(e, option.id, option.label)} className={`relative flex items-center justify-between p-4 border rounded-xl transition-all active:scale-[0.98] ${selectedMulti.includes(option.id) ? 'border-purple-500 bg-purple-50 ring-1 ring-purple-500' : 'border-gray-200 bg-white shadow-sm'}`}>
-                    <div className={`flex items-center ${currentQuestion.columns === 2 ? 'flex-col gap-2 p-2 text-center' : 'gap-3'}`}>
-                      <span className={`${currentQuestion.columns === 2 ? 'text-2xl' : 'text-xl'}`}>{option.icon}</span>
-                      <span className="text-[13px] font-bold text-gray-800 leading-tight">{option.label}</span>
-                    </div>
-                    <div className={`w-5 h-5 border rounded flex items-center justify-center transition-colors flex-shrink-0 ${selectedMulti.includes(option.id) ? 'bg-purple-600 border-purple-600' : 'border-gray-300 bg-white'} ${currentQuestion.columns === 2 ? 'absolute top-3 right-3' : ''}`}>
-                      {selectedMulti.includes(option.id) && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>}
-                    </div>
-                  </button>
-                ))}
               </div>
             )}
 
@@ -890,6 +819,44 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 >
                   Continuar
                 </button>
+              </div>
+            )}
+
+            {(currentQuestion.type === 'text' || currentQuestion.type === 'card' || currentQuestion.type === 'image') && (
+               <div className={`w-full ${currentQuestion.type === 'image' ? 'grid grid-cols-2 gap-3 max-w-[340px]' : 'space-y-3'}`}>
+                  {currentQuestion.options.map((option) => (
+                    <button key={option.id} onClick={(e) => handleOptionSelect(e, option.id, option.label)} className={`relative w-full flex transition-all active:scale-[0.98] group ${currentQuestion.type === 'image' ? 'aspect-[3/4] rounded-xl overflow-hidden shadow-md' : 'items-center justify-between border border-gray-200 rounded-2xl bg-white hover:border-purple-300 hover:bg-purple-50 p-5'}`}>
+                      {currentQuestion.type === 'image' && <img src={option.image} alt={option.label} className="w-full h-full object-cover"/>}
+                      {currentQuestion.type === 'image' && <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center pb-3"><span className="text-white text-[13px] font-bold tracking-tight">{option.label}</span></div>}
+                      {currentQuestion.type !== 'image' && (
+                        <>
+                          <div className="flex-1 text-left">
+                            <p className="text-sm font-bold text-gray-900">{option.label}</p>
+                            {option.subtext && <p className="text-[11px] text-gray-500 font-medium mt-0.5">{option.subtext}</p>}
+                          </div>
+                          <div className="w-5 h-5 border-2 border-gray-300 rounded-full group-hover:border-purple-500 transition-colors flex items-center justify-center flex-shrink-0">
+                            {answers[currentQuestion.id] === option.label && <div className="w-2.5 h-2.5 bg-purple-600 rounded-full"></div>}
+                          </div>
+                        </>
+                      )}
+                    </button>
+                  ))}
+               </div>
+            )}
+
+            {currentQuestion.type === 'multi' && (
+              <div className={`grid gap-3 w-full max-sm ${currentQuestion.columns === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                {currentQuestion.options.map((option) => (
+                  <button key={option.id} onClick={(e) => handleOptionSelect(e, option.id, option.label)} className={`relative flex items-center justify-between p-4 border rounded-xl transition-all active:scale-[0.98] ${selectedMulti.includes(option.id) ? 'border-purple-500 bg-purple-50 ring-1 ring-purple-500' : 'border-gray-200 bg-white shadow-sm'}`}>
+                    <div className={`flex items-center ${currentQuestion.columns === 2 ? 'flex-col gap-2 p-2 text-center' : 'gap-3'}`}>
+                      <span className={`${currentQuestion.columns === 2 ? 'text-2xl' : 'text-xl'}`}>{option.icon}</span>
+                      <span className="text-[13px] font-bold text-gray-800 leading-tight">{option.label}</span>
+                    </div>
+                    <div className={`w-5 h-5 border rounded flex items-center justify-center transition-colors flex-shrink-0 ${selectedMulti.includes(option.id) ? 'bg-purple-600 border-purple-600' : 'border-gray-300 bg-white'} ${currentQuestion.columns === 2 ? 'absolute top-3 right-3' : ''}`}>
+                      {selectedMulti.includes(option.id) && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>}
+                    </div>
+                  </button>
+                ))}
               </div>
             )}
           </>
