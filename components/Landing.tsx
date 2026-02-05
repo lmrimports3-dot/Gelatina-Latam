@@ -10,7 +10,7 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
     <div className="w-full max-w-lg mx-auto flex flex-col items-center px-6 py-10">
       {/* Headline principal */}
       <h1 className="text-xl md:text-2xl font-extrabold text-center text-gray-900 leading-tight mb-6">
-        <span className="text-red-600">⚠️ ATENÇÃO:</span> Relatos recentes associam as <span className="text-purple-600">CANETAS para emagrecer</span> e o uso de <span className="text-purple-600">Mounjaro</span> a efeitos colaterais que estão preocupando especialistas.
+        <span className="text-red-600">⚠️</span> O que muitas mulheres estão fazendo à noite para evitar <span className="text-purple-600">Mounjaro</span> e reduzir o inchaço da barriga enquanto dormem
       </h1>
 
       {/* Imagen principal */}
@@ -25,7 +25,7 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
 
       {/* Transição para oferta */}
       <p className="text-[15px] text-center text-gray-700 mb-10 max-w-[360px] leading-relaxed font-semibold">
-        👉 Enquanto métodos agressivos assustam cada vez mais pessoas, milhares estão migrando para o <span className="font-black text-purple-700 bg-purple-100 px-2 py-0.5 rounded-lg border border-purple-200 shadow-sm">Truque da Gelatina Noturna</span> — uma rotina simples que faz a barriga desinchar enquanto você dorme.
+        Um protocolo noturno simples que começa a agir já nos primeiros dias — sem injeções e sem efeitos colaterais.
       </p>
 
       {/* CTA Principal */}
@@ -36,7 +36,7 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
         }}
         className="w-full btn-gradient text-white font-extrabold text-lg py-5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all mb-3 flex flex-col items-center justify-center uppercase"
       >
-        <span>🔥 QUERO DESINCHAR MINHA BARRIGA AGORA</span>
+        <span>GERAR MEU PROTOCOLO NOTURNO</span>
       </button>
 
       {/* Micro copy */}

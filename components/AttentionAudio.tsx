@@ -6,22 +6,19 @@ interface AttentionAudioProps {
 }
 
 const AUDIO_URL = "https://diplomatic-blush-gjqli2jfsx.edgeone.app/gelatina%20br_%20%7Bhappy%7DOi,%20tudo....mp3";
-const UNLOCK_DELAY_MS = 28000; // Tempo visual para a barra de progresso (aprox. 60% do áudio)
 
+// AttentionAudio component to be used in App.tsx
 const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [isUnlocked, setIsUnlocked] = useState(true); // O botão agora inicia habilitado por padrão em todos os dispositivos
+  const [isUnlocked, setIsUnlocked] = useState(false); 
   const [trackedHalf, setTrackedHalf] = useState(false);
   const [trackedFull, setTrackedFull] = useState(false);
   const [trackedStarted, setTrackedStarted] = useState(false);
-  const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const unlockTimerRef = useRef<any>(null);
-  const visualProgressIntervalRef = useRef<any>(null);
 
   const trackCustom = (eventName: string) => {
     if (typeof window !== 'undefined') {
@@ -32,30 +29,7 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    return () => {
-      if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current);
-      if (visualProgressIntervalRef.current) clearInterval(visualProgressIntervalRef.current);
-    };
   }, []);
-
-  const startUnlockSequence = () => {
-    if (hasStartedPlayback) return;
-    setHasStartedPlayback(true);
-
-    // Simulação visual de progresso continua funcionando como elemento informativo
-    const startTime = Date.now();
-    visualProgressIntervalRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const calculatedProgress = Math.min((elapsed / UNLOCK_DELAY_MS) * 60, 60);
-      
-      setProgress(prev => Math.max(prev, calculatedProgress));
-      
-      if (calculatedProgress >= 50 && !trackedHalf) {
-        trackCustom('AudioHalf');
-        setTrackedHalf(true);
-      }
-    }, 100);
-  };
 
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
@@ -65,9 +39,14 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
     if (isNaN(total) || total === 0) return;
 
     const percent = (current / total) * 100;
-    setProgress(prev => Math.max(prev, percent));
+    setProgress(percent);
     setCurrentTime(current);
     setDuration(total);
+
+    // Liberar botão faltando 10 segundos
+    if (total > 0 && current >= total - 10 && !isUnlocked) {
+      setIsUnlocked(true);
+    }
 
     if (percent >= 50 && !trackedHalf) {
       trackCustom('AudioHalf');
@@ -99,12 +78,12 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
         trackCustom('AudioStarted');
         setTrackedStarted(true);
       }
-      startUnlockSequence();
     }
     setIsPlaying(!isPlaying);
   };
 
   const handleFinalNext = () => {
+    if (!isUnlocked) return;
     if (typeof window !== 'undefined') {
       if ((window as any).fbq) (window as any).fbq('track', 'ViewContent');
       if ((window as any).dataLayer) (window as any).dataLayer.push({ event: 'audio_cta_clicked' });
@@ -121,20 +100,15 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
 
   return (
     <div className="w-full max-w-lg mx-auto flex flex-col items-center px-6 py-10 min-h-screen animate-fadeIn bg-white">
-      {/* 🚨 Headline */}
       <div className="text-center mb-6">
-        <h1 className="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-4">
-          🚨 ATENÇÃO: Seu protocolo já está pronto
+        <h1 className="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-4 px-2">
+          Atenção
         </h1>
         <p className="text-[15px] font-bold text-gray-700 leading-relaxed mb-4 px-2">
-          Antes de liberar seu acesso, escute essa mensagem importante da criadora do método. Ela contém orientações essenciais para garantir seus resultados.
-        </p>
-        <p className="text-[13px] text-gray-500 font-medium">
-          Essa mensagem é rápida e vai fazer toda diferença na sua transformação.
+          Escute com atenção a mensagem abaixo para finalizar seu perfil.
         </p>
       </div>
 
-      {/* 🎵 Player Container */}
       <div className="w-full bg-gray-50 border border-gray-100 rounded-[32px] p-8 mb-10 shadow-sm flex flex-col items-center">
         <audio 
           ref={audioRef}
@@ -145,11 +119,9 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
           preload="auto"
         />
 
-        {/* Play Button */}
         <button 
           onClick={togglePlay}
           className="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all mb-6 relative overflow-hidden group"
-          aria-label={isPlaying ? "Pausar áudio" : "Reproduzir áudio"}
         >
           <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
           {isPlaying ? (
@@ -159,7 +131,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
           )}
         </button>
 
-        {/* Info & Progress */}
         <div className="w-full space-y-2">
           <div className="flex justify-between text-[10px] font-black text-gray-400 uppercase tracking-widest">
             <span>{formatTime(currentTime)}</span>
@@ -172,35 +143,24 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
             ></div>
           </div>
         </div>
-
-        <p className="text-[11px] font-bold text-purple-400 mt-4 uppercase tracking-tighter">
-          {isPlaying ? "Ouvindo mensagem importante..." : "Clique no play para ouvir"}
-        </p>
       </div>
 
-      {/* 🚀 CTA Action */}
       <div className="w-full flex flex-col items-center gap-4">
         <button 
           onClick={handleFinalNext}
           disabled={!isUnlocked}
-          className={`w-full py-6 rounded-2xl font-black text-lg shadow-2xl transition-all uppercase flex items-center justify-center gap-2 
-            ${isUnlocked 
-              ? 'btn-gradient text-white animate-bounce-short hover:scale-[1.02] active:scale-95' 
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-            }`}
+          className={`w-full py-6 rounded-2xl font-black text-lg shadow-2xl transition-all uppercase flex items-center justify-center gap-2 btn-gradient text-white hover:scale-[1.02] active:scale-95 ${!isUnlocked ? 'opacity-50 cursor-not-allowed filter grayscale' : 'animate-bounce-short'}`}
         >
-          <span>Liberar meu protocolo agora</span>
-          {isUnlocked && <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>}
+          <span>Continuar</span>
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
         </button>
-
         {!isUnlocked && (
-          <p className="text-[11px] font-bold text-gray-400 animate-pulse text-center px-4 leading-tight">
-            Ouça a mensagem para liberar seu acesso...
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
+            O botão será liberado ao final do áudio
           </p>
         )}
       </div>
 
-      {/* Estilo adicional local */}
       <style>{`
         @keyframes bounce-short {
           0%, 100% { transform: translateY(0); }

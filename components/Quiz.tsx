@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface QuizOption {
   label: string;
@@ -15,7 +15,7 @@ interface GenericQuizQuestion {
   questionHighlight?: string;
   subtext: string;
   options: QuizOption[];
-  type: 'text' | 'image' | 'multi' | 'input' | 'card' | 'info' | 'weight' | 'height' | 'target_weight' | 'commitment' | 'transformation_offer' | 'transformation_stories' | 'analysis_summary';
+  type: 'text' | 'image' | 'multi' | 'input' | 'card' | 'info' | 'weight' | 'height' | 'target_weight' | 'commitment' | 'transformation_offer' | 'transformation_stories' | 'analysis_summary' | 'loading_transition' | 'intermediate_audio' | 'results_proof_carousel';
   columns?: number;
 }
 
@@ -47,6 +47,45 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
+    id: 101,
+    question: "Quando você mais sente a ",
+    questionHighlight: "barriga inchada?",
+    subtext: "Identificar o momento ajuda no ajuste do protocolo",
+    type: 'text',
+    options: [
+      { id: 'bloat1', label: "Ao acordar" },
+      { id: 'bloat2', label: "Após o jantar" },
+      { id: 'bloat3', label: "Durante o dia todo" },
+      { id: 'bloat4', label: "Principalmente à noite" }
+    ]
+  },
+  {
+    id: 102,
+    question: "Você já pensou em usar canetas emagrecedoras como ",
+    questionHighlight: "Mounjaro ou similares?",
+    subtext: "Queremos entender sua preferência por métodos",
+    type: 'text',
+    options: [
+      { id: 'pen1', label: "Já usei" },
+      { id: 'pen2', label: "Pensei, mas tive medo dos efeitos colaterais" },
+      { id: 'pen3', label: "Nunca usei e não pretendo" },
+      { id: 'pen4', label: "Prefiro soluções naturais" }
+    ]
+  },
+  {
+    id: 103,
+    question: "Seu intestino funciona com ",
+    questionHighlight: "regularidade?",
+    subtext: "O trânsito intestinal é chave para o desinchaço",
+    type: 'text',
+    options: [
+      { id: 'bowel1', label: "Todos os dias" },
+      { id: 'bowel2', label: "Dia sim, dia não" },
+      { id: 'bowel3', label: "Raramente" },
+      { id: 'bowel4', label: "Quase nunca" }
+    ]
+  },
+  {
     id: 3,
     question: "Em quais áreas você mais ",
     questionHighlight: "quer perder gordura?",
@@ -68,6 +107,27 @@ const QUESTIONS: GenericQuizQuestion[] = [
     questionHighlight: "nome?",
     subtext: "Queremos te conhecer melhor 💖",
     type: 'input',
+    options: []
+  },
+  {
+    id: 401,
+    question: "Analisando suas informações…",
+    subtext: "Ajustando o protocolo de acordo com seu perfil",
+    type: 'loading_transition',
+    options: []
+  },
+  {
+    id: 402,
+    question: "⚠️ Atenção: isso explica por que tantas mulheres estão abandonando canetas e Mounjaro",
+    subtext: "O que você vai ouvir agora explica por que o Truque da Gelatina Noturna começou a gerar resultados reais sem agredir o corpo.",
+    type: 'intermediate_audio',
+    options: []
+  },
+  {
+    id: 403,
+    question: "Resultados reais de mulheres que começaram o Truque da Gelatina Noturna",
+    subtext: "Desinchaço visível, barriga menos estufada e roupas voltando a servir — já nas primeiras semanas.",
+    type: 'results_proof_carousel',
     options: []
   },
   {
@@ -262,6 +322,12 @@ const TRANSFORMATION_IMAGES = [
   "https://ik.imagekit.io/ekdmcxqtr/img_0136%20(1).png"
 ];
 
+const PROOF_IMAGES = [
+  "https://ik.imagekit.io/ekdmcxqtr/resultado01.jpg",
+  "https://ik.imagekit.io/ekdmcxqtr/resultado02.jpg",
+  "https://ik.imagekit.io/ekdmcxqtr/resultado03.jpg"
+];
+
 const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
@@ -271,6 +337,10 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   const [height, setHeight] = useState(165);
   const [targetWeight, setTargetWeight] = useState(60);
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [isIntermediateAudioPlaying, setIsIntermediateAudioPlaying] = useState(false);
+  const [isIntermediateAudioUnlocked, setIsIntermediateAudioUnlocked] = useState(false);
+  
+  const intermediateAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // Tracking Helper
   const track = (name: string) => {
@@ -290,14 +360,28 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     }
   }, [currentQuestionIndex]);
 
+  // Loading Transition Effect
+  useEffect(() => {
+    const q = QUESTIONS[currentQuestionIndex];
+    if (q.type === 'loading_transition') {
+      const timer = setTimeout(() => {
+        handleContinue(new MouseEvent('click') as any);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [currentQuestionIndex]);
+
   // Carousel Effect
   useEffect(() => {
     const q = QUESTIONS[currentQuestionIndex];
-    if (q.type === 'transformation_stories') {
+    if (q.type === 'transformation_stories' || q.type === 'results_proof_carousel') {
+      const items = q.type === 'transformation_stories' ? TRANSFORMATION_IMAGES : PROOF_IMAGES;
       const interval = setInterval(() => {
-        setCarouselIndex((prev) => (prev + 1) % TRANSFORMATION_IMAGES.length);
+        setCarouselIndex((prev) => (prev + 1) % items.length);
       }, 3000);
       return () => clearInterval(interval);
+    } else {
+      setCarouselIndex(0);
     }
   }, [currentQuestionIndex]);
 
@@ -337,10 +421,21 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   };
 
   const handleContinue = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    if (e && e.stopPropagation) e.stopPropagation();
     const q = QUESTIONS[currentQuestionIndex];
+    
+    // Bloqueio do botão de áudio intermediário
+    if (q.type === 'intermediate_audio' && !isIntermediateAudioUnlocked) return;
+    
     if (q.type === 'multi' && selectedMulti.length === 0) return;
     if (q.type === 'input' && !userName.trim()) return;
+    
+    // Stop audio if moving away from audio step
+    if (q.type === 'intermediate_audio' && intermediateAudioRef.current) {
+      intermediateAudioRef.current.pause();
+      setIsIntermediateAudioPlaying(false);
+    }
+
     let answerValue: any;
     if (q.type === 'input') {
       answerValue = userName;
@@ -360,6 +455,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     if (currentQuestionIndex < QUESTIONS.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedMulti([]); 
+      setIsIntermediateAudioUnlocked(false); // Reset para próximos passos
     } else {
       finishQuiz(updatedAnswers);
     }
@@ -378,6 +474,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   };
 
   const currentQuestion = QUESTIONS[currentQuestionIndex];
+  
+  // Lógica para cálculo da porcentagem da barra de progresso
   const totalSteps = QUESTIONS.length + 3; 
   const currentStep = currentQuestionIndex + 3;
   const progressPercentage = Math.round((currentStep / totalSteps) * 100);
@@ -405,11 +503,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-white pb-24 relative">
+      {/* Barra de progresso visível, mas sem as labels de texto */}
       <div className="w-full px-4 pt-4 pb-2 sticky top-0 bg-white z-10">
-        <div className="flex justify-between items-end mb-1 px-1">
-          <span className="text-[11px] font-bold text-gray-700">Etapa {currentStep} de {totalSteps}</span>
-          <span className="text-[11px] font-bold text-purple-600">{progressPercentage}%</span>
-        </div>
         <div className="w-full bg-gray-100 h-[6px] rounded-full overflow-hidden">
           <div 
             className="h-full bg-purple-600 transition-all duration-700 ease-out" 
@@ -481,8 +576,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
               </div>
 
               <div className="w-full mb-10 relative px-2">
-                {/* Alterado para aspect-auto e object-contain para não cortar a imagem */}
-                <div className="w-full min-h-[400px] bg-white rounded-[40px] shadow-2xl overflow-hidden border border-gray-50 relative flex items-center justify-center">
+                <div className="w-full min-h-[400px] bg-white rounded-[40px] shadow-2xl overflow-hidden border border-gray-100 relative flex items-center justify-center">
                   {TRANSFORMATION_IMAGES.map((img, idx) => (
                     <img 
                       key={idx}
@@ -492,10 +586,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                     />
                   ))}
                   
-                  {/* Overlay Gradiente Inferior suave */}
                   <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
                   
-                  {/* Indicadores (Dots) */}
                   <div className="absolute bottom-6 inset-x-0 flex justify-center gap-2">
                     {TRANSFORMATION_IMAGES.map((_, idx) => (
                       <div 
@@ -506,7 +598,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   </div>
                 </div>
                 
-                {/* Badge Flutuante */}
                 <div className="absolute -top-3 -right-1 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg rotate-12 z-20">
                   RESULTADO REAL ✨
                 </div>
@@ -540,6 +631,102 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 SIM! Eu quero essa transformação! 🔥
               </button>
            </div>
+        ) : currentQuestion.type === 'loading_transition' ? (
+          <div className="w-full flex flex-col items-center justify-center py-20 animate-fadeIn">
+            <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-8"></div>
+            <h2 className="text-[22px] font-black text-gray-900 text-center mb-2">{currentQuestion.question}</h2>
+            <p className="text-sm font-medium text-gray-500 text-center">{currentQuestion.subtext}</p>
+          </div>
+        ) : currentQuestion.type === 'intermediate_audio' ? (
+          <div className="w-full flex flex-col items-center animate-fadeIn">
+             <div className="text-center mb-8">
+                <h2 className="text-[22px] md:text-[24px] font-extrabold text-gray-900 leading-tight mb-4 px-2">
+                  {currentQuestion.question}
+                </h2>
+                <p className="text-[15px] font-bold text-gray-700 leading-relaxed mb-2 px-2">
+                  {currentQuestion.subtext}
+                </p>
+              </div>
+
+              <div className="w-full bg-gray-50 border border-gray-100 rounded-[32px] p-8 mb-10 shadow-sm flex flex-col items-center">
+                <audio 
+                  ref={intermediateAudioRef}
+                  src="https://helpless-jade-9wxkrufo1i.edgeone.app/gelatinanoturna_%20Perfeito,%20agora....mp3"
+                  onTimeUpdate={(e) => {
+                    const audio = e.currentTarget;
+                    if (audio.duration > 0 && audio.currentTime >= audio.duration - 10 && !isIntermediateAudioUnlocked) {
+                      setIsIntermediateAudioUnlocked(true);
+                    }
+                  }}
+                  onEnded={() => setIsIntermediateAudioPlaying(false)}
+                  className="hidden"
+                  preload="auto"
+                />
+
+                <button 
+                  onClick={() => {
+                    const audio = intermediateAudioRef.current;
+                    if (audio) {
+                      if (audio.paused) {
+                        audio.play().then(() => {
+                          setIsIntermediateAudioPlaying(true);
+                        }).catch(err => {
+                          console.error("Audio playback failed:", err);
+                        });
+                      } else {
+                        audio.pause();
+                        setIsIntermediateAudioPlaying(false);
+                      }
+                    }
+                  }}
+                  className="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all mb-6 relative overflow-hidden group"
+                >
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  {isIntermediateAudioPlaying ? (
+                    <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                  ) : (
+                    <svg className="w-8 h-8 fill-current ml-1" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  )}
+                </button>
+
+                <p className="text-[11px] font-bold text-purple-400 uppercase tracking-tighter">
+                  {isIntermediateAudioPlaying ? "Ouvindo mensagem..." : "Clique no play para ouvir"}
+                </p>
+              </div>
+          </div>
+        ) : currentQuestion.type === 'results_proof_carousel' ? (
+          <div className="w-full flex flex-col items-center animate-fadeIn">
+            <div className="text-center mb-8">
+              <h2 className="text-[22px] md:text-[24px] font-extrabold text-gray-900 leading-tight mb-4">
+                {currentQuestion.question}
+              </h2>
+              <p className="text-[15px] font-bold text-gray-700 leading-relaxed px-2">
+                {currentQuestion.subtext}
+              </p>
+            </div>
+
+            <div className="w-full relative mb-8 overflow-hidden h-auto min-h-[300px]">
+                <div className="relative w-full h-[400px] rounded-[32px] overflow-hidden shadow-lg border border-gray-100">
+                    {PROOF_IMAGES.map((src, i) => (
+                      <img 
+                        key={i}
+                        src={src} 
+                        alt={`Resultado Real ${i + 1}`} 
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${carouselIndex === i ? 'opacity-100' : 'opacity-0'}`} 
+                      />
+                    ))}
+                </div>
+                <div className="flex justify-center gap-1.5 mt-4">
+                    {PROOF_IMAGES.map((_, i) => (
+                      <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${carouselIndex === i ? 'bg-purple-600 w-4' : 'bg-purple-200'}`}></div>
+                    ))}
+                </div>
+            </div>
+
+            <p className="text-[14px] text-gray-600 font-medium text-center mb-10 leading-relaxed px-4">
+              Esses resultados aconteceram após seguir o protocolo noturno do jeito correto, respeitando o corpo e o ritmo digestivo.
+            </p>
+          </div>
         ) : (
           <>
             <div className="text-center mb-8">
@@ -615,7 +802,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 <div className="flex items-center gap-4 mb-4">
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
-                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(1) : adjustHeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
+                  <button onClick={(e) => { e.stopPropagation(); adjustWeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
                 <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
@@ -709,12 +896,12 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
         )}
       </div>
 
-      {currentQuestion.type === 'multi' && (
+      {(currentQuestion.type === 'multi' || currentQuestion.type === 'intermediate_audio' || currentQuestion.type === 'results_proof_carousel') && (
         <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-md flex justify-center border-t border-gray-100">
           <button 
             onClick={(e) => handleContinue(e)} 
-            disabled={selectedMulti.length === 0} 
-            className={`w-full max-sm py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${selectedMulti.length > 0 ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-300 cursor-not-allowed opacity-60'}`}
+            disabled={currentQuestion.type === 'intermediate_audio' && !isIntermediateAudioUnlocked}
+            className={`w-full max-sm py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${((currentQuestion.type === 'multi' && selectedMulti.length === 0) || (currentQuestion.type === 'intermediate_audio' && !isIntermediateAudioUnlocked)) ? 'bg-gray-300 cursor-not-allowed opacity-60' : 'bg-purple-400 hover:bg-purple-500'}`}
           >
             Continuar
           </button>

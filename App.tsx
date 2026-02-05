@@ -5,6 +5,9 @@ import Transition from './components/Transition';
 import Quiz from './components/Quiz';
 import LoadingResult from './components/LoadingResult';
 import AttentionAudio from './components/AttentionAudio';
+import DiagnosisLoading from './components/DiagnosisLoading';
+import Diagnosis from './components/Diagnosis';
+import DiscountScratch from './components/DiscountScratch';
 import ResultAnalysis from './components/ResultAnalysis';
 import { AppStep } from './types';
 
@@ -40,7 +43,7 @@ const App: React.FC = () => {
   }, []);
 
   const handleNext = (data?: any) => {
-    // BLOQUEIO ABSOLUTO: Se for um evento ou elemento DOM (circular), descartar.
+    // BLOQUEIO ABSOLUTO
     if (data && (
       data.nativeEvent || 
       data instanceof Event || 
@@ -58,7 +61,7 @@ const App: React.FC = () => {
           if (value instanceof Event) return undefined;
           return value;
         }));
-        setUserData(sanitized);
+        setUserData((prev: any) => ({ ...prev, ...sanitized }));
       } catch (e) {
         console.warn("Circular reference detected and blocked.");
       }
@@ -78,6 +81,18 @@ const App: React.FC = () => {
         setCurrentStep(AppStep.ATTENTION_AUDIO);
         break;
       case AppStep.ATTENTION_AUDIO:
+        setCurrentStep(AppStep.DIAGNOSIS_LOADING);
+        break;
+      case AppStep.DIAGNOSIS_LOADING:
+        setCurrentStep(AppStep.DIAGNOSIS);
+        break;
+      case AppStep.DIAGNOSIS:
+        setCurrentStep(AppStep.DISCOUNT_SCRATCH);
+        break;
+      case AppStep.DISCOUNT_SCRATCH:
+        setCurrentStep(AppStep.RESULT);
+        break;
+      case AppStep.RESULTS_PROOF:
         setCurrentStep(AppStep.RESULT);
         break;
       default:
@@ -93,6 +108,9 @@ const App: React.FC = () => {
         {currentStep === AppStep.QUIZ && <Quiz onNext={(data) => handleNext(data)} />}
         {currentStep === AppStep.CALCULATING && <LoadingResult onComplete={() => handleNext()} />}
         {currentStep === AppStep.ATTENTION_AUDIO && <AttentionAudio onNext={() => handleNext()} />}
+        {currentStep === AppStep.DIAGNOSIS_LOADING && <DiagnosisLoading onComplete={() => handleNext()} />}
+        {currentStep === AppStep.DIAGNOSIS && <Diagnosis userData={userData} onNext={() => handleNext()} />}
+        {currentStep === AppStep.DISCOUNT_SCRATCH && <DiscountScratch onNext={() => handleNext()} />}
         {currentStep === AppStep.RESULT && <ResultAnalysis userData={userData} onNext={() => {}} />}
       </main>
     </div>
