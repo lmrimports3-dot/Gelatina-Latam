@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 
 interface AttentionAudioProps {
@@ -6,6 +7,7 @@ interface AttentionAudioProps {
 
 const AUDIO_URL = "https://diplomatic-blush-gjqli2jfsx.edgeone.app/gelatina%20br_%20%7Bhappy%7DOi,%20tudo....mp3";
 
+// AttentionAudio component to be used in App.tsx
 const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -17,8 +19,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   const [trackedStarted, setTrackedStarted] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const playStartTimeRef = useRef<number | null>(null);
-  const totalExpectedDuration = 46; // Duração de fallback se Safari falhar
 
   const trackCustom = (eventName: string) => {
     if (typeof window !== 'undefined') {
@@ -30,31 +30,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  // Timer de Fallback para iOS Safari (Validação Dupla)
-  useEffect(() => {
-    let interval: any;
-    if (isPlaying && !isUnlocked) {
-      interval = setInterval(() => {
-        if (!playStartTimeRef.current) return;
-        
-        // Cronômetro Real Independente do Player
-        const elapsed = (Date.now() - playStartTimeRef.current) / 1000;
-        
-        // Tenta obter a duração real, caso contrário usa o fallback
-        const total = (audioRef.current && audioRef.current.duration && Number.isFinite(audioRef.current.duration)) 
-          ? audioRef.current.duration 
-          : totalExpectedDuration;
-
-        // Regra de Liberação: Faltando 10 segundos
-        if (elapsed >= total - 10) {
-          setIsUnlocked(true);
-          clearInterval(interval);
-        }
-      }, 500);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying, isUnlocked]);
 
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
@@ -68,8 +43,8 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
     setCurrentTime(current);
     setDuration(total);
 
-    // Validação Primária via Evento do Áudio
-    if (total > 0 && Number.isFinite(total) && current >= total - 10 && !isUnlocked) {
+    // Liberar botão faltando 10 segundos
+    if (total > 0 && current >= total - 10 && !isUnlocked) {
       setIsUnlocked(true);
     }
 
@@ -86,10 +61,7 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
 
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
-      const d = audioRef.current.duration;
-      if (Number.isFinite(d)) {
-        setDuration(d);
-      }
+      setDuration(audioRef.current.duration);
     }
   };
 
@@ -102,10 +74,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
       audioRef.current.play().catch(err => {
         console.error("Erro ao reproduzir áudio:", err);
       });
-      
-      // Sincroniza o cronômetro de início com o tempo atual do player (importante para resumes)
-      playStartTimeRef.current = Date.now() - (audioRef.current.currentTime * 1000);
-
       if (!trackedStarted) {
         trackCustom('AudioStarted');
         setTrackedStarted(true);
@@ -147,15 +115,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
           src={AUDIO_URL}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
-          onPlay={() => {
-            if (!playStartTimeRef.current) {
-               playStartTimeRef.current = Date.now() - ((audioRef.current?.currentTime || 0) * 1000);
-            }
-          }}
-          onEnded={() => {
-            setIsUnlocked(true);
-            setIsPlaying(false);
-          }}
           className="hidden"
           preload="auto"
         />
@@ -175,7 +134,7 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
         <div className="w-full space-y-2">
           <div className="flex justify-between text-[10px] font-black text-gray-400 uppercase tracking-widest">
             <span>{formatTime(currentTime)}</span>
-            <span>{duration > 0 && Number.isFinite(duration) ? formatTime(duration) : "0:46"}</span>
+            <span>{duration > 0 ? formatTime(duration) : "0:46"}</span>
           </div>
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden relative">
             <div 
