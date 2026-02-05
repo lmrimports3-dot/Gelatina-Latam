@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 
 interface QuizOption {
@@ -341,6 +340,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   const [isIntermediateAudioUnlocked, setIsIntermediateAudioUnlocked] = useState(false);
   
   const intermediateAudioRef = useRef<HTMLAudioElement | null>(null);
+  const audioPlayTimestamp = useRef<number | null>(null);
 
   // Tracking Helper
   const track = (name: string) => {
@@ -384,6 +384,33 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
       setCarouselIndex(0);
     }
   }, [currentQuestionIndex]);
+
+  // Fallback Timer para iOS Safari (Dual Validation)
+  useEffect(() => {
+    const q = QUESTIONS[currentQuestionIndex];
+    if (q.type !== 'intermediate_audio' || isIntermediateAudioUnlocked) return;
+
+    const fallbackInterval = setInterval(() => {
+      const audio = intermediateAudioRef.current;
+      if (!audio || !audioPlayTimestamp.current || !isIntermediateAudioPlaying) return;
+
+      // Cronômetro Real baseado no tempo absoluto de início
+      const elapsed = (Date.now() - audioPlayTimestamp.current) / 1000;
+      
+      // Captura duração se disponível, senão usa fallback padrão de 32s para esse áudio
+      const total = (audio.duration && !isNaN(audio.duration) && audio.duration !== Infinity) 
+        ? audio.duration 
+        : 32;
+
+      // Regra Crítica: Faltando exatamente 10 segundos
+      if (elapsed >= total - 10) {
+        setIsIntermediateAudioUnlocked(true);
+        clearInterval(fallbackInterval);
+      }
+    }, 500);
+
+    return () => clearInterval(fallbackInterval);
+  }, [currentQuestionIndex, isIntermediateAudioPlaying, isIntermediateAudioUnlocked]);
 
   const finishQuiz = (updatedAnswers: any) => {
     onNext({
@@ -455,7 +482,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     if (currentQuestionIndex < QUESTIONS.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedMulti([]); 
-      setIsIntermediateAudioUnlocked(false); // Reset para próximos passos
+      setIsIntermediateAudioUnlocked(false); 
+      audioPlayTimestamp.current = null; // Reseta timestamp para segurança
     } else {
       finishQuiz(updatedAnswers);
     }
@@ -503,7 +531,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-white pb-24 relative">
-      {/* Barra de progresso visível, mas sem as labels de texto */}
       <div className="w-full px-4 pt-4 pb-2 sticky top-0 bg-white z-10">
         <div className="w-full bg-gray-100 h-[6px] rounded-full overflow-hidden">
           <div 
@@ -585,9 +612,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                       className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-1000 ease-in-out ${carouselIndex === idx ? 'opacity-100' : 'opacity-0'}`} 
                     />
                   ))}
-                  
                   <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
-                  
                   <div className="absolute bottom-6 inset-x-0 flex justify-center gap-2">
                     {TRANSFORMATION_IMAGES.map((_, idx) => (
                       <div 
@@ -597,7 +622,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                     ))}
                   </div>
                 </div>
-                
                 <div className="absolute -top-3 -right-1 bg-emerald-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg rotate-12 z-20">
                   RESULTADO REAL ✨
                 </div>
@@ -615,15 +639,12 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
               <div className="w-20 h-20 bg-pink-50 rounded-full flex items-center justify-center mb-8 shadow-sm">
                 <span className="text-4xl">🎯</span>
               </div>
-              
               <h2 className="text-[20px] md:text-[22px] font-extrabold text-gray-900 leading-tight mb-3">
                 <span className="lowercase">{answers[4] || 'Amiga'}</span>, você gostaria de perder entre <span className="text-purple-600">8 e 14 quilos</span> em poucas semanas?
               </h2>
-              
               <p className="text-sm font-medium text-gray-500 mb-10 max-w-[300px] leading-relaxed">
                 Baseado no seu perfil, este resultado é totalmente alcançável com a **Gelatina Noturna**!
               </p>
-
               <button 
                 onClick={(e) => handleContinue(e)}
                 className="w-full max-w-[340px] py-5 bg-[#10b981] hover:bg-[#059669] text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-100 active:scale-95 transition-all flex items-center justify-center gap-2"
@@ -654,11 +675,23 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   src="https://helpless-jade-9wxkrufo1i.edgeone.app/gelatinanoturna_%20Perfeito,%20agora....mp3"
                   onTimeUpdate={(e) => {
                     const audio = e.currentTarget;
-                    if (audio.duration > 0 && audio.currentTime >= audio.duration - 10 && !isIntermediateAudioUnlocked) {
+                    const total = audio.duration;
+                    const current = audio.currentTime;
+                    // Validação 1: Via Player (Safari as vezes falha aqui)
+                    if (total > 0 && !isNaN(total) && total !== Infinity && current >= total - 10 && !isIntermediateAudioUnlocked) {
                       setIsIntermediateAudioUnlocked(true);
                     }
                   }}
-                  onEnded={() => setIsIntermediateAudioPlaying(false)}
+                  onPlay={() => {
+                    // Sincroniza Cronômetro de Fallback para iOS
+                    if (!audioPlayTimestamp.current) {
+                      audioPlayTimestamp.current = Date.now() - ((intermediateAudioRef.current?.currentTime || 0) * 1000);
+                    }
+                  }}
+                  onEnded={() => {
+                    setIsIntermediateAudioPlaying(false);
+                    setIsIntermediateAudioUnlocked(true);
+                  }}
                   className="hidden"
                   preload="auto"
                 />
@@ -670,6 +703,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                       if (audio.paused) {
                         audio.play().then(() => {
                           setIsIntermediateAudioPlaying(true);
+                          // Garante sincronização se play vier de pause
+                          audioPlayTimestamp.current = Date.now() - (audio.currentTime * 1000);
                         }).catch(err => {
                           console.error("Audio playback failed:", err);
                         });
@@ -803,7 +838,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
                   <button onClick={(e) => { e.stopPropagation(); adjustWeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
-                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
+                  <button onClick={(e) => { e.stopPropagation(); adjustWeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
                 <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
               </div>
