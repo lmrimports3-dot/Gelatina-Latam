@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface LandingProps {
@@ -10,7 +9,7 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
     <div className="w-full max-w-lg mx-auto flex flex-col items-center px-6 py-10">
       {/* Headline principal */}
       <h1 className="text-xl md:text-2xl font-extrabold text-center text-gray-900 leading-tight mb-6">
-        <span className="text-red-600">⚠️</span> O que muitas mulheres estão fazendo à noite para evitar <span className="text-purple-600">Mounjaro</span> e reduzir o inchaço da barriga enquanto dormem
+        <span className="text-red-600">⚠️</span> Canetas de emagrecer estão dando problema — descobrimos o truque que funciona <span className="text-purple-600">ENQUANTO VOCÊ DORME</span>
       </h1>
 
       {/* Imagen principal */}
@@ -25,7 +24,7 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
 
       {/* Transição para oferta */}
       <p className="text-[15px] text-center text-gray-700 mb-10 max-w-[360px] leading-relaxed font-semibold">
-        Um protocolo noturno simples que começa a agir já nos primeiros dias — sem injeções e sem efeitos colaterais.
+        O truque que as mulheres estão usando para desinchar a barriga em DIAS — e que o Mounjaro não consegue fazer
       </p>
 
       {/* CTA Principal */}
