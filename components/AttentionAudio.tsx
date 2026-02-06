@@ -11,14 +11,12 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [isUnlocked, setIsUnlocked] = useState(false); 
   const [trackedHalf, setTrackedHalf] = useState(false);
   const [trackedFull, setTrackedFull] = useState(false);
   const [trackedStarted, setTrackedStarted] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playStartTimeRef = useRef<number | null>(null);
-  const totalExpectedDuration = 46; // Duração aproximada do arquivo para fallback (exatamente 46s)
 
   const trackCustom = (eventName: string) => {
     if (typeof window !== 'undefined') {
@@ -31,31 +29,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Timer de Fallback para iOS Safari (Validação Dupla)
-  useEffect(() => {
-    let interval: any;
-    if (isPlaying && !isUnlocked) {
-      interval = setInterval(() => {
-        if (!playStartTimeRef.current) return;
-        
-        // Cronômetro Real baseado no tempo de sistema para mitigar imprecisão do Safari
-        const elapsed = (Date.now() - playStartTimeRef.current) / 1000;
-        
-        // Captura duração real se disponível, caso contrário usa fallback configurado
-        const total = (audioRef.current && audioRef.current.duration && Number.isFinite(audioRef.current.duration)) 
-          ? audioRef.current.duration 
-          : totalExpectedDuration;
-
-        // Regra de Liberação: Faltando exatamente 10 segundos
-        if (elapsed >= total - 10) {
-          setIsUnlocked(true);
-          clearInterval(interval);
-        }
-      }, 500);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying, isUnlocked]);
-
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
     const current = audioRef.current.currentTime;
@@ -67,11 +40,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
     setProgress(percent);
     setCurrentTime(current);
     setDuration(total);
-
-    // Validação Primária via Evento nativo (Safari as vezes falha aqui, o useEffect resolve)
-    if (total > 0 && Number.isFinite(total) && current >= total - 10 && !isUnlocked) {
-      setIsUnlocked(true);
-    }
 
     if (percent >= 50 && !trackedHalf) {
       trackCustom('AudioHalf');
@@ -103,7 +71,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
         console.error("Erro ao reproduzir áudio:", err);
       });
       
-      // Sincroniza Cronômetro Real (necessário recalcular em resumes)
       playStartTimeRef.current = Date.now() - (audioRef.current.currentTime * 1000);
 
       if (!trackedStarted) {
@@ -115,7 +82,6 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   };
 
   const handleFinalNext = () => {
-    if (!isUnlocked) return;
     if (typeof window !== 'undefined') {
       if ((window as any).fbq) (window as any).fbq('track', 'ViewContent');
       if ((window as any).dataLayer) (window as any).dataLayer.push({ event: 'audio_cta_clicked' });
@@ -131,75 +97,104 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto flex flex-col items-center px-6 py-10 min-h-screen animate-fadeIn bg-white">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-4 px-2">
-          Atenção
-        </h1>
-        <p className="text-[15px] font-bold text-gray-700 leading-relaxed mb-4 px-2">
-          Escute com atenção a mensagem abaixo para finalizar seu perfil.
-        </p>
+    <div className="w-full min-h-screen relative overflow-hidden bg-white flex flex-col items-center">
+      {/* Background Decorativo: Elementos médicos geométricos desfocados */}
+      <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+        <div className="absolute top-20 -left-10 w-64 h-64 border-8 border-purple-100 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 -right-20 w-80 h-80 border-[20px] border-blue-50 rotate-45 blur-2xl"></div>
+        <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-purple-50 rounded-lg blur-3xl"></div>
+        <svg className="absolute top-1/4 right-1/4 w-32 h-32 text-gray-100 blur-[2px]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+        </svg>
       </div>
 
-      <div className="w-full bg-gray-50 border border-gray-100 rounded-[32px] p-8 mb-10 shadow-sm flex flex-col items-center">
-        <audio 
-          ref={audioRef}
-          src={AUDIO_URL}
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={handleLoadedMetadata}
-          onPlay={() => {
-            if (!playStartTimeRef.current) {
-              playStartTimeRef.current = Date.now() - ((audioRef.current?.currentTime || 0) * 1000);
-            }
-          }}
-          onEnded={() => {
-            setIsUnlocked(true);
-            setIsPlaying(false);
-          }}
-          className="hidden"
-          preload="auto"
-        />
+      {/* Barra de Notificação Superior */}
+      <div className="w-full bg-red-600 py-3 px-4 flex items-center justify-center gap-2 shadow-md relative z-20">
+        <span className="text-white text-lg animate-pulse">⚠️</span>
+        <span className="text-white text-[11px] font-black uppercase tracking-[0.2em]">
+          ATENÇÃO: MENSAGEM CONFIDENCIAL
+        </span>
+      </div>
 
-        <button 
-          onClick={togglePlay}
-          className="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all mb-6 relative overflow-hidden group"
-        >
-          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          {isPlaying ? (
-            <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-          ) : (
-            <svg className="w-8 h-8 fill-current ml-1" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          )}
-        </button>
+      <div className="w-full max-w-lg mx-auto flex flex-col items-center px-6 pt-12 pb-20 flex-1 relative z-10">
+        <div className="text-center mb-10">
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-4 px-2">
+            Análise Concluída
+          </h1>
+          <p className="text-[15px] font-bold text-gray-700 leading-relaxed px-2">
+            Escute com atenção a mensagem abaixo para liberar seu protocolo.
+          </p>
+        </div>
 
-        <div className="w-full space-y-2">
-          <div className="flex justify-between text-[10px] font-black text-gray-400 uppercase tracking-widest">
-            <span>{formatTime(currentTime)}</span>
-            <span>{duration > 0 && Number.isFinite(duration) ? formatTime(duration) : "0:46"}</span>
+        {/* Card Flutuante com Glassmorphism */}
+        <div className="w-full backdrop-blur-xl bg-white/40 border border-white/60 rounded-[40px] p-10 mb-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col items-center transition-all duration-500 hover:shadow-[0_25px_60px_rgba(147,51,234,0.15)]">
+          <audio 
+            ref={audioRef}
+            src={AUDIO_URL}
+            onTimeUpdate={handleTimeUpdate}
+            onLoadedMetadata={handleLoadedMetadata}
+            onEnded={() => setIsPlaying(false)}
+            className="hidden"
+            preload="auto"
+          />
+
+          {/* Botão de PLAY Vibrante e Pulsante */}
+          <div className="relative mb-8">
+            <div className={`absolute inset-0 bg-purple-500 rounded-full blur-xl transition-all duration-1000 ${isPlaying ? 'opacity-20 scale-150' : 'opacity-40 animate-pulse-slow'}`}></div>
+            <button 
+              onClick={togglePlay}
+              className={`w-24 h-24 btn-gradient rounded-full flex items-center justify-center text-white shadow-[0_10px_30px_rgba(168,85,247,0.4)] hover:scale-105 active:scale-95 transition-all relative overflow-hidden group ${!isPlaying ? 'animate-vibrate' : ''}`}
+            >
+              <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              {isPlaying ? (
+                <svg className="w-10 h-10 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              ) : (
+                <svg className="w-10 h-10 fill-current ml-2" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              )}
+            </button>
           </div>
-          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden relative">
-            <div 
-              className="h-full bg-purple-600 transition-all duration-300 ease-linear rounded-full"
-              style={{ width: `${progress}%` }}
-            ></div>
+
+          {/* Visualização de Onda Sonora (Waveform) */}
+          <div className="w-full flex items-center justify-center gap-1.5 h-12 mb-6">
+            {[...Array(20)].map((_, i) => (
+              <div 
+                key={i} 
+                className={`w-1 rounded-full bg-gradient-to-t from-purple-400 to-pink-500 transition-all duration-300 ${isPlaying ? 'animate-waveform' : 'h-3 opacity-30'}`}
+                style={{ 
+                  height: isPlaying ? `${Math.random() * 100}%` : '12px',
+                  animationDelay: `${i * 0.05}s`
+                }}
+              ></div>
+            ))}
+          </div>
+
+          <div className="w-full space-y-3">
+            <div className="flex justify-between text-[11px] font-black text-purple-600/60 uppercase tracking-widest">
+              <span className="tabular-nums">{formatTime(currentTime)}</span>
+              <span className="tabular-nums">01:27</span>
+            </div>
+            <div className="w-full h-1.5 bg-gray-200/50 rounded-full overflow-hidden relative">
+              <div 
+                className="h-full bg-purple-600 transition-all duration-300 ease-linear rounded-full"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="w-full flex flex-col items-center gap-4">
-        <button 
-          onClick={handleFinalNext}
-          disabled={!isUnlocked}
-          className={`w-full py-6 rounded-2xl font-black text-lg shadow-2xl transition-all uppercase flex items-center justify-center gap-2 btn-gradient text-white hover:scale-[1.02] active:scale-95 ${!isUnlocked ? 'opacity-50 cursor-not-allowed filter grayscale' : 'animate-bounce-short'}`}
-        >
-          <span>Continuar</span>
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-        </button>
-        {!isUnlocked && (
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
-            O botão será liberado ao final do áudio
-          </p>
-        )}
+        <div className="w-full flex flex-col items-center gap-6">
+          <button 
+            onClick={handleFinalNext}
+            className="w-full py-6 rounded-2xl font-black text-lg shadow-2xl transition-all uppercase flex items-center justify-center gap-2 btn-gradient text-white hover:scale-[1.02] active:scale-95 animate-bounce-short"
+          >
+            <span>Continuar para o Protocolo</span>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+          </button>
+          
+          <div className="flex items-center gap-2 opacity-40">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Início Imediato</span>
+          </div>
+        </div>
       </div>
 
       <style>{`
@@ -207,8 +202,33 @@ const AttentionAudio: React.FC<AttentionAudioProps> = ({ onNext }) => {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
         }
+        @keyframes vibrate {
+          0% { transform: translate(0); }
+          20% { transform: translate(-1px, 1px); }
+          40% { transform: translate(-1px, -1px); }
+          60% { transform: translate(1px, 1px); }
+          80% { transform: translate(1px, -1px); }
+          100% { transform: translate(0); }
+        }
+        @keyframes waveform {
+          0%, 100% { height: 20%; }
+          50% { height: 100%; }
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(1.1); }
+        }
         .animate-bounce-short {
           animation: bounce-short 2s infinite ease-in-out;
+        }
+        .animate-vibrate {
+          animation: vibrate 0.5s infinite linear;
+        }
+        .animate-waveform {
+          animation: waveform 0.8s infinite ease-in-out;
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 3s infinite ease-in-out;
         }
       `}</style>
     </div>

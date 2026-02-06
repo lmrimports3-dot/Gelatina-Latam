@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 
 interface ResultAnalysisProps {
@@ -20,7 +21,7 @@ const REVIEWS = [
 ];
 
 const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
-  const name = userData?.name || 'Amiga';
+  const name = (userData?.name || '').trim();
   const [timeLeft, setTimeLeft] = useState(600); 
   const [reviewIndex, setReviewIndex] = useState(0);
 
@@ -97,7 +98,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
         </h1>
         
         <p className="text-[14px] text-gray-500 font-medium leading-relaxed mb-10 px-4">
-          Com base nas suas respostas, você apresenta sinais comuns de <strong>inchaço abdominal e metabolismo lento</strong> — por isso esse protocolo noturno foi adaptado para você, <span className="text-purple-600 font-bold">{name}</span>.
+          Com base nas suas respostas, você apresenta sinais comuns de <strong>inchaço abdominal e metabolismo lento</strong> — por isso esse protocolo noturno foi adaptado para você{name ? `, ${name}` : ''}.
         </p>
 
         {/* 📊 BLOCO VISUAL DE RESULTADO SIMULADO */}

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 
 interface QuizOption {
@@ -46,7 +47,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 101,
+    id: 3,
     question: "Quando você mais sente a ",
     questionHighlight: "barriga inchada?",
     subtext: "Identificar o momento ajuda no ajuste do protocolo",
@@ -59,7 +60,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 102,
+    id: 4,
     question: "Você já pensou em usar canetas emagrecedoras como ",
     questionHighlight: "Mounjaro ou similares?",
     subtext: "Queremos entender sua preferência por métodos",
@@ -72,7 +73,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 103,
+    id: 5,
     question: "Seu intestino funciona com ",
     questionHighlight: "regularidade?",
     subtext: "O trânsito intestinal é chave para o desinchaço",
@@ -85,7 +86,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 3,
+    id: 6,
     question: "Em quais áreas você mais ",
     questionHighlight: "quer perder gordura?",
     subtext: "Selecione todas que se aplicam",
@@ -101,36 +102,21 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 4,
-    question: "Qual é o seu ",
-    questionHighlight: "nome?",
-    subtext: "Queremos te conhecer melhor 💖",
-    type: 'input',
-    options: []
-  },
-  {
-    id: 401,
+    id: 7,
     question: "Analisando suas informações…",
     subtext: "Ajustando o protocolo de acordo com seu perfil",
     type: 'loading_transition',
     options: []
   },
   {
-    id: 402,
-    question: "⚠️ Atenção: isso explica por que tantas mulheres estão abandonando canetas e Mounjaro",
-    subtext: "O que você vai ouvir agora explica por que o Truque da Gelatina Noturna começou a gerar resultados reais sem agredir o corpo.",
-    type: 'intermediate_audio',
-    options: []
-  },
-  {
-    id: 403,
+    id: 8,
     question: "Resultados reais de mulheres que começaram o Truque da Gelatina Noturna",
     subtext: "Desinchaço visível, barriga menos estufada e roupas voltando a servir — já nas primeiras semanas.",
     type: 'results_proof_carousel',
     options: []
   },
   {
-    id: 5,
+    id: 9,
     question: "Como o peso afeta sua vida?",
     subtext: "Entender isso nos ajuda a criar seu protocolo ideal",
     type: 'card',
@@ -142,7 +128,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 6,
+    id: 10,
     question: "Você está feliz com sua aparência atual?",
     subtext: "Seja sincera com você mesma",
     type: 'card',
@@ -153,7 +139,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 7,
+    id: 11,
     question: "O que te impede de emagrecer?",
     subtext: "Selecione seus maiores obstáculos",
     type: 'multi',
@@ -166,7 +152,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 8,
+    id: 12,
     question: "O que você quer conquistar?",
     subtext: "Selecione seus maiores objetivos",
     type: 'multi',
@@ -181,35 +167,35 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 9,
-    question: "Ótimo, [nome]! 🎉",
+    id: 13,
+    question: "Ótimo! 🎉",
     subtext: "Sem esforço nem dietas pesadas: **A Gelatina Noturna** faz o trabalho pesado por você, ativando a queima de gordura com ingredientes caseiros que você prepara em minutos.",
     type: 'info',
     options: []
   },
   {
-    id: 10,
+    id: 14,
     question: "Qual seu peso atual?",
     subtext: "Seja sincera para obter um resultado preciso",
     type: 'weight',
     options: []
   },
   {
-    id: 11,
+    id: 15,
     question: "Qual sua altura?",
     subtext: "Precisamos disso para calcular seu IMC",
     type: 'height',
     options: []
   },
   {
-    id: 12,
+    id: 16,
     question: "Qual seu peso desejado?",
     subtext: "Qual é o peso que você sonha alcançar?",
     type: 'target_weight',
     options: []
   },
   {
-    id: 13,
+    id: 17,
     question: "Você já tentou alguma dessas ",
     questionHighlight: "soluções?",
     subtext: "Isso nos ajuda a entender sua jornada",
@@ -224,7 +210,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 14,
+    id: 18,
     question: "Quantas gravidezes você teve?",
     subtext: "Isso influencia no seu metabolismo",
     type: 'card',
@@ -236,7 +222,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 15,
+    id: 19,
     question: "Como é sua rotina diária?",
     subtext: "Vamos adaptar o protocolo ao seu dia a dia",
     type: 'card',
@@ -248,7 +234,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 16,
+    id: 20,
     question: "Quantas horas dorme por noite?",
     subtext: "O sono influencia diretamente no emagrecimento",
     type: 'card',
@@ -260,7 +246,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 17,
+    id: 21,
     question: "Quanto de água bebe por dia?",
     subtext: "A hidratação é fundamental para a queima de gordura",
     type: 'card',
@@ -272,14 +258,14 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 18,
-    question: "Resultado da sua análise, [nome]",
+    id: 22,
+    question: "Resultado da sua análise",
     subtext: "Analisamos seu perfil baseado nas suas respostas.",
     type: 'analysis_summary',
     options: []
   },
   {
-    id: 19,
+    id: 23,
     question: "Como usar ",
     questionHighlight: "A Gelatina Noturna",
     subtext: "Simples, prático e eficaz",
@@ -287,7 +273,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     options: []
   },
   {
-    id: 20,
+    id: 24,
     question: "Qual o ",
     questionHighlight: "corpo dos seus sonhos?",
     subtext: "Como você se imagina daqui a 30 dias?",
@@ -298,19 +284,27 @@ const QUESTIONS: GenericQuizQuestion[] = [
     ]
   },
   {
-    id: 21,
-    question: "[nome], gostaria de perder entre ",
+    id: 25,
+    question: "Gostaria de perder entre ",
     questionHighlight: "8 e 14 quilos?",
     subtext: "Baseado no seu perfil, este resultado é totalmente alcançável com a **Gelatina Noturna**!",
     type: 'transformation_offer',
     options: []
   },
   {
-    id: 22,
+    id: 26,
     question: "Histórias de ",
     questionHighlight: "Transformação",
     subtext: "Veja quem já transformou o corpo com a **Gelatina Noturna**",
     type: 'transformation_stories',
+    options: []
+  },
+  {
+    id: 27,
+    question: "Para finalizar seu perfil, qual é o seu ",
+    questionHighlight: "nome?",
+    subtext: "Como podemos te chamar? 💖",
+    type: 'input',
     options: []
   }
 ];
@@ -331,18 +325,12 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
   const [selectedMulti, setSelectedMulti] = useState<string[]>([]);
-  const [userName, setUserName] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [weight, setWeight] = useState(75);
   const [height, setHeight] = useState(165);
   const [targetWeight, setTargetWeight] = useState(60);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [isIntermediateAudioPlaying, setIsIntermediateAudioPlaying] = useState(false);
-  const [isIntermediateAudioUnlocked, setIsIntermediateAudioUnlocked] = useState(false);
-  
-  const intermediateAudioRef = useRef<HTMLAudioElement | null>(null);
-  const audioPlayTimestamp = useRef<number | null>(null);
 
-  // Tracking Helper
   const track = (name: string) => {
     if (typeof window !== 'undefined') {
       if ((window as any).fbq) (window as any).fbq('trackCustom', name);
@@ -360,7 +348,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     }
   }, [currentQuestionIndex]);
 
-  // Loading Transition Effect
   useEffect(() => {
     const q = QUESTIONS[currentQuestionIndex];
     if (q.type === 'loading_transition') {
@@ -371,7 +358,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     }
   }, [currentQuestionIndex]);
 
-  // Carousel Effect
   useEffect(() => {
     const q = QUESTIONS[currentQuestionIndex];
     if (q.type === 'transformation_stories' || q.type === 'results_proof_carousel') {
@@ -385,40 +371,13 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     }
   }, [currentQuestionIndex]);
 
-  // Fallback Timer para iOS Safari (Dual Validation)
-  useEffect(() => {
-    const q = QUESTIONS[currentQuestionIndex];
-    if (q.type !== 'intermediate_audio' || isIntermediateAudioUnlocked) return;
-
-    const fallbackInterval = setInterval(() => {
-      const audio = intermediateAudioRef.current;
-      if (!audio || !audioPlayTimestamp.current || !isIntermediateAudioPlaying) return;
-
-      // Cronômetro Real baseado no tempo absoluto de início
-      const elapsed = (Date.now() - audioPlayTimestamp.current) / 1000;
-      
-      // Captura duração se disponível, senão usa fallback padrão de 32s para esse áudio
-      const total = (audio.duration && !isNaN(audio.duration) && audio.duration !== Infinity) 
-        ? audio.duration 
-        : 32;
-
-      // Regra Crítica: Faltando exatamente 10 segundos
-      if (elapsed >= total - 10) {
-        setIsIntermediateAudioUnlocked(true);
-        clearInterval(fallbackInterval);
-      }
-    }, 500);
-
-    return () => clearInterval(fallbackInterval);
-  }, [currentQuestionIndex, isIntermediateAudioPlaying, isIntermediateAudioUnlocked]);
-
   const finishQuiz = (updatedAnswers: any) => {
     onNext({
       ...updatedAnswers,
       weight,
       height,
       targetWeight,
-      name: answers[4] || userName || 'Amiga'
+      name: updatedAnswers[27] || ''
     });
   };
 
@@ -451,22 +410,11 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
     if (e && e.stopPropagation) e.stopPropagation();
     const q = QUESTIONS[currentQuestionIndex];
     
-    // Bloqueio do botão de áudio intermediário
-    if (q.type === 'intermediate_audio' && !isIntermediateAudioUnlocked) return;
-    
     if (q.type === 'multi' && selectedMulti.length === 0) return;
-    if (q.type === 'input' && !userName.trim()) return;
-    
-    // Stop audio if moving away from audio step
-    if (q.type === 'intermediate_audio' && intermediateAudioRef.current) {
-      intermediateAudioRef.current.pause();
-      setIsIntermediateAudioPlaying(false);
-    }
+    if (q.type === 'input' && !inputValue.trim()) return;
 
     let answerValue: any;
-    if (q.type === 'input') {
-      answerValue = userName;
-    } else if (q.type === 'weight') {
+    if (q.type === 'weight') {
       answerValue = weight;
     } else if (q.type === 'height') {
       answerValue = height;
@@ -474,16 +422,17 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
       answerValue = targetWeight;
     } else if (q.type === 'multi') {
       answerValue = selectedMulti;
+    } else if (q.type === 'input') {
+      answerValue = inputValue.trim();
     } else {
       answerValue = true; 
     }
+
     const updatedAnswers = { ...answers, [q.id]: answerValue };
     setAnswers(updatedAnswers);
     if (currentQuestionIndex < QUESTIONS.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedMulti([]); 
-      setIsIntermediateAudioUnlocked(false); 
-      audioPlayTimestamp.current = null; // Reseta timestamp para segurança
     } else {
       finishQuiz(updatedAnswers);
     }
@@ -502,18 +451,15 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   };
 
   const currentQuestion = QUESTIONS[currentQuestionIndex];
-  
-  // Lógica para cálculo da porcentagem da barra de progresso
   const totalSteps = QUESTIONS.length + 3; 
-  const currentStep = currentQuestionIndex + 3;
-  const progressPercentage = Math.round((currentStep / totalSteps) * 100);
+  const currentStepNum = currentQuestionIndex + 3;
+  const progressPercentage = Math.round((currentStepNum / totalSteps) * 100);
 
   let displayQuestion = currentQuestion.question;
-  if (currentQuestion.id === 5) {
-    displayQuestion = `${answers[4] || 'Amiga'}, ${currentQuestion.question}`;
-  } else if (currentQuestion.id === 9 || currentQuestion.id === 21 || currentQuestion.id === 18) {
-    displayQuestion = currentQuestion.question.replace('[nome]', answers[4] || 'Amiga');
-  }
+  const userName = (answers[27] || '').trim();
+
+  // Substituir placeholders por nada ou pelo nome se existir
+  displayQuestion = displayQuestion.replace('[nome], ', userName ? `${userName}, ` : '').replace(' [nome]', userName ? ` ${userName}` : '').replace('[nome]', userName);
 
   const calculateBMI = () => {
     const h = height / 100;
@@ -544,7 +490,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
         {currentQuestion.type === 'analysis_summary' ? (
           <div className="w-full flex flex-col items-center animate-fadeIn">
             <h2 className="text-[20px] md:text-[22px] font-extrabold text-gray-900 leading-tight mb-8 text-center">
-              Resultado da sua análise, <span className="text-purple-600 lowercase">{answers[4] || 'Amiga'}</span>
+              Resultado da sua análise
             </h2>
 
             <div className="w-full bg-white rounded-3xl p-8 shadow-lg border border-gray-100 flex flex-col items-center mb-6">
@@ -580,7 +526,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                </div>
                <div className="p-5 text-center">
                  <p className="text-[14px] font-black text-gray-900 mb-1">"Perdi 12kg em 5 semanas!"</p>
-                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{answers[4] || 'Amiga'}, 32 anos - São Paulo</p>
+                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">32 anos - São Paulo</p>
                  <div className="flex justify-center gap-1 mt-2">
                     {[1,2,3,4,5].map(s => <span key={s} className="text-orange-400 text-sm">★</span>)}
                  </div>
@@ -640,7 +586,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 <span className="text-4xl">🎯</span>
               </div>
               <h2 className="text-[20px] md:text-[22px] font-extrabold text-gray-900 leading-tight mb-3">
-                <span className="lowercase">{answers[4] || 'Amiga'}</span>, você gostaria de perder entre <span className="text-purple-600">8 e 14 quilos</span> em poucas semanas?
+                Você gostaria de perder entre <span className="text-purple-600">8 e 14 quilos</span> em poucas semanas?
               </h2>
               <p className="text-sm font-medium text-gray-500 mb-10 max-w-[300px] leading-relaxed">
                 Baseado no seu perfil, este resultado é totalmente alcançável com a **Gelatina Noturna**!
@@ -657,77 +603,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
             <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-8"></div>
             <h2 className="text-[22px] font-black text-gray-900 text-center mb-2">{currentQuestion.question}</h2>
             <p className="text-sm font-medium text-gray-500 text-center">{currentQuestion.subtext}</p>
-          </div>
-        ) : currentQuestion.type === 'intermediate_audio' ? (
-          <div className="w-full flex flex-col items-center animate-fadeIn">
-             <div className="text-center mb-8">
-                <h2 className="text-[22px] md:text-[24px] font-extrabold text-gray-900 leading-tight mb-4 px-2">
-                  {currentQuestion.question}
-                </h2>
-                <p className="text-[15px] font-bold text-gray-700 leading-relaxed mb-2 px-2">
-                  {currentQuestion.subtext}
-                </p>
-              </div>
-
-              <div className="w-full bg-gray-50 border border-gray-100 rounded-[32px] p-8 mb-10 shadow-sm flex flex-col items-center">
-                <audio 
-                  ref={intermediateAudioRef}
-                  src="https://helpless-jade-9wxkrufo1i.edgeone.app/gelatinanoturna_%20Perfeito,%20agora....mp3"
-                  onTimeUpdate={(e) => {
-                    const audio = e.currentTarget;
-                    const total = audio.duration;
-                    const current = audio.currentTime;
-                    // Validação 1: Via Player (Safari as vezes falha aqui)
-                    if (total > 0 && !isNaN(total) && total !== Infinity && current >= total - 10 && !isIntermediateAudioUnlocked) {
-                      setIsIntermediateAudioUnlocked(true);
-                    }
-                  }}
-                  onPlay={() => {
-                    // Sincroniza Cronômetro de Fallback para iOS
-                    if (!audioPlayTimestamp.current) {
-                      audioPlayTimestamp.current = Date.now() - ((intermediateAudioRef.current?.currentTime || 0) * 1000);
-                    }
-                  }}
-                  onEnded={() => {
-                    setIsIntermediateAudioPlaying(false);
-                    setIsIntermediateAudioUnlocked(true);
-                  }}
-                  className="hidden"
-                  preload="auto"
-                />
-
-                <button 
-                  onClick={() => {
-                    const audio = intermediateAudioRef.current;
-                    if (audio) {
-                      if (audio.paused) {
-                        audio.play().then(() => {
-                          setIsIntermediateAudioPlaying(true);
-                          // Garante sincronização se play vier de pause
-                          audioPlayTimestamp.current = Date.now() - (audio.currentTime * 1000);
-                        }).catch(err => {
-                          console.error("Audio playback failed:", err);
-                        });
-                      } else {
-                        audio.pause();
-                        setIsIntermediateAudioPlaying(false);
-                      }
-                    }
-                  }}
-                  className="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all mb-6 relative overflow-hidden group"
-                >
-                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  {isIntermediateAudioPlaying ? (
-                    <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                  ) : (
-                    <svg className="w-8 h-8 fill-current ml-1" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                  )}
-                </button>
-
-                <p className="text-[11px] font-bold text-purple-400 uppercase tracking-tighter">
-                  {isIntermediateAudioPlaying ? "Ouvindo mensagem..." : "Clique no play para ouvir"}
-                </p>
-              </div>
           </div>
         ) : currentQuestion.type === 'results_proof_carousel' ? (
           <div className="w-full flex flex-col items-center animate-fadeIn">
@@ -775,6 +650,26 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 {currentQuestion.subtext}
               </p>
             </div>
+
+            {currentQuestion.type === 'input' && (
+              <div className="w-full space-y-4 animate-fadeIn">
+                <input
+                  autoFocus
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Seu nome aqui..."
+                  className="w-full py-5 px-6 border-2 border-gray-100 rounded-2xl font-bold text-gray-700 focus:border-purple-300 focus:ring-0 outline-none"
+                />
+                <button 
+                  onClick={(e) => handleContinue(e)} 
+                  disabled={!inputValue.trim()}
+                  className={`w-full py-5 rounded-2xl font-black text-lg shadow-xl uppercase transition-all ${!inputValue.trim() ? 'bg-gray-200 cursor-not-allowed text-gray-400' : 'btn-gradient text-white active:scale-95'}`}
+                >
+                  Continuar
+                </button>
+              </div>
+            )}
 
             {currentQuestion.type === 'commitment' && (
               <div className="w-full flex flex-col gap-4 animate-fadeIn">
@@ -907,36 +802,16 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 ))}
               </div>
             )}
-
-            {currentQuestion.type === 'input' && (
-              <div className="w-full max-w-sm mt-4">
-                <input 
-                  type="text" 
-                  value={userName} 
-                  onChange={(e) => setUserName(e.target.value)} 
-                  placeholder="Escreva seu primeiro nome" 
-                  className="w-full p-4 text-center border-2 border-purple-400 rounded-xl focus:ring-2 focus:ring-purple-200 focus:outline-none font-bold text-gray-700 placeholder:font-medium placeholder:text-gray-300" 
-                  autoFocus 
-                />
-                <button 
-                  onClick={(e) => handleContinue(e)} 
-                  disabled={!userName.trim()} 
-                  className={`w-full mt-6 py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${userName.trim() ? 'bg-purple-400 hover:bg-purple-500' : 'bg-gray-300 cursor-not-allowed opacity-60'}`}
-                >
-                  Continuar
-                </button>
-              </div>
-            )}
           </>
         )}
       </div>
 
-      {(currentQuestion.type === 'multi' || currentQuestion.type === 'intermediate_audio' || currentQuestion.type === 'results_proof_carousel') && (
+      {(currentQuestion.type === 'multi' || currentQuestion.type === 'results_proof_carousel') && (
         <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-md flex justify-center border-t border-gray-100">
           <button 
             onClick={(e) => handleContinue(e)} 
-            disabled={currentQuestion.type === 'intermediate_audio' && !isIntermediateAudioUnlocked}
-            className={`w-full max-sm py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${((currentQuestion.type === 'multi' && selectedMulti.length === 0) || (currentQuestion.type === 'intermediate_audio' && !isIntermediateAudioUnlocked)) ? 'bg-gray-300 cursor-not-allowed opacity-60' : 'bg-purple-400 hover:bg-purple-500'}`}
+            disabled={(currentQuestion.type === 'multi' && selectedMulti.length === 0)}
+            className={`w-full max-sm py-4 rounded-xl font-extrabold text-white text-lg shadow-lg transition-all active:scale-95 ${(currentQuestion.type === 'multi' && selectedMulti.length === 0) ? 'bg-gray-300 cursor-not-allowed opacity-60' : 'bg-purple-400 hover:bg-purple-500'}`}
           >
             Continuar
           </button>

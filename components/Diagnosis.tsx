@@ -11,13 +11,13 @@ const Diagnosis: React.FC<DiagnosisProps> = ({ userData, onNext }) => {
     window.scrollTo(0, 0);
   }, []);
 
-  const name = userData?.name || 'Amiga';
+  const name = userData?.name || '';
   const weight = userData?.weight || '--';
   const height = userData?.height || '--';
   const targetWeight = userData?.targetWeight || '--';
   
-  // No Quiz.tsx, id 3 é a área de gordura (multi-select)
-  const areas = userData?.[3] || [];
+  // No Quiz.tsx renumereado, o novo id 6 é a área de gordura (multi-select)
+  const areas = userData?.[6] || [];
   const areaGordura = Array.isArray(areas) && areas.length > 0 
     ? areas.join(', ') 
     : 'Áreas críticas';
@@ -39,7 +39,7 @@ const Diagnosis: React.FC<DiagnosisProps> = ({ userData, onNext }) => {
         <div className="space-y-4">
           <div className="flex justify-between items-center py-3 border-b border-gray-50">
             <span className="text-xs font-bold text-gray-400 uppercase">Nome</span>
-            <span className="text-sm font-black text-gray-900">{name}</span>
+            <span className="text-sm font-black text-gray-900">{name || '---'}</span>
           </div>
           <div className="flex justify-between items-center py-3 border-b border-gray-50">
             <span className="text-xs font-bold text-gray-400 uppercase">Peso Atual</span>
