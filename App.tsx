@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Landing from './components/Landing';
 import Transition from './components/Transition';
@@ -40,31 +39,42 @@ const App: React.FC = () => {
       document.head.appendChild(utmifyCapture);
     }, 1500);
 
-    // 2. SISTEMA GLOBAL DE BACKREDIRECT
+    // 2. SISTEMA GLOBAL DE BACKREDIRECT (REFORÇADO)
     const handleRedirect = () => {
-      // Impede o redirect se estiver indo para o checkout
+      // Bloqueio se estiver indo para o checkout
       if ((window as any).isNavigatingToCheckout) return;
+      
+      // Redirecionamento Direto, Imediato e Invisível
       window.location.replace(REDIRECT_URL);
     };
 
-    // Manipulação de Histórico para capturar o botão "Voltar" (Back)
-    // Adicionamos um estado fantasma para o popstate disparar o redirect
-    window.history.pushState(null, '', window.location.href);
-    window.addEventListener('popstate', handleRedirect);
-
-    // Eventos de Saída e Perda de Foco (Visibility, Blur, Pagehide)
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        handleRedirect();
-      }
+    // INTERCEPTAÇÃO DO BOTÃO VOLTAR (POPSTATE)
+    // Criamos uma entrada artificial no histórico para "prender" o usuário
+    const setupBackTrap = () => {
+      window.history.pushState(null, '', window.location.href);
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('blur', handleRedirect);
+    setupBackTrap();
+
+    const onPopState = (event: PopStateEvent) => {
+      // Quando o usuário tenta voltar, ele "cai" na entrada anterior e dispara este evento
+      handleRedirect();
+      // Opcional: Re-inserir o trap para bloquear múltiplas tentativas
+      setupBackTrap();
+    };
+
+    // Eventos de Abandono
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') handleRedirect();
+    };
+
+    window.addEventListener('popstate', onPopState);
     window.addEventListener('pagehide', handleRedirect);
+    window.addEventListener('blur', handleRedirect);
+    document.addEventListener('visibilitychange', onVisibilityChange);
     
-    // Fallback para fechamento de aba (iOS Safari compatibilidade)
-    window.addEventListener('beforeunload', (event) => {
+    // Interceptação de navegação em browsers mobile/modernos
+    window.addEventListener('beforeunload', (e) => {
       if (!(window as any).isNavigatingToCheckout) {
         handleRedirect();
       }
@@ -72,15 +82,15 @@ const App: React.FC = () => {
 
     return () => {
       clearTimeout(pixelTimer);
-      window.removeEventListener('popstate', handleRedirect);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('blur', handleRedirect);
+      window.removeEventListener('popstate', onPopState);
       window.removeEventListener('pagehide', handleRedirect);
+      window.removeEventListener('blur', handleRedirect);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, []);
 
   const handleNext = (data?: any) => {
-    // BLOQUEIO DE EVENTOS NATIVOS
+    // Limpeza de eventos nativos para evitar erros de serialização
     if (data && (
       data.nativeEvent || 
       data instanceof Event || 

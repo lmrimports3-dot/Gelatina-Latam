@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 
 interface ResultAnalysisProps {
@@ -61,7 +60,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
   };
 
   const handleCheckoutClick = () => {
-    // Sinalização Crítica para impedir Backredirect
+    // SINALIZAÇÃO CRÍTICA PARA O SISTEMA DE BACKREDIRECT
     (window as any).isNavigatingToCheckout = true;
     
     track('quiz_cta_click');
@@ -69,7 +68,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
       const url = new URL(CHECKOUT_URL);
       const currentParams = new URLSearchParams(window.location.search);
       currentParams.forEach((value, key) => url.searchParams.set(key, value));
-      window.location.href = url.toString(); // Navegação direta na mesma aba é mais segura contra bloqueios de pop-up
+      window.location.href = url.toString(); 
     } catch (e) {
       window.location.href = CHECKOUT_URL;
     }
