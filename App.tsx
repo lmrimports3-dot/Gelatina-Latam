@@ -39,58 +39,67 @@ const App: React.FC = () => {
       document.head.appendChild(utmifyCapture);
     }, 1500);
 
-    // 2. SISTEMA GLOBAL DE BACKREDIRECT (REFORÇADO)
-    const handleRedirect = () => {
-      // Bloqueio se estiver indo para o checkout
+    // 2. SISTEMA DE INTERCEPTAÇÃO TOTAL (BACK BUTTON HIJACK)
+    const performBackRedirect = () => {
       if ((window as any).isNavigatingToCheckout) return;
-      
-      // Redirecionamento Direto, Imediato e Invisível
       window.location.replace(REDIRECT_URL);
     };
 
-    // INTERCEPTAÇÃO DO BOTÃO VOLTAR (POPSTATE)
-    // Criamos uma entrada artificial no histórico para "prender" o usuário
-    const setupBackTrap = () => {
+    // Lógica agressiva de histórico: Cria armadilha para popstate
+    const setupHistoryTrap = () => {
+      // Empurra dois estados extras para garantir que o usuário precise clicar 'voltar' 
+      // várias vezes para sair do nosso controle, mas no primeiro clique já disparamos o popstate.
+      window.history.pushState(null, '', window.location.href);
       window.history.pushState(null, '', window.location.href);
     };
 
-    setupBackTrap();
+    setupHistoryTrap();
 
     const onPopState = (event: PopStateEvent) => {
-      // Quando o usuário tenta voltar, ele "cai" na entrada anterior e dispara este evento
-      handleRedirect();
-      // Opcional: Re-inserir o trap para bloquear múltiplas tentativas
-      setupBackTrap();
+      // Bloqueia a navegação reversa e força o redirect imediato
+      event.preventDefault();
+      performBackRedirect();
+      // Reaplica a armadilha caso o redirecionamento demore ou falhe
+      setupHistoryTrap();
     };
 
-    // Eventos de Abandono
+    // Eventos de Abandono Críticos
     const onVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') handleRedirect();
+      if (document.visibilityState === 'hidden') performBackRedirect();
     };
+
+    const onPageHide = () => performBackRedirect();
+    const onBlur = () => performBackRedirect();
 
     window.addEventListener('popstate', onPopState);
-    window.addEventListener('pagehide', handleRedirect);
-    window.addEventListener('blur', handleRedirect);
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('blur', onBlur);
     document.addEventListener('visibilitychange', onVisibilityChange);
     
-    // Interceptação de navegação em browsers mobile/modernos
+    // Interceptação de fechamento de aba/navegador (Safari/iOS)
     window.addEventListener('beforeunload', (e) => {
       if (!(window as any).isNavigatingToCheckout) {
-        handleRedirect();
+        performBackRedirect();
       }
     });
 
     return () => {
       clearTimeout(pixelTimer);
       window.removeEventListener('popstate', onPopState);
-      window.removeEventListener('pagehide', handleRedirect);
-      window.removeEventListener('blur', handleRedirect);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('blur', onBlur);
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, []);
 
   const handleNext = (data?: any) => {
-    // Limpeza de eventos nativos para evitar erros de serialização
+    // Manutenção do Trap de Histórico em cada mudança de etapa
+    if (typeof window !== 'undefined') {
+      window.history.pushState(null, '', window.location.href);
+      window.history.pushState(null, '', window.location.href);
+    }
+
+    // Limpeza de objetos nativos para evitar erros de serialização
     if (data && (
       data.nativeEvent || 
       data instanceof Event || 

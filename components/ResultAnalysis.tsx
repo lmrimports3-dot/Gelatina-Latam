@@ -60,7 +60,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
   };
 
   const handleCheckoutClick = () => {
-    // SINALIZAÇÃO CRÍTICA PARA O SISTEMA DE BACKREDIRECT
+    // SINALIZAÇÃO CRÍTICA PARA O SISTEMA DE BACKREDIRECT (EXCEÇÃO ÚNICA)
     (window as any).isNavigatingToCheckout = true;
     
     track('quiz_cta_click');
@@ -68,9 +68,10 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
       const url = new URL(CHECKOUT_URL);
       const currentParams = new URLSearchParams(window.location.search);
       currentParams.forEach((value, key) => url.searchParams.set(key, value));
-      window.location.href = url.toString(); 
+      // Redirecionamento direto e limpo para o checkout
+      window.location.replace(url.toString()); 
     } catch (e) {
-      window.location.href = CHECKOUT_URL;
+      window.location.replace(CHECKOUT_URL);
     }
   };
 
