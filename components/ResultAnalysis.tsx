@@ -61,14 +61,17 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
   };
 
   const handleCheckoutClick = () => {
+    // Sinalização Crítica para impedir Backredirect
+    (window as any).isNavigatingToCheckout = true;
+    
     track('quiz_cta_click');
     try {
       const url = new URL(CHECKOUT_URL);
       const currentParams = new URLSearchParams(window.location.search);
       currentParams.forEach((value, key) => url.searchParams.set(key, value));
-      window.open(url.toString(), '_blank', 'noopener,noreferrer');
+      window.location.href = url.toString(); // Navegação direta na mesma aba é mais segura contra bloqueios de pop-up
     } catch (e) {
-      window.open(CHECKOUT_URL, '_blank', 'noopener,noreferrer');
+      window.location.href = CHECKOUT_URL;
     }
   };
 
@@ -114,7 +117,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
           ))}
         </div>
 
-        {/* 🆕 NOVO CTA NA PRIMEIRA DOBRA */}
+        {/* CTA NA PRIMEIRA DOBRA */}
         <button 
           onClick={handleCheckoutClick} 
           className="w-full py-5 btn-gradient text-white font-black text-lg rounded-2xl shadow-2xl active:scale-95 transition-all uppercase flex items-center justify-center gap-2 mb-2"
@@ -125,7 +128,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Início imediato</p>
       </section>
 
-      {/* ⭐ SEÇÃO 1 — PROVA SOCIAL MASSIVA (CARROSSEL ESTILO GOOGLE) */}
+      {/* ⭐ SEÇÃO 1 — PROVA SOCIAL MASSIVA */}
       <section className="w-full px-6 py-16 bg-white overflow-hidden">
         <h2 className="text-xl font-black text-center mb-2 px-4 leading-tight">
           Mais de <span className="text-purple-600">350.000 mulheres</span> já usam o Truque da Gelatina Noturna
@@ -226,7 +229,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
         </div>
       </section>
 
-      {/* 📱 SEÇÃO 3.5 — O QUE VOCÊ VAI RECEBER (NOVA SEÇÃO) */}
+      {/* 📱 SEÇÃO 3.5 — O QUE VOCÊ VAI RECEBER */}
       <section className="w-full px-6 py-16 bg-white border-t border-gray-50">
         <h2 className="text-2xl font-black text-center mb-4">O que você vai receber</h2>
         <p className="text-sm text-gray-500 font-medium text-center mb-10 px-4 leading-relaxed">
@@ -234,13 +237,12 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
         </p>
 
         <div className="w-full bg-purple-50 rounded-[40px] p-6 mb-8 border border-purple-100 shadow-inner overflow-hidden relative">
-          {/* Background decoration dots */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-full -mr-16 -mt-16 opacity-50"></div>
           
           <img 
             src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_ki4ot9ki4ot9ki4o.png" 
             alt="Mockup do App" 
-            className="w-full h-auto rounded-3xl shadow-2xl mb-10 relative z-10 hover:scale-[1.02] transition-transform duration-500"
+            className="w-full h-auto rounded-3xl shadow-2xl mb-10 relative z-10"
           />
           
           <div className="space-y-4 relative z-10">
@@ -345,7 +347,7 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
 
       {/* 🔥 CTA FINAL */}
       <section className="w-full px-6 py-16 bg-white border-t border-gray-100 flex flex-col items-center">
-        <button onClick={handleCheckoutClick} className="w-full py-6 btn-gradient text-white font-black text-[18px] rounded-2xl shadow-2xl active:scale-95 transition-all mb-4 uppercase">
+        <button onClick={handleCheckoutClick} className="w-full py-6 btn-gradient text-white font-black text-[18px] rounded-2xl shadow-2xl active:scale-95 transition-all uppercase">
           SIM, QUERO ACESSAR MEU PROTOCOLO COMPLETO
         </button>
 

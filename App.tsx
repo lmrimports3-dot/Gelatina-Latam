@@ -11,6 +11,8 @@ import DiscountScratch from './components/DiscountScratch';
 import ResultAnalysis from './components/ResultAnalysis';
 import { AppStep } from './types';
 
+const REDIRECT_URL = "https://gelatinaexpresso.lovable.app";
+
 const App: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<AppStep>(AppStep.LANDING);
   const [userData, setUserData] = useState<any>(null);
@@ -18,8 +20,8 @@ const App: React.FC = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const timer = setTimeout(() => {
-      // 1. UTMify Pixel
+    // 1. UTMify Pixels e Scripts
+    const pixelTimer = setTimeout(() => {
       if (!(window as any).pixelId) {
         (window as any).pixelId = "69702fa1c5b721d69dce91ef";
         const utmifyPixel = document.createElement("script");
@@ -29,7 +31,6 @@ const App: React.FC = () => {
         document.head.appendChild(utmifyPixel);
       }
 
-      // 2. UTMify Capture
       const utmifyCapture = document.createElement("script");
       utmifyCapture.src = "https://cdn.utmify.com.br/scripts/utms/latest.js";
       utmifyCapture.setAttribute("data-utmify-prevent-xcod-sck", "");
@@ -39,11 +40,47 @@ const App: React.FC = () => {
       document.head.appendChild(utmifyCapture);
     }, 1500);
 
-    return () => clearTimeout(timer);
+    // 2. SISTEMA GLOBAL DE BACKREDIRECT
+    const handleRedirect = () => {
+      // Impede o redirect se estiver indo para o checkout
+      if ((window as any).isNavigatingToCheckout) return;
+      window.location.replace(REDIRECT_URL);
+    };
+
+    // Manipulação de Histórico para capturar o botão "Voltar" (Back)
+    // Adicionamos um estado fantasma para o popstate disparar o redirect
+    window.history.pushState(null, '', window.location.href);
+    window.addEventListener('popstate', handleRedirect);
+
+    // Eventos de Saída e Perda de Foco (Visibility, Blur, Pagehide)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        handleRedirect();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleRedirect);
+    window.addEventListener('pagehide', handleRedirect);
+    
+    // Fallback para fechamento de aba (iOS Safari compatibilidade)
+    window.addEventListener('beforeunload', (event) => {
+      if (!(window as any).isNavigatingToCheckout) {
+        handleRedirect();
+      }
+    });
+
+    return () => {
+      clearTimeout(pixelTimer);
+      window.removeEventListener('popstate', handleRedirect);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleRedirect);
+      window.removeEventListener('pagehide', handleRedirect);
+    };
   }, []);
 
   const handleNext = (data?: any) => {
-    // BLOQUEIO ABSOLUTO
+    // BLOQUEIO DE EVENTOS NATIVOS
     if (data && (
       data.nativeEvent || 
       data instanceof Event || 
@@ -63,7 +100,7 @@ const App: React.FC = () => {
         }));
         setUserData((prev: any) => ({ ...prev, ...sanitized }));
       } catch (e) {
-        console.warn("Circular reference detected and blocked.");
+        console.warn("Circular reference detected.");
       }
     }
 
@@ -90,9 +127,6 @@ const App: React.FC = () => {
         setCurrentStep(AppStep.DISCOUNT_SCRATCH);
         break;
       case AppStep.DISCOUNT_SCRATCH:
-        setCurrentStep(AppStep.RESULT);
-        break;
-      case AppStep.RESULTS_PROOF:
         setCurrentStep(AppStep.RESULT);
         break;
       default:
