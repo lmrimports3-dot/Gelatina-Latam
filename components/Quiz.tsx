@@ -278,7 +278,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     subtext: "Como você se imagina daqui a 30 dias?",
     type: 'card',
     options: [
-      { id: 'dream1', label: "En forma e definida", icon: "💪" },
+      { id: 'dream1', label: "Em forma e definida", icon: "💪" },
       { id: 'dream2', label: "Natural e saudável", icon: "🌸" }
     ]
   },
