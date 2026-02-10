@@ -60,15 +60,15 @@ const QUESTIONS: GenericQuizQuestion[] = [
   },
   {
     id: 4,
-    question: "Você já pensou em usar canetas emagrecedoras como ",
-    questionHighlight: "Mounjaro ou similares?",
-    subtext: "Queremos entender sua preferência por métodos",
+    question: "Você colocaria uma agulha no seu corpo para emagrecer?",
+    questionHighlight: "",
+    subtext: "Mesmo sabendo dos riscos?",
     type: 'text',
     options: [
-      { id: 'pen1', label: "Já usei" },
-      { id: 'pen2', label: "Pensei, mas tive medo dos efeitos colaterais" },
-      { id: 'pen3', label: "Nunca usei e não pretendo" },
-      { id: 'pen4', label: "Prefiro soluções naturais" }
+      { id: 'pen1', label: "Nunca" },
+      { id: 'pen2', label: "Já pensei, mas tive medo" },
+      { id: 'pen3', label: "Já usei e me arrependi" },
+      { id: 'pen4', label: "Prefiro o natural" }
     ]
   },
   {
@@ -109,8 +109,8 @@ const QUESTIONS: GenericQuizQuestion[] = [
   },
   {
     id: 8,
-    question: "Sim, até as famosas estão usando!",
-    subtext: "",
+    question: "🚨 Nem as famosas estão usando canetas.",
+    subtext: "Elas estão usando o mesmo truque noturno que desincha a barriga sem agulhas, sem remédios e sem riscos.",
     type: 'results_proof_carousel',
     options: []
   },
@@ -594,6 +594,9 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
         ) : currentQuestion.type === 'results_proof_carousel' ? (
           <div className="w-full flex flex-col items-center animate-fadeIn">
             <div className="text-center mb-8 px-6">
+              <span className="inline-block bg-purple-100 text-purple-700 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-4">
+                Prova social real
+              </span>
               <h2 className="text-[22px] md:text-[24px] font-extrabold text-gray-900 leading-tight mb-4">
                 {currentQuestion.question}
               </h2>
@@ -714,20 +717,24 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
             {currentQuestion.type === 'info' && (
               <div className="w-full flex flex-col items-center animate-fadeIn">
-                <div className="relative mb-10 w-full max-w-[280px]">
-                  <div className="bg-gray-50 rounded-3xl p-6 flex flex-col items-center shadow-sm">
-                    <img src="https://ik.imagekit.io/ekdmcxqtr/e9e0639c-6c94-4464-ab97-8e369eb06fdf.png" alt="Gelatina" className="w-32 h-32 object-cover rounded-2xl shadow-lg mb-6 rotate-3"/>
-                    <div className="flex items-center justify-between w-full px-4 gap-2">
-                      <div className="flex flex-col items-center"><div className="text-2xl mb-1">👤</div><span className="text-[10px] font-bold text-gray-400 uppercase">Você</span></div>
-                      <div className="text-purple-300 text-xl animate-pulse">→</div>
-                      <div className="flex flex-col items-center"><div className="text-2xl mb-1">🍮</div><span className="text-[10px] font-bold text-purple-600 uppercase">Gelatina</span></div>
-                      <div className="text-purple-300 text-xl animate-pulse">→</div>
-                      <div className="flex flex-col items-center"><div className="text-2xl mb-1">✨</div><span className="text-[10px] font-bold text-gray-400 uppercase">Objetivo</span></div>
-                    </div>
-                  </div>
+                <div className="w-full mb-10">
+                  <img 
+                    src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_c8uuvbc8uuvbc8uu%20(1).png" 
+                    alt="Gelatina" 
+                    className="w-full h-auto block rounded-3xl shadow-xl object-contain"
+                  />
                 </div>
-                <div className="w-full bg-purple-50 border border-purple-100 p-5 rounded-2xl mb-8"><p className="text-sm leading-relaxed text-gray-700"><span className="font-bold text-purple-700">Como funciona:</span> A receita caseira ativa o <span className="font-bold">GLP-1</span>, o mesmo hormônio do Ozempic, mas de forma 100% natural!</p></div>
-                <button onClick={(e) => handleContinue(e)} className="w-full py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">Entendido! Continuar 🚀</button>
+                <div className="w-full bg-purple-50 border border-purple-100 p-5 rounded-2xl mb-8">
+                  <p className="text-sm leading-relaxed text-gray-700">
+                    <span className="font-bold text-purple-700">Como funciona:</span> A receita caseira ativa o <span className="font-bold">GLP-1</span>, o mesmo hormônio do Ozempic, mas de forma 100% natural!
+                  </p>
+                </div>
+                <button 
+                  onClick={(e) => handleContinue(e)} 
+                  className="w-full py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+                >
+                  Entendido! Continuar 🚀
+                </button>
               </div>
             )}
 
@@ -766,7 +773,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   <button key={option.id} onClick={(e) => handleOptionSelect(e, option.id, option.label)} className={`relative flex items-center justify-between p-4 border rounded-xl transition-all active:scale-[0.98] ${selectedMulti.includes(option.id) ? 'border-purple-500 bg-purple-50 ring-1 ring-purple-500' : 'border-gray-200 bg-white shadow-sm'}`}>
                     <div className={`flex items-center ${currentQuestion.columns === 2 ? 'flex-col gap-2 p-2 text-center' : 'gap-3'}`}>
                       <span className={`${currentQuestion.columns === 2 ? 'text-2xl' : 'text-xl'}`}>{option.icon}</span>
-                      <span className="text-[13px] font-bold text-gray-800 leading-tight">{option.label}</span>
+                      <span className="text-[13px] font-bold text-gray-800 siding-tight">{option.label}</span>
                     </div>
                     <div className={`w-5 h-5 border rounded flex items-center justify-center transition-colors flex-shrink-0 ${selectedMulti.includes(option.id) ? 'bg-purple-600 border-purple-600' : 'border-gray-300 bg-white'} ${currentQuestion.columns === 2 ? 'absolute top-3 right-3' : ''}`}>
                       {selectedMulti.includes(option.id) && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>}

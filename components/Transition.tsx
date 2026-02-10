@@ -15,31 +15,25 @@ const Transition: React.FC<TransitionProps> = ({ onNext }) => {
       {/* 🚨 Headline */}
       <div className="w-full bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-xl">
         <h1 className="text-[17px] md:text-lg font-black text-red-700 leading-tight">
-          ⚠️ O uso do Mounjaro e de canetas para emagrecer está gerando uma preocupação crescente entre especialistas.
+          ⚠️ Mounjaro, canetas e injeções estão adoecendo mulheres em silêncio.
         </h1>
       </div>
 
       {/* 📌 Subheadline & Corpo do Texto */}
       <div className="w-full mb-6 space-y-4">
-        <p className="text-[14px] text-gray-600 leading-relaxed font-medium">
-          Novos relatos associam esses métodos a efeitos digestivos perigosos, incluindo casos de pancreatite, inflamações e alterações no funcionamento do metabolismo.
-        </p>
         <p className="text-[14px] text-gray-600 leading-relaxed font-bold">
-          Muitas mulheres estão abandonando essas soluções extremas e migrando para métodos naturais que estimulam o corpo sem expor a saúde a riscos.
+          Relatos de inflamações, pancreatite e colapso digestivo estão explodindo — enquanto uma alternativa noturna natural começa a se espalhar.
+        </p>
+        <p className="text-[14px] text-gray-600 leading-relaxed font-medium">
+          Milhares de mulheres já abandonaram agulhas e remédios perigosos.  
+          Agora estão usando um truque noturno simples, que desincha a barriga enquanto dormem — sem química, sem riscos e sem injeções.
         </p>
       </div>
 
       {/* 💜 Texto de Transição e Destaque */}
       <div className="w-full bg-purple-50 rounded-2xl p-5 mb-6 border border-purple-100">
         <p className="text-[14px] text-purple-900 font-bold leading-relaxed">
-          👉 Uma dessas rotinas é o <span className="text-purple-600">Truque da Gelatina Noturna</span>, criado para estimular o organismo enquanto você dorme e acelerar o processo de desinchar a barriga.
-        </p>
-      </div>
-
-      {/* ❓ Chamada para Ação */}
-      <div className="w-full text-center mb-8">
-        <p className="text-[15px] font-black text-gray-900">
-          Antes de te mostrar como funciona, responda a este teste rápido.
+          Antes de te mostrar como funciona o Truque da Gelatina Noturna, preciso entender seu perfil.
         </p>
       </div>
 
@@ -48,7 +42,7 @@ const Transition: React.FC<TransitionProps> = ({ onNext }) => {
         onClick={() => onNext()}
         className="w-full btn-gradient text-white font-extrabold text-lg py-5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all mb-8 uppercase"
       >
-        <span>Continuar para o Teste</span>
+        <span>👉 GERAR MEU PROTOCOLO AGORA</span>
       </button>
 
       {/* ✨ Micro Prova Social */}
@@ -61,7 +55,7 @@ const Transition: React.FC<TransitionProps> = ({ onNext }) => {
           ))}
         </div>
         <p className="text-[11px] font-bold text-gray-400 uppercase tracking-tight">
-          ✨ Mais de 312.000 mulheres já responderam este teste.
+          ✨ Mais de 312.000 mulheres já começaram por aqui
         </p>
       </div>
     </div>

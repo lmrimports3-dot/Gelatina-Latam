@@ -10,7 +10,7 @@ import DiscountScratch from './components/DiscountScratch';
 import ResultAnalysis from './components/ResultAnalysis';
 import { AppStep } from './types';
 
-const REDIRECT_URL = "https://gelatinaexpresso.lovable.app";
+const REDIRECT_URL = "https://ofertaexclusiva.figma.site/";
 
 const App: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<AppStep>(AppStep.LANDING);
@@ -59,13 +59,18 @@ const App: React.FC = () => {
 
     // 2. SISTEMA DE INTERCEPTAÇÃO TOTAL (BACK BUTTON HIJACK)
     const performBackRedirect = () => {
+      // SINALIZAÇÃO CRÍTICA PARA O SISTEMA DE CHECKOUT
       if ((window as any).isNavigatingToCheckout) return;
-      window.location.replace(REDIRECT_URL);
+      
+      // TRAVA DE SEGURANÇA: NÃO REDIRECIONAR EM CASO DE PERDA DE FOCO (BACKGROUND/APPSWITCH)
+      if (document.visibilityState === 'hidden') return;
+      
+      // REDIRECIONAMENTO FINAL
+      window.location.href = REDIRECT_URL;
     };
 
     // Lógica agressiva de histórico: Cria armadilha para popstate
     const setupHistoryTrap = () => {
-      window.history.pushState(null, '', window.location.href);
       window.history.pushState(null, '', window.location.href);
     };
 
@@ -77,30 +82,16 @@ const App: React.FC = () => {
       setupHistoryTrap();
     };
 
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') performBackRedirect();
-    };
-
-    const onPageHide = () => performBackRedirect();
-    const onBlur = () => performBackRedirect();
-
+    // Listeners exclusivos para saída real
     window.addEventListener('popstate', onPopState);
-    window.addEventListener('pagehide', onPageHide);
-    window.addEventListener('blur', onBlur);
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    
-    window.addEventListener('beforeunload', (e) => {
-      if (!(window as any).isNavigatingToCheckout) {
-        performBackRedirect();
-      }
-    });
+    window.addEventListener('pagehide', performBackRedirect);
+    window.addEventListener('beforeunload', performBackRedirect);
 
     return () => {
       clearTimeout(pixelTimer);
       window.removeEventListener('popstate', onPopState);
-      window.removeEventListener('pagehide', onPageHide);
-      window.removeEventListener('blur', onBlur);
-      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('pagehide', performBackRedirect);
+      window.removeEventListener('beforeunload', performBackRedirect);
     };
   }, []);
 
