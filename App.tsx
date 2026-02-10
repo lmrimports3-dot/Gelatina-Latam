@@ -10,8 +10,6 @@ import DiscountScratch from './components/DiscountScratch';
 import ResultAnalysis from './components/ResultAnalysis';
 import { AppStep } from './types';
 
-const REDIRECT_URL = "https://ofertaexclusiva.figma.site/";
-
 const App: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<AppStep>(AppStep.LANDING);
   const [userData, setUserData] = useState<any>(null);
@@ -57,41 +55,12 @@ const App: React.FC = () => {
       document.head.appendChild(utmifyCapture);
     }, 1500);
 
-    // 2. IMPLEMENTAÇÃO DO BACK REDIRECT (SCRIPT GLOBAL)
-    // Criar Stack Manual de History
-    window.history.pushState({br:true}, "", window.location.href);
-    window.history.pushState({br:true}, "", window.location.href);
-
-    const handleBackRedirect = () => {
-      if (sessionStorage.getItem("br_done")) return;
-      sessionStorage.setItem("br_done", "1");
-      window.location.replace(REDIRECT_URL);
-    };
-
-    // Captura do Botão Voltar
-    window.addEventListener("popstate", function(e) {
-      handleBackRedirect();
-    });
-
-    // Captura de Fechamento de Aba / Navegador
-    window.addEventListener("beforeunload", function(e) {
-      handleBackRedirect();
-    });
-
-    window.addEventListener("pagehide", function(e) {
-      handleBackRedirect();
-    });
-
     return () => {
       clearTimeout(pixelTimer);
     };
   }, []);
 
   const handleNext = (data?: any) => {
-    if (typeof window !== 'undefined') {
-      window.history.pushState({br:true}, "", window.location.href);
-    }
-
     if (data && (
       data.nativeEvent || 
       data instanceof Event || 
