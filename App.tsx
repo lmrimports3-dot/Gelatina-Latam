@@ -58,65 +58,78 @@ const App: React.FC = () => {
     }, 1500);
 
     // 2. SISTEMA DE BACK REDIRECT SEGURO
-    const performBackRedirect = () => {
-      // 1. Verificar se já disparou nesta sessão
+    const performBackRedirect = (event?: any) => {
+      // Regra 10: Controle por sessão (executar apenas 1 vez)
       if (sessionStorage.getItem('back_redirect_fired')) return;
 
-      // 2. Sinalização de navegação para Checkout (Whitelist Interna)
+      // Proteção contra disparos em botões de CTA/Checkout (Regra 6)
       if ((window as any).isNavigatingToCheckout) return;
       
-      // 3. Whitelist de URLs Externas
+      // Regra 7: Whitelist (Não disparar se URL contiver termos específicos)
       const whitelist = [
-        'checkout', 'pagamento', 'obrigado', 'thankyou', 
-        'payment', 'success', 'stripe', 'hotmart', 
-        'kirvano', 'paypal'
+        '/checkout', '/pagamento', '/payment', '/obrigado', 
+        '/thankyou', '/success', '/stripe', '/paypal', 
+        '/hotmart', '/kirvano'
       ];
       const currentUrl = window.location.href.toLowerCase();
       if (whitelist.some(term => currentUrl.includes(term))) return;
 
-      // 4. Trava de Segurança: Não disparar em perda de foco acidental (multi-tasking)
-      // O pagehide e beforeunload disparam em eventos legítimos de saída.
-      
-      // 5. Marcar como disparado e redirecionar
+      // Proteção: Impedir disparo em Reload/Refresh (Regra 6)
+      if (window.performance && window.performance.getEntriesByType) {
+        const navigation = window.performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        if (navigation && navigation.type === 'reload') return;
+      }
+
+      // Execução única
       sessionStorage.setItem('back_redirect_fired', 'true');
+      
+      // Regra 8: Comportamento imediato e invisível
       window.location.replace(REDIRECT_URL);
     };
 
     const setupHistoryTrap = () => {
+      // Regra 5: Interceptar history para capturar o voltar
       window.history.pushState(null, '', window.location.href);
     };
 
-    // Inicializa a armadilha de histórico
+    // Inicializa armadilha de histórico
     setupHistoryTrap();
 
     const onPopState = (event: PopStateEvent) => {
-      // Quando o usuário clica em voltar, o popstate é disparado.
-      // Nós prevenimos a saída e executamos o redirect.
+      // Regra 3: Evento popstate permitido para captura do voltar
       performBackRedirect();
-      // Re-estabelece a armadilha para cliques subsequentes (se o redirect falhar ou demorar)
+      // Garante que o usuário permaneça na "armadilha" se o redirect falhar
       setupHistoryTrap();
     };
 
-    // Eventos permitidos para captura de saída real
+    // Listeners permitidos conforme Regra 3
     window.addEventListener('popstate', onPopState);
-    window.addEventListener('pagehide', (e) => {
-      // Verificação de navegação real: persistencia do histórico
-      if (!e.persisted) {
+    
+    // Regra 3: Interceptar fechamento real via beforeunload e pagehide
+    window.addEventListener('beforeunload', (e) => {
+      // Proteção contra disparo em navegação interna controlada
+      if (!(window as any).isNavigatingInternally) {
         performBackRedirect();
       }
     });
-    window.addEventListener('beforeunload', performBackRedirect);
+
+    window.addEventListener('pagehide', (e) => {
+      // Regra 1: Disparar em tentativa real de abandono/fechamento
+      if (!e.persisted && !(window as any).isNavigatingInternally) {
+        performBackRedirect();
+      }
+    });
 
     return () => {
       clearTimeout(pixelTimer);
       window.removeEventListener('popstate', onPopState);
-      window.removeEventListener('pagehide', performBackRedirect);
-      window.removeEventListener('beforeunload', performBackRedirect);
     };
   }, []);
 
   const handleNext = (data?: any) => {
-    // Mantém a armadilha de histórico ativa durante a navegação do funil
+    // Flag de proteção para impedir backredirect durante troca de steps (Navegação interna - Regra 6)
+    (window as any).isNavigatingInternally = true;
+    
     if (typeof window !== 'undefined') {
       window.history.pushState(null, '', window.location.href);
     }
@@ -172,6 +185,11 @@ const App: React.FC = () => {
       default:
         break;
     }
+
+    // Libera a flag após a troca de estado
+    setTimeout(() => {
+      (window as any).isNavigatingInternally = false;
+    }, 100);
   };
 
   return (
