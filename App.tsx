@@ -16,6 +16,24 @@ const App: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<AppStep>(AppStep.LANDING);
   const [userData, setUserData] = useState<any>(null);
 
+  const trackStep = (n: number) => {
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('trackCustom', `quiz_step_${n}`);
+    }
+  };
+
+  useEffect(() => {
+    // Tracking global steps
+    if (currentStep === AppStep.LANDING) trackStep(1);
+    if (currentStep === AppStep.TRANSITION) trackStep(2);
+    if (currentStep === AppStep.CALCULATING) trackStep(30);
+    if (currentStep === AppStep.ATTENTION_AUDIO) trackStep(31);
+    if (currentStep === AppStep.DIAGNOSIS_LOADING) trackStep(32);
+    if (currentStep === AppStep.DIAGNOSIS) trackStep(33);
+    if (currentStep === AppStep.DISCOUNT_SCRATCH) trackStep(34);
+    if (currentStep === AppStep.RESULT) trackStep(35);
+  }, [currentStep]);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -47,8 +65,6 @@ const App: React.FC = () => {
 
     // Lógica agressiva de histórico: Cria armadilha para popstate
     const setupHistoryTrap = () => {
-      // Empurra dois estados extras para garantir que o usuário precise clicar 'voltar' 
-      // várias vezes para sair do nosso controle, mas no primeiro clique já disparamos o popstate.
       window.history.pushState(null, '', window.location.href);
       window.history.pushState(null, '', window.location.href);
     };
@@ -56,14 +72,11 @@ const App: React.FC = () => {
     setupHistoryTrap();
 
     const onPopState = (event: PopStateEvent) => {
-      // Bloqueia a navegação reversa e força o redirect imediato
       event.preventDefault();
       performBackRedirect();
-      // Reaplica a armadilha caso o redirecionamento demore ou falhe
       setupHistoryTrap();
     };
 
-    // Eventos de Abandono Críticos
     const onVisibilityChange = () => {
       if (document.visibilityState === 'hidden') performBackRedirect();
     };
@@ -76,7 +89,6 @@ const App: React.FC = () => {
     window.addEventListener('blur', onBlur);
     document.addEventListener('visibilitychange', onVisibilityChange);
     
-    // Interceptação de fechamento de aba/navegador (Safari/iOS)
     window.addEventListener('beforeunload', (e) => {
       if (!(window as any).isNavigatingToCheckout) {
         performBackRedirect();
@@ -93,13 +105,11 @@ const App: React.FC = () => {
   }, []);
 
   const handleNext = (data?: any) => {
-    // Manutenção do Trap de Histórico em cada mudança de etapa
     if (typeof window !== 'undefined') {
       window.history.pushState(null, '', window.location.href);
       window.history.pushState(null, '', window.location.href);
     }
 
-    // Limpeza de objetos nativos para evitar erros de serialização
     if (data && (
       data.nativeEvent || 
       data instanceof Event || 

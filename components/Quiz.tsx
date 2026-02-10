@@ -326,21 +326,15 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   const [targetWeight, setTargetWeight] = useState(60);
   const [carouselIndex, setCarouselIndex] = useState(0);
 
-  const track = (name: string) => {
-    if (typeof window !== 'undefined') {
-      if ((window as any).fbq) (window as any).fbq('trackCustom', name);
-      if ((window as any).utmify?.track) (window as any).utmify.track(name);
+  const trackStep = (n: number) => {
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('trackCustom', `quiz_step_${n}`);
     }
   };
 
   useEffect(() => {
-    if (currentQuestionIndex === 0) {
-      track('quiz_view');
-    }
-    const stepNumber = currentQuestionIndex + 1;
-    if (stepNumber <= 5) {
-      track(`quiz_step_${stepNumber}`);
-    }
+    // Current Global Step mapping: Question index 0 = Step 3, index 26 = Step 29
+    trackStep(currentQuestionIndex + 3);
   }, [currentQuestionIndex]);
 
   useEffect(() => {
@@ -608,7 +602,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
               </p>
             </div>
 
-            {/* Imagem com layout corrigido: max-width 92%, margem auto, padding horizontal 12px, rounded 12px, object-contain */}
             <div className="w-full px-[12px] max-w-[92%] mx-auto mb-8">
               <img 
                 src={PROOF_IMAGE_URL} 
@@ -712,8 +705,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 <div className="flex items-center gap-4 mb-4">
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
-                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(1) : adjustHeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
-                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
+                  <button onClick={(e) => { e.stopPropagation(); adjustWeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
+                  <button onClick={(e) => { e.stopPropagation(); adjustWeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
                 <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
               </div>
