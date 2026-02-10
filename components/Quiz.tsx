@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 
 interface QuizOption {
@@ -87,9 +86,9 @@ const QUESTIONS: GenericQuizQuestion[] = [
   },
   {
     id: 6,
-    question: "Em quais áreas você mais ",
-    questionHighlight: "quer perder gordura?",
-    subtext: "Selecione todas que se aplicam",
+    question: "Qual parte do seu corpo mais te ",
+    questionHighlight: "incomoda hoje?",
+    subtext: "Aponte onde o inchaço e a gordura mais te afetam",
     type: 'multi',
     columns: 2,
     options: [
@@ -110,8 +109,8 @@ const QUESTIONS: GenericQuizQuestion[] = [
   },
   {
     id: 8,
-    question: "Resultados reais de mulheres que começaram o Truque da Gelatina Noturna",
-    subtext: "Desinchaço visível, barriga menos estufada e roupas voltando a servir — já nas primeiras semanas.",
+    question: "Sim, até as famosas estão usando!",
+    subtext: "",
     type: 'results_proof_carousel',
     options: []
   },
@@ -169,7 +168,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
   {
     id: 13,
     question: "Ótimo! 🎉",
-    subtext: "Sem esforço nem dietas pesadas: **A Gelatina Noturna** faz o trabalho pesado por você, ativando a queima de gordura com ingredientes caseiros que você prepara em minutos.",
+    subtext: "Sem esforço nem dietas pesadas: **A Gelatina Noturna** faz o trabalho pesado por você, ativando a queima de gordura com ingredientes caseros que você prepara em minutos.",
     type: 'info',
     options: []
   },
@@ -279,7 +278,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     subtext: "Como você se imagina daqui a 30 dias?",
     type: 'card',
     options: [
-      { id: 'dream1', label: "Em forma e definida", icon: "💪" },
+      { id: 'dream1', label: "En forma e definida", icon: "💪" },
       { id: 'dream2', label: "Natural e saudável", icon: "🌸" }
     ]
   },
@@ -315,11 +314,7 @@ const TRANSFORMATION_IMAGES = [
   "https://ik.imagekit.io/ekdmcxqtr/img_0136%20(1).png"
 ];
 
-const PROOF_IMAGES = [
-  "https://ik.imagekit.io/ekdmcxqtr/resultado01.jpg",
-  "https://ik.imagekit.io/ekdmcxqtr/resultado02.jpg",
-  "https://ik.imagekit.io/ekdmcxqtr/resultado03.jpg"
-];
+const PROOF_IMAGE_URL = "https://ik.imagekit.io/ekdmcxqtr/celebrity-proof-CMYKHlYT%20(1).jpg";
 
 const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -360,10 +355,9 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
 
   useEffect(() => {
     const q = QUESTIONS[currentQuestionIndex];
-    if (q.type === 'transformation_stories' || q.type === 'results_proof_carousel') {
-      const items = q.type === 'transformation_stories' ? TRANSFORMATION_IMAGES : PROOF_IMAGES;
+    if (q.type === 'transformation_stories') {
       const interval = setInterval(() => {
-        setCarouselIndex((prev) => (prev + 1) % items.length);
+        setCarouselIndex((prev) => (prev + 1) % TRANSFORMATION_IMAGES.length);
       }, 3000);
       return () => clearInterval(interval);
     } else {
@@ -458,7 +452,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
   let displayQuestion = currentQuestion.question;
   const userName = (answers[27] || '').trim();
 
-  // Substituir placeholders por nada ou pelo nome se existir
   displayQuestion = displayQuestion.replace('[nome], ', userName ? `${userName}, ` : '').replace(' [nome]', userName ? ` ${userName}` : '').replace('[nome]', userName);
 
   const calculateBMI = () => {
@@ -606,7 +599,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
           </div>
         ) : currentQuestion.type === 'results_proof_carousel' ? (
           <div className="w-full flex flex-col items-center animate-fadeIn">
-            <div className="text-center mb-8">
+            <div className="text-center mb-8 px-6">
               <h2 className="text-[22px] md:text-[24px] font-extrabold text-gray-900 leading-tight mb-4">
                 {currentQuestion.question}
               </h2>
@@ -615,27 +608,14 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
               </p>
             </div>
 
-            <div className="w-full relative mb-8 overflow-hidden h-auto min-h-[300px]">
-                <div className="relative w-full h-[400px] rounded-[32px] overflow-hidden shadow-lg border border-gray-100">
-                    {PROOF_IMAGES.map((src, i) => (
-                      <img 
-                        key={i}
-                        src={src} 
-                        alt={`Resultado Real ${i + 1}`} 
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${carouselIndex === i ? 'opacity-100' : 'opacity-0'}`} 
-                      />
-                    ))}
-                </div>
-                <div className="flex justify-center gap-1.5 mt-4">
-                    {PROOF_IMAGES.map((_, i) => (
-                      <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${carouselIndex === i ? 'bg-purple-600 w-4' : 'bg-purple-200'}`}></div>
-                    ))}
-                </div>
+            {/* Imagem com layout corrigido: max-width 92%, margem auto, padding horizontal 12px, rounded 12px, object-contain */}
+            <div className="w-full px-[12px] max-w-[92%] mx-auto mb-8">
+              <img 
+                src={PROOF_IMAGE_URL} 
+                alt="Prova Social" 
+                className="w-full h-auto block rounded-[12px] object-contain"
+              />
             </div>
-
-            <p className="text-[14px] text-gray-600 font-medium text-center mb-10 leading-relaxed px-4">
-              Esses resultados aconteceram após seguir o protocolo noturno do jeito correto, respeitando o corpo e o ritmo digestivo.
-            </p>
           </div>
         ) : (
           <>
@@ -732,8 +712,8 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                 <div className="flex items-center gap-4 mb-4">
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
-                  <button onClick={(e) => { e.stopPropagation(); adjustWeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
-                  <button onClick={(e) => { e.stopPropagation(); adjustWeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
+                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(1) : adjustHeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
+                  <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
                 <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
               </div>
