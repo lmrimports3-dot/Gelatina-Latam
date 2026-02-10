@@ -9,7 +9,7 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
     <div className="w-full max-w-lg mx-auto flex flex-col items-center px-6 py-10">
       {/* Headline principal */}
       <h1 className="text-xl md:text-2xl font-extrabold text-center text-gray-900 leading-tight mb-6">
-        <span className="text-red-600">⚠️</span> Canetas de emagrecer estão dando problema — descobrimos o truque que funciona <span className="text-purple-600">ENQUANTO VOCÊ DORME</span>
+        Seu metabolismo não é preguiçoso. <span className="text-red-600">Você está sendo enganada.</span>
       </h1>
 
       {/* Imagen principal */}
@@ -22,9 +22,12 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
         />
       </div>
 
-      {/* Transição para oferta */}
+      {/* Bloco de Impacto / Subheadline */}
       <p className="text-[15px] text-center text-gray-700 mb-10 max-w-[360px] leading-relaxed font-semibold">
-        O truque que as mulheres estão usando para desinchar a barriga em DIAS — e que o Mounjaro não consegue fazer
+        <span className="text-purple-600 font-extrabold">Descubra como 312.000 mulheres estão perdendo 8kg em 30 dias enquanto dormem.</span><br/><br/>
+        Remédios e injeções bagunçam hormônios e criam dependência. Enquanto isso, 312.000 mulheres descobriram um protocolo noturno que ativa o metabolismo durante o sono.<br/><br/>
+        Sem dieta. Sem exercício. Sem remédios. <br/>
+        Resultados em 30-60 dias.
       </p>
 
       {/* CTA Principal */}
@@ -35,12 +38,12 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
         }}
         className="w-full btn-gradient text-white font-extrabold text-lg py-5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all mb-3 flex flex-col items-center justify-center uppercase"
       >
-        <span>GERAR MEU PROTOCOLO NOTURNO</span>
+        <span>🔥 DESCOBRIR MEU PROTOCOLO AGORA</span>
       </button>
 
-      {/* Micro copy */}
+      {/* Micro copy e Prova Social */}
       <p className="text-[11px] font-bold text-gray-400 text-center uppercase tracking-tight mb-8">
-        ⏱ LEVA MENOS DE 2 MINUTOS • TESTE GRATUITO • RESULTADO PERSONALIZADO
+        <span className="text-purple-600">✨ 312.000 mulheres • ⭐ 4.9/5 estrelas • 8kg em 30 dias • 🏆 Garantia 15 dias</span>
       </p>
     </div>
   );

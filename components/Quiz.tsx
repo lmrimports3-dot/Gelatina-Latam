@@ -47,15 +47,15 @@ const QUESTIONS: GenericQuizQuestion[] = [
   },
   {
     id: 3,
-    question: "Quando você mais sente a ",
+    question: "Qual é seu maior problema com a ",
     questionHighlight: "barriga inchada?",
     subtext: "Identificar o momento ajuda no ajuste do protocolo",
     type: 'text',
     options: [
-      { id: 'bloat1', label: "Ao acordar" },
-      { id: 'bloat2', label: "Após o jantar" },
-      { id: 'bloat3', label: "Durante o dia todo" },
-      { id: 'bloat4', label: "Principalmente à noite" }
+      { id: 'bloat1', label: "Acordo com a barriga inchada — fico deprimida o dia todo" },
+      { id: 'bloat2', label: "Depois de comer, minha barriga incha tanto que não consigo sair de casa" },
+      { id: 'bloat3', label: "Minha barriga incha durante o dia — tenho que trocar de roupa 3x" },
+      { id: 'bloat4', label: "À noite minha barriga fica tão inchada que não consigo dormir bem" }
     ]
   },
   {
