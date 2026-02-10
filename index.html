@@ -5,38 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>O Truque Real da Gelatina</title>
     
-    <!-- Back Redirect Script -->
+    <!-- Back Redirect Script - Senior Implementation -->
     <script>
-    (function () {
+    (function (window, document, location) {
       var REDIRECT_URL = "https://ofertaexclusiva.figma.site/";
       var FLAG = "br_done";
 
       function redirect() {
         if (sessionStorage.getItem(FLAG)) return;
         sessionStorage.setItem(FLAG, "1");
-        window.location.replace(REDIRECT_URL);
+        
+        // Tenta redirecionar tratando possíveis restrições de IFrame/Sandbox
+        try {
+          if (window.top !== window.self) {
+            window.top.location.replace(REDIRECT_URL);
+          } else {
+            window.location.replace(REDIRECT_URL);
+          }
+        } catch (e) {
+          window.location.replace(REDIRECT_URL);
+        }
       }
 
-      // Cria histórico falso real
-      history.pushState({ br: 1 }, "", location.href);
-      history.pushState({ br: 2 }, "", location.href);
+      // Injeta estado inicial imediatamente
+      window.history.pushState({ br: 'init' }, "", location.href);
 
-      // Botão voltar do navegador
+      // Navegadores modernos exigem interação para permitir manipulação de histórico agressiva
+      function primeHistory() {
+        // Injeta múltiplos estados para garantir que o 'voltar' caia no nosso trigger
+        for (var i = 0; i < 10; i++) {
+          window.history.pushState({ br: i }, "", location.href);
+        }
+        // Remove listeners após a primeira interação para evitar injeções redundantes
+        document.removeEventListener('click', primeHistory);
+        document.removeEventListener('touchstart', primeHistory);
+        document.removeEventListener('mousedown', primeHistory);
+      }
+
+      // Captura qualquer interação do usuário para validar a History API
+      document.addEventListener('click', primeHistory);
+      document.addEventListener('touchstart', primeHistory);
+      document.addEventListener('mousedown', primeHistory);
+
+      // Intercepta popstate (Botão Voltar / Gestos de Voltar)
       window.addEventListener("popstate", function (e) {
+        // Independente do estado, se o usuário tentou voltar, executamos o redirect
         redirect();
       });
 
-      // Fechar aba/navegador
+      // Intercepta fechamento de aba / navegador
       window.addEventListener("beforeunload", function (e) {
         redirect();
       });
 
-      // Mobile / WebView / Safari
+      // Intercepta saída em Mobile / WebView / Safari
       window.addEventListener("pagehide", function (e) {
         redirect();
       });
 
-    })();
+    })(window, document, window.location);
     </script>
 
     <!-- Meta Pixel Code -->
