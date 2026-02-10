@@ -57,34 +57,54 @@ const App: React.FC = () => {
       document.head.appendChild(utmifyCapture);
     }, 1500);
 
-    // 2. SISTEMA DE INTERCEPTAÇÃO TOTAL (BACK BUTTON HIJACK)
+    // 2. SISTEMA DE BACK REDIRECT SEGURO
     const performBackRedirect = () => {
-      // SINALIZAÇÃO CRÍTICA PARA O SISTEMA DE CHECKOUT
+      // 1. Verificar se já disparou nesta sessão
+      if (sessionStorage.getItem('back_redirect_fired')) return;
+
+      // 2. Sinalização de navegação para Checkout (Whitelist Interna)
       if ((window as any).isNavigatingToCheckout) return;
       
-      // TRAVA DE SEGURANÇA: NÃO REDIRECIONAR EM CASO DE PERDA DE FOCO (BACKGROUND/APPSWITCH)
-      if (document.visibilityState === 'hidden') return;
+      // 3. Whitelist de URLs Externas
+      const whitelist = [
+        'checkout', 'pagamento', 'obrigado', 'thankyou', 
+        'payment', 'success', 'stripe', 'hotmart', 
+        'kirvano', 'paypal'
+      ];
+      const currentUrl = window.location.href.toLowerCase();
+      if (whitelist.some(term => currentUrl.includes(term))) return;
+
+      // 4. Trava de Segurança: Não disparar em perda de foco acidental (multi-tasking)
+      // O pagehide e beforeunload disparam em eventos legítimos de saída.
       
-      // REDIRECIONAMENTO FINAL
-      window.location.href = REDIRECT_URL;
+      // 5. Marcar como disparado e redirecionar
+      sessionStorage.setItem('back_redirect_fired', 'true');
+      window.location.replace(REDIRECT_URL);
     };
 
-    // Lógica agressiva de histórico: Cria armadilha para popstate
     const setupHistoryTrap = () => {
       window.history.pushState(null, '', window.location.href);
     };
 
+    // Inicializa a armadilha de histórico
     setupHistoryTrap();
 
     const onPopState = (event: PopStateEvent) => {
-      event.preventDefault();
+      // Quando o usuário clica em voltar, o popstate é disparado.
+      // Nós prevenimos a saída e executamos o redirect.
       performBackRedirect();
+      // Re-estabelece a armadilha para cliques subsequentes (se o redirect falhar ou demorar)
       setupHistoryTrap();
     };
 
-    // Listeners exclusivos para saída real
+    // Eventos permitidos para captura de saída real
     window.addEventListener('popstate', onPopState);
-    window.addEventListener('pagehide', performBackRedirect);
+    window.addEventListener('pagehide', (e) => {
+      // Verificação de navegação real: persistencia do histórico
+      if (!e.persisted) {
+        performBackRedirect();
+      }
+    });
     window.addEventListener('beforeunload', performBackRedirect);
 
     return () => {
@@ -96,8 +116,8 @@ const App: React.FC = () => {
   }, []);
 
   const handleNext = (data?: any) => {
+    // Mantém a armadilha de histórico ativa durante a navegação do funil
     if (typeof window !== 'undefined') {
-      window.history.pushState(null, '', window.location.href);
       window.history.pushState(null, '', window.location.href);
     }
 
