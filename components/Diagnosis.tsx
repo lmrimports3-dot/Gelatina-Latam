@@ -71,7 +71,7 @@ const Diagnosis: React.FC<DiagnosisProps> = ({ userData, onNext }) => {
       </div>
 
       <button 
-        onClick={onNext}
+        onClick={() => onNext()}
         className="w-full py-6 btn-gradient text-white font-black text-lg rounded-2xl shadow-2xl hover:scale-[1.02] active:scale-95 transition-all uppercase flex items-center justify-center gap-3"
       >
         <span>👉 Continuar para liberação do protocolo</span>

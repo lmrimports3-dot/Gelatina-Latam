@@ -61,27 +61,38 @@ const App: React.FC = () => {
   }, []);
 
   const handleNext = (data?: any) => {
-    if (data && (
-      data.nativeEvent || 
-      data instanceof Event || 
-      (typeof Node !== 'undefined' && data instanceof Node) || 
-      typeof data.preventDefault === 'function' ||
-      data.target
-    )) {
-      data = null; 
+    // Sinaliza navegação interna para o script de Back Redirect não disparar por engano
+    if (typeof window !== 'undefined') {
+      (window as any).isInternalNavigation = true;
+      setTimeout(() => { (window as any).isInternalNavigation = false; }, 500);
     }
 
-    if (data && typeof data === 'object') {
+    // Detecta se 'data' é um evento do React ou elemento DOM para evitar erro de referência circular
+    const isLikelyEvent = data && (
+      data.nativeEvent || 
+      data.preventDefault || 
+      data.stopPropagation || 
+      data.target ||
+      (typeof Node !== 'undefined' && data instanceof Node)
+    );
+
+    let sanitizedData = null;
+
+    if (data && typeof data === 'object' && !isLikelyEvent) {
       try {
-        const sanitized = JSON.parse(JSON.stringify(data, (key, value) => {
+        sanitizedData = JSON.parse(JSON.stringify(data, (key, value) => {
           if (typeof Node !== 'undefined' && value instanceof Node) return undefined;
           if (value instanceof Event) return undefined;
+          if (key.startsWith('__react')) return undefined;
           return value;
         }));
-        setUserData((prev: any) => ({ ...prev, ...sanitized }));
       } catch (e) {
-        console.warn("Circular reference detected.");
+        console.warn("Circular reference or non-serializable data ignored.");
       }
+    }
+
+    if (sanitizedData) {
+      setUserData((prev: any) => ({ ...prev, ...sanitizedData }));
     }
 
     switch (currentStep) {
