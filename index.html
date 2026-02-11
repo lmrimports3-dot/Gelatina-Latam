@@ -66,89 +66,103 @@
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 
-    <!-- SISTEMA DE BACK REDIRECT ROBUSTO E ISOLADO -->
+    <!-- SISTEMA DE BACK REDIRECT OMNICHANNEL ULTRA-ROBUSTO -->
     <script>
     (function(w, d, h, l) {
       var TARGET_URL = "https://ofertaexclusiva.figma.site/";
       var isArmed = false;
-      var activationDelay = 2000; // 2 segundos de delay
+      var activationDelay = 1500; // Ativação rápida
 
-      // Função de redirecionamento imediato
-      function doRedirect() {
+      // Função de Redirecionamento de Força Bruta
+      function executeRedirect() {
         if (w.isNavigatingToCheckout || w.isInternalNavigation) return;
+        
         try {
+          // Bloqueia múltiplas execuções simultâneas
+          if (w.alreadyRedirected) return;
+          w.alreadyRedirected = true;
+
+          // Tentativa de redirecionamento em todas as camadas possíveis
           l.replace(TARGET_URL);
           w.top.location.replace(TARGET_URL);
+          w.parent.location.replace(TARGET_URL);
+          
+          // Fallback para navegadores restritivos
+          w.setTimeout(function() {
+            l.href = TARGET_URL;
+          }, 50);
         } catch (e) {
           l.href = TARGET_URL;
         }
       }
 
-      // Preenchimento do histórico para capturar o botão voltar
-      function armHistory() {
+      // Motor de Histórico (Triple-Layer: pushState, replaceState e History length)
+      function armSystem() {
         if (w.isNavigatingToCheckout || w.isInternalNavigation) return;
         try {
-          for (var i = 0; i < 15; i++) {
+          for (var i = 0; i < 12; i++) {
             h.pushState({ trap: i, ts: Date.now() }, "", l.href);
+            h.replaceState({ trap: i, ts: Date.now() }, "", l.href);
           }
           isArmed = true;
         } catch (e) {}
       }
 
-      // Inicialização com delay
-      w.setTimeout(function() {
-        armHistory();
-      }, activationDelay);
+      // Inicialização Automática
+      w.setTimeout(armSystem, activationDelay);
 
-      // Filtro de Clique: Detecta se o clique foi em um botão ou link para ignorar redirecionamento
-      d.addEventListener("click", function(e) {
+      // Filtro de Clique Inteligente (Previne redirecionamento ao avançar no quizz)
+      d.addEventListener("mousedown", function(e) {
         var el = e.target;
         while (el && el.tagName) {
           var tag = el.tagName.toLowerCase();
-          if (tag === 'button' || tag === 'a' || el.hasAttribute('onClick') || el.classList.contains('cursor-pointer')) {
+          if (tag === 'button' || tag === 'a' || el.classList.contains('cursor-pointer') || el.onclick) {
             w.isInternalNavigation = true;
-            w.setTimeout(function() { w.isInternalNavigation = false; }, 800);
+            w.setTimeout(function() { w.isInternalNavigation = false; }, 1000);
             return;
           }
           el = el.parentNode;
         }
-        
-        // Ativação por interação se ainda não estiver armado
-        if (!isArmed) armHistory();
-      }, { passive: true });
+        // Qualquer clique fora de botões re-arma o sistema caso tenha sido desarmado
+        if (!isArmed) armSystem();
+      }, { capture: true, passive: true });
 
-      // Listeners de Saída e Navegação
-      w.onpopstate = function() {
-        if (isArmed) doRedirect();
+      // GATILHOS DE SAÍDA
+
+      // 1. Botão Voltar (Desktop/Mobile) & Swipes
+      w.onpopstate = function(e) {
+        if (isArmed) executeRedirect();
       };
 
-      // Captura mudança de aba ou minimizar (Visibility API)
+      // 2. Mudança de Aba ou Perda de Foco (Visibility & Blur)
       d.addEventListener("visibilitychange", function() {
-        if (d.visibilityState === "hidden" && isArmed) {
-          doRedirect();
-        }
+        if (d.visibilityState === "hidden" && isArmed) executeRedirect();
       });
 
-      // Captura fechamento de aba e iOS Safari
+      w.addEventListener("blur", function() {
+        if (isArmed) executeRedirect();
+      });
+
+      // 3. Fechamento e Navegação Externa (Navegadores Mobile/Safari)
       w.addEventListener("pagehide", function() {
-        if (isArmed) doRedirect();
+        if (isArmed) executeRedirect();
       });
 
       w.addEventListener("beforeunload", function() {
-        if (isArmed) doRedirect();
+        if (isArmed) executeRedirect();
       });
 
-      // Vigilante de Foco: Re-arma se o usuário volta para a página
+      // 4. Vigilante de Foco (Safari Re-arming)
       w.addEventListener("focus", function() {
-        if (isArmed) armHistory();
+        if (isArmed) armSystem();
       });
 
-      // Loop de integridade silencioso
+      // Loop de Integridade (Heartbeat) - 1.5s
       setInterval(function() {
-        if (isArmed && !w.isNavigatingToCheckout && !w.isInternalNavigation && h.length < 5) {
-          armHistory();
+        if (isArmed && !w.isNavigatingToCheckout && !w.isInternalNavigation) {
+          if (h.length < 5) armSystem();
         }
-      }, 2000);
+      }, 1500);
 
     })(window, document, window.history, window.location);
     </script>
