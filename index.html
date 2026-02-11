@@ -5,81 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>O Truque Real da Gelatina</title>
     
-    <!-- Script de Back Redirect Persistente (Otimizado para Figma/SPA) -->
-    <script>
-    (function (window, location) {
-      var REDIRECT_URL = "https://ofertaexclusiva.figma.site/";
-      var FLAG = "br_done";
-      var isArmed = false;
-
-      // Função para realizar o redirecionamento
-      function executeRedirect() {
-        // Evita loop, redirecionamento após sucesso ou se o usuário estiver indo para o checkout
-        if (sessionStorage.getItem(FLAG) || window.isNavigatingToCheckout) return;
-        sessionStorage.setItem(FLAG, "true");
-        
-        try {
-          // Tenta quebrar iframes caso o Figma esteja em sandbox
-          if (window.top !== window.self) {
-            window.top.location.href = REDIRECT_URL;
-          } else {
-            window.location.href = REDIRECT_URL;
-          }
-        } catch (err) {
-          window.location.href = REDIRECT_URL;
-        }
-      }
-
-      // Injeta 10 estados no histórico
-      function populateHistory() {
-        try {
-          for (var i = 0; i < 10; i++) {
-            window.history.pushState({ trap: i, ts: Date.now() }, "", location.href);
-          }
-        } catch (e) {}
-      }
-
-      // 1. Injeção inicial (DOMContentLoaded)
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', populateHistory);
-      } else {
-        populateHistory();
-      }
-
-      // 2. Gatilho de Ativação (Armar no primeiro clique)
-      function armRedirect() {
-        if (isArmed) return;
-        isArmed = true;
-        populateHistory();
-        // Remove listeners para performance
-        window.removeEventListener('click', armRedirect);
-        window.removeEventListener('touchstart', armRedirect);
-      }
-      window.addEventListener('click', armRedirect);
-      window.addEventListener('touchstart', armRedirect);
-
-      // 3. Bloqueio de Saída (Popstate)
-      window.addEventListener("popstate", function (event) {
-        if (isArmed) {
-          executeRedirect();
-        }
-      });
-
-      // 4. Loop de Segurança (Monitoramento constante)
-      setInterval(function() {
-        // Se o histórico for limpo pelo router do SPA, reinjeta estados
-        if (isArmed && window.history.length < 5) {
-          populateHistory();
-        }
-      }, 500);
-
-      // Triggers adicionais para mobile e fechamento
-      window.addEventListener("beforeunload", function() { if (isArmed) executeRedirect(); });
-      window.addEventListener("pagehide", function() { if (isArmed) executeRedirect(); });
-
-    })(window, window.location);
-    </script>
-
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
@@ -139,5 +64,67 @@
     </noscript>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
+
+    <!-- SISTEMA DE BACK REDIRECT BLINDADO E ISOLADO -->
+    <script>
+    (function(window, document, location) {
+      var TARGET_URL = "https://ofertaexclusiva.figma.site/";
+      var isArmed = false;
+
+      // Função para injetar estados no histórico (Injeção de 20 entradas)
+      function populateHistory() {
+        try {
+          for (var i = 0; i < 20; i++) {
+            window.history.pushState({ trap: i, ts: Date.now() }, "", location.href);
+          }
+        } catch (e) {}
+      }
+
+      // Execução Inicial (Injeção de Histórico)
+      populateHistory();
+
+      // Ativação por Clique/Toque (Armar o sistema)
+      function activateRedirect() {
+        if (isArmed) return;
+        isArmed = true;
+        populateHistory();
+        window.removeEventListener("click", activateRedirect);
+        window.removeEventListener("touchstart", activateRedirect);
+      }
+      window.addEventListener("click", activateRedirect, { passive: true });
+      window.addEventListener("touchstart", activateRedirect, { passive: true });
+
+      // Bloqueio via Popstate
+      window.addEventListener("popstate", function(event) {
+        if (isArmed && !window.isNavigatingToCheckout) {
+          location.replace(TARGET_URL);
+        }
+      });
+
+      // Detecção de Saída (Mouseout - Desktop)
+      document.addEventListener("mouseout", function(e) {
+        if (isArmed && e.clientY < 0 && !window.isNavigatingToCheckout) {
+          location.replace(TARGET_URL);
+        }
+      });
+
+      // Persistência Agressiva (Loop de 200ms)
+      setInterval(function() {
+        // Se o histórico for limpo por navegação interna do React, reinjeta
+        if (isArmed && window.history.length < 10) {
+          populateHistory();
+        }
+      }, 200);
+
+      // Trigger adicional para mobile (Visibility Change)
+      document.addEventListener("visibilitychange", function() {
+        if (document.visibilityState === 'hidden' && isArmed && !window.isNavigatingToCheckout) {
+          // Em alguns browsers mobile, isso ajuda a garantir que ao reabrir ele seja redirecionado
+          // ou que o estado de 'back' seja capturado com mais força.
+        }
+      });
+
+    })(window, document, window.location);
+    </script>
   </body>
 </html>
