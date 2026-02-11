@@ -15,10 +15,10 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
       </div>
 
       <div className="flex-1 flex flex-col items-center px-5 pt-4 pb-8 max-w-lg w-full">
-        {/* Main Image - Optimized Height */}
+        {/* Main Image - Optimized Height & Performance */}
         <div className="w-full max-h-[180px] sm:max-h-[220px] mb-3 overflow-hidden rounded-2xl shadow-xl border border-white/10">
           <img 
-            src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_q07qytq07qytq07q.png" 
+            src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_q07qytq07qytq07q.png?tr=w-650,f-webp,q-80" 
             alt="Alerta" 
             width="512"
             height="220"
