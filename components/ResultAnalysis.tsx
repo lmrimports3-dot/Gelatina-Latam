@@ -107,22 +107,29 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
   return (
     <div className="w-full min-h-screen bg-[#F5F5F5] font-['Poppins']">
       
-      {/* SEÇÃO 1: HEADLINE + DIAGNÓSTICO */}
-      <section className="w-full bg-roxo-grad pt-4 pb-8 px-6 flex flex-col items-center">
-        <div className="w-full max-w-lg mb-6">
+      {/* SEÇÃO 1: HEADLINE REFORMULADA (SUCCESS NOTIFICATION) */}
+      <section className="w-full bg-roxo-grad pt-6 pb-8 px-6 flex flex-col items-center">
+        <div className="w-full max-w-lg mb-8">
           <div className="flex justify-between items-center mb-1 px-1">
-            <span className="text-white text-[10px] font-bold opacity-60">Análise concluída</span>
-            <span className="text-[#E91E63] text-[10px] font-black uppercase tracking-widest">Protocolo Liberado</span>
+            <span className="text-white text-[10px] font-bold opacity-60 uppercase tracking-tighter">Sincronizando dados...</span>
+            <span className="text-emerald-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Sistema Online
+            </span>
           </div>
           <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-            <div className="h-full bg-[#E91E63] w-full shadow-[0_0_8px_#E91E63]"></div>
+            <div className="h-full bg-emerald-500 w-full shadow-[0_0_10px_#10b981]"></div>
           </div>
         </div>
 
         <div className="max-w-lg w-full text-center">
-          <h1 className="font-['Montserrat'] font-black text-[28px] leading-tight text-white mb-4">
-            SEU <span className="text-[#E91E63]">PLANO DE QUEIMA</span> ESTÁ PRONTO
-          </h1>
+          {/* Box de Notificação de Sucesso */}
+          <div className="bg-emerald-50 border-2 border-emerald-500 p-6 rounded-[32px] shadow-[0_20px_40px_rgba(16,185,129,0.15)] mb-8 transform hover:scale-[1.02] transition-transform animate-fadeIn">
+            <div className="text-5xl mb-4 animate-bounce">✅</div>
+            <h2 className="text-[11px] font-black text-emerald-600 tracking-[0.3em] uppercase mb-2">ANÁLISE FINALIZADA COM SUCESSO</h2>
+            <h1 className="font-['Montserrat'] font-black text-[24px] md:text-[30px] leading-tight text-gray-900 uppercase">
+              SEU PLANO DE <span className="text-emerald-600">QUEIMA ACELERADA</span> ESTÁ PRONTO
+            </h1>
+          </div>
           
           <div className="bg-white rounded-[24px] p-5 text-left shadow-2xl border-b-4 border-gray-200 mb-6">
             <div className="grid grid-cols-2 gap-3 mb-4">
