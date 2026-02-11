@@ -9,6 +9,7 @@ const DiscountScratch: React.FC<DiscountScratchProps> = ({ onNext }) => {
   const [scratched, setScratched] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isRevealed, setIsRevealed] = useState(false);
+  const scratchCountRef = useRef(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -22,13 +23,13 @@ const DiscountScratch: React.FC<DiscountScratchProps> = ({ onNext }) => {
       if (rect) {
         canvas.width = rect.width;
         canvas.height = rect.height;
-        ctx.fillStyle = '#e2e8f0'; 
+        ctx.fillStyle = '#cbd5e1'; // Um pouco mais escuro para melhor contraste
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        ctx.fillStyle = '#94a3b8'; 
-        ctx.font = 'bold 18px sans-serif';
+        ctx.fillStyle = '#64748b'; 
+        ctx.font = 'black 20px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('RASPE AQUI', canvas.width / 2, canvas.height / 2 + 6);
+        ctx.fillText('PASSE O DEDO PARA REVELAR', canvas.width / 2, canvas.height / 2 + 8);
       }
     };
 
@@ -57,11 +58,19 @@ const DiscountScratch: React.FC<DiscountScratchProps> = ({ onNext }) => {
 
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    // Pincel aumentado para 45px para facilitar a raspagem no mobile
-    ctx.arc(x, y, 45, 0, Math.PI * 2);
+    // Pincel aumentado drasticamente para 100px para que um toque limpe quase tudo
+    ctx.arc(x, y, 100, 0, Math.PI * 2);
     ctx.fill();
 
-    checkReveal();
+    scratchCountRef.current += 1;
+    
+    // Se o usuário interagiu minimamente (mais de 2 eventos de movimento ou toque), já libera
+    if (scratchCountRef.current > 2) {
+        setIsRevealed(true);
+        setScratched(true);
+    } else {
+        checkReveal();
+    }
   };
 
   const checkReveal = () => {
@@ -81,8 +90,8 @@ const DiscountScratch: React.FC<DiscountScratchProps> = ({ onNext }) => {
     }
 
     const percent = (transparentPixels / (pixels.length / 4)) * 100;
-    // Liberar automaticamente ao atingir 25% de área limpa (usabilidade facilitada)
-    if (percent > 25) {
+    // Limite reduzido para 5% para liberação imediata ao primeiro toque
+    if (percent > 5) {
       setIsRevealed(true);
       setScratched(true);
     }
@@ -106,7 +115,7 @@ const DiscountScratch: React.FC<DiscountScratchProps> = ({ onNext }) => {
       </div>
 
       <div className="w-full flex flex-col items-center">
-        <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Raspe abaixo para revelar seu desconto</p>
+        <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Passe o dedo para revelar seu desconto</p>
         
         <div className="relative w-full aspect-[16/9] max-w-sm rounded-3xl overflow-hidden shadow-2xl border-4 border-dashed border-purple-200 bg-white group cursor-crosshair">
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-emerald-50 p-6 text-center select-none">
@@ -123,9 +132,11 @@ const DiscountScratch: React.FC<DiscountScratchProps> = ({ onNext }) => {
 
           <canvas 
             ref={canvasRef}
-            className={`absolute inset-0 w-full h-full transition-opacity duration-700 ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
             onMouseMove={(e) => e.buttons === 1 && handleScratch(e)}
             onTouchMove={handleScratch}
+            onMouseDown={handleScratch}
+            onTouchStart={handleScratch}
           />
         </div>
       </div>
@@ -149,7 +160,7 @@ const DiscountScratch: React.FC<DiscountScratchProps> = ({ onNext }) => {
       )}
 
       {!isRevealed && (
-        <p className="text-[11px] font-bold text-gray-300 mt-6 uppercase animate-pulse">Use o dedo ou o mouse para raspar</p>
+        <p className="text-[11px] font-bold text-gray-300 mt-6 uppercase animate-pulse">Toque ou arraste para raspar</p>
       )}
 
       <style>{`
