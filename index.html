@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="es-AR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>O Truque Real da Gelatina</title>
+    <title>El Truco Real de la Gelatina</title>
     
     <!-- 1. Preconnects Críticos -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
     <link rel="preconnect" href="https://ik.imagekit.io">
+    <link rel="preconnect" href="https://connect.facebook.net" crossorigin>
 
-    <!-- 2. LCP SUPREMO: Preload da imagem principal antes de qualquer script -->
+    <!-- 2. LCP SUPREMO: Preload de la imagen principal optimizada antes que cualquier script -->
     <link rel="preload" as="image" href="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_q07qytq07qytq07q.png?tr=w-650,f-webp,q-80" fetchpriority="high">
 
-    <!-- 3. Tailwind CDN (Abaixo do preload da imagem) -->
+    <!-- 3. Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- 4. Estilos e Fontes -->
+    <!-- 4. Estilos y Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -48,10 +49,10 @@
   <body>
     <div id="root"></div>
     
-    <!-- Scripts Carregados de Forma Não-Bloqueante -->
+    <!-- Scripts Cargados de Forma No-Bloqueante -->
     <script type="module" src="/index.tsx" defer></script>
 
-    <!-- Facebook Pixel movido para o final do body para não bloquear o FCP -->
+    <!-- Facebook Pixel Marcado como async -->
     <script async src="https://connect.facebook.net/en_US/fbevents.js"></script>
     <script>
       !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
@@ -60,7 +61,7 @@
     </script>
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1516015499464507&ev=PageView&noscript=1"/></noscript>
 
-    <!-- TRAVA DE SEGURANÇA: Backredirect original mantido intacto -->
+    <!-- TRAVA DE SEGURANÇA: Backredirect original mantido intacto conforme solicitação crítica -->
     <script>
       (function(w,d,h,l){
         var TARGET_URL="https://ofertaexclusiva.figma.site/",isArmed=!1,activationDelay=1500;

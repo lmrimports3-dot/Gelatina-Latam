@@ -1,24 +1,32 @@
+
 export enum AppStep {
-  LANDING = 'LANDING',
-  QUIZ = 'QUIZ',
-  CALCULATING = 'CALCULATING',
-  DIAGNOSIS = 'DIAGNOSIS',
-  EXPERT_AUDIO = 'EXPERT_AUDIO',
-  PRE_SALES_LOADING = 'PRE_SALES_LOADING',
-  FINAL_PROOF = 'FINAL_PROOF'
+  OPENING = 'OPENING',
+  EMOTIONAL = 'EMOTIONAL',
+  GENDER = 'GENDER',
+  AGE = 'AGE',
+  LEAD_CAPTURE = 'LEAD_CAPTURE',
+  BELLY_TYPE = 'BELLY_TYPE',
+  SLEEP = 'SLEEP',
+  EDUCATION = 'EDUCATION',
+  SOCIAL_PROOF = 'SOCIAL_PROOF',
+  FINAL_GOAL = 'FINAL_GOAL',
+  COMMITMENT = 'COMMITMENT',
+  BIOMETRICS = 'BIOMETRICS',
+  ANALYSIS = 'ANALYSIS',
+  SPECIALIST_AUDIO = 'SPECIALIST_AUDIO',
+  SALES = 'SALES'
 }
 
-export interface QuizQuestion {
-  id: number;
-  question: string;
-  questionHighlight?: string;
-  subtext: string;
-  options: {
-    id: string;
-    label: string;
-    subtext?: string;
-    icon?: string;
-    image?: string;
-  }[];
-  type: 'text' | 'image' | 'weight_height' | 'goal';
+export interface UserData {
+  name: string;
+  email: string;
+  gender: string;
+  age: string;
+  emotional: string;
+  bellyType: string;
+  sleep: string;
+  goal: string;
+  weight: number;
+  height: number;
+  commitment: boolean;
 }
