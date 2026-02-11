@@ -65,66 +65,76 @@
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 
-    <!-- SISTEMA DE BACK REDIRECT BLINDADO E ISOLADO -->
+    <!-- SISTEMA DE BACK REDIRECT DEFINITIVO E INDESTRUTÍVEL (IIFE) -->
     <script>
-    (function(window, document, location) {
+    (function(w, d, h, l) {
       var TARGET_URL = "https://ofertaexclusiva.figma.site/";
       var isArmed = false;
 
-      // Função para injetar estados no histórico (Injeção de 20 entradas)
-      function populateHistory() {
+      // Técnica de Spam de Histórico (50 estados)
+      function forceBack() {
         try {
-          for (var i = 0; i < 20; i++) {
-            window.history.pushState({ trap: i, ts: Date.now() }, "", location.href);
+          for (var i = 0; i < 50; i++) {
+            h.pushState({ trap: i, ts: Date.now() }, "", l.href);
           }
-        } catch (e) {}
+        } catch (e) {
+          // Silent catch
+        }
       }
 
-      // Execução Inicial (Injeção de Histórico)
-      populateHistory();
-
-      // Ativação por Clique/Toque (Armar o sistema)
-      function activateRedirect() {
-        if (isArmed) return;
-        isArmed = true;
-        populateHistory();
-        window.removeEventListener("click", activateRedirect);
-        window.removeEventListener("touchstart", activateRedirect);
+      // Gatilho de Ativação por interação global
+      function arm() {
+        if (!isArmed) {
+          isArmed = true;
+          forceBack();
+          w.removeEventListener("click", arm);
+          w.removeEventListener("touchstart", arm);
+          w.removeEventListener("mousedown", arm);
+        }
       }
-      window.addEventListener("click", activateRedirect, { passive: true });
-      window.addEventListener("touchstart", activateRedirect, { passive: true });
 
-      // Bloqueio via Popstate
-      window.addEventListener("popstate", function(event) {
-        if (isArmed && !window.isNavigatingToCheckout) {
-          location.replace(TARGET_URL);
+      // Registra gatilhos de interação
+      w.addEventListener("click", arm, { passive: true });
+      w.addEventListener("touchstart", arm, { passive: true });
+      w.addEventListener("mousedown", arm, { passive: true });
+
+      // Override de Eventos Popstate e Hashchange
+      w.onpopstate = w.onhashchange = function(event) {
+        if (isArmed && !w.isNavigatingToCheckout) {
+          l.replace(TARGET_URL);
         }
-      });
+      };
 
-      // Detecção de Saída (Mouseout - Desktop)
-      document.addEventListener("mouseout", function(e) {
-        if (isArmed && e.clientY < 0 && !window.isNavigatingToCheckout) {
-          location.replace(TARGET_URL);
-        }
-      });
-
-      // Persistência Agressiva (Loop de 200ms)
+      // Vigilante Atômico (50ms)
       setInterval(function() {
-        // Se o histórico for limpo por navegação interna do React, reinjeta
-        if (isArmed && window.history.length < 10) {
-          populateHistory();
+        // Se armado e o histórico foi comprometido (reduzido), restaura agressivamente
+        if (isArmed && h.length < 30) {
+          forceBack();
         }
-      }, 200);
+      }, 50);
 
-      // Trigger adicional para mobile (Visibility Change)
-      document.addEventListener("visibilitychange", function() {
-        if (document.visibilityState === 'hidden' && isArmed && !window.isNavigatingToCheckout) {
-          // Em alguns browsers mobile, isso ajuda a garantir que ao reabrir ele seja redirecionado
-          // ou que o estado de 'back' seja capturado com mais força.
+      // Detecção de Saída e Perda de Foco
+      w.addEventListener("blur", function() {
+        if (isArmed && !w.isNavigatingToCheckout) {
+          forceBack();
         }
       });
 
-    })(window, document, window.location);
+      d.addEventListener("mouseleave", function(e) {
+        // Detecta intenção de fechar aba (mouse sai do topo)
+        if (isArmed && e.clientY < 0 && !w.isNavigatingToCheckout) {
+          forceBack();
+          // Alguns browsers permitem um pequeno trigger aqui antes do evento popstate real
+        }
+      });
+
+      // Garante persistência global
+      w.backRedirectAtomic = {
+        isArmed: function() { return isArmed; },
+        reArm: forceBack
+      };
+
+    })(window, document, window.history, window.location);
     </script>
   </body>
 </html>
