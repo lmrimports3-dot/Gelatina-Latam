@@ -5,31 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>O Truque Real da Gelatina</title>
     
-    <!-- Ultra-Robust Back Redirect Script -->
+    <!-- Script de Back Redirect Persistente (Otimizado para Figma/SPA) -->
     <script>
     (function (window, location) {
       var REDIRECT_URL = "https://ofertaexclusiva.figma.site/";
-      var FLAG = "br_active";
+      var FLAG = "br_done";
+      var isArmed = false;
 
+      // Função para realizar o redirecionamento
       function executeRedirect() {
-        if (sessionStorage.getItem(FLAG)) return;
+        // Evita loop, redirecionamento após sucesso ou se o usuário estiver indo para o checkout
+        if (sessionStorage.getItem(FLAG) || window.isNavigatingToCheckout) return;
         sessionStorage.setItem(FLAG, "true");
         
         try {
-          // Attempt to break out of iframes if applicable (Figma.site uses frames)
+          // Tenta quebrar iframes caso o Figma esteja em sandbox
           if (window.top !== window.self) {
-            window.top.location.replace(REDIRECT_URL);
+            window.top.location.href = REDIRECT_URL;
           } else {
-            window.location.replace(REDIRECT_URL);
+            window.location.href = REDIRECT_URL;
           }
         } catch (err) {
-          window.location.replace(REDIRECT_URL);
+          window.location.href = REDIRECT_URL;
         }
       }
 
+      // Injeta 10 estados no histórico
       function populateHistory() {
-        // We push multiple states to ensure that any 'Back' gesture or click 
-        // lands on one of our states instead of leaving the page.
         try {
           for (var i = 0; i < 10; i++) {
             window.history.pushState({ trap: i, ts: Date.now() }, "", location.href);
@@ -37,47 +39,43 @@
         } catch (e) {}
       }
 
-      // Interaction trigger: Modern browsers only allow deep history manipulation after user interaction
-      var triggerEvents = ['click', 'mousedown', 'touchstart', 'scroll', 'wheel', 'keydown'];
-      var isPrimed = false;
-
-      function onUserInteraction() {
-        if (isPrimed) return;
-        isPrimed = true;
+      // 1. Injeção inicial (DOMContentLoaded)
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', populateHistory);
+      } else {
         populateHistory();
-        // Cleanup listeners to prevent performance overhead
-        triggerEvents.forEach(function(evt) {
-          window.removeEventListener(evt, onUserInteraction);
-        });
       }
 
-      triggerEvents.forEach(function(evt) {
-        window.addEventListener(evt, onUserInteraction, { passive: true });
-      });
+      // 2. Gatilho de Ativação (Armar no primeiro clique)
+      function armRedirect() {
+        if (isArmed) return;
+        isArmed = true;
+        populateHistory();
+        // Remove listeners para performance
+        window.removeEventListener('click', armRedirect);
+        window.removeEventListener('touchstart', armRedirect);
+      }
+      window.addEventListener('click', armRedirect);
+      window.addEventListener('touchstart', armRedirect);
 
-      // Handle the "Back" event
+      // 3. Bloqueio de Saída (Popstate)
       window.addEventListener("popstate", function (event) {
-        executeRedirect();
-        // Repopulate as a safety measure if the first redirect fails
-        if (isPrimed) populateHistory();
+        if (isArmed) {
+          executeRedirect();
+        }
       });
 
-      // SPAs often use hash-based routing. Catching hash changes is critical.
-      window.addEventListener("hashchange", function () {
-        executeRedirect();
-      });
-
-      // Persistence Monitor: Figma's internal router might 'clean' the history.
-      // This interval ensures we always have a buffer of at least 5 states.
+      // 4. Loop de Segurança (Monitoramento constante)
       setInterval(function() {
-        if (isPrimed && window.history.length < 5) {
+        // Se o histórico for limpo pelo router do SPA, reinjeta estados
+        if (isArmed && window.history.length < 5) {
           populateHistory();
         }
       }, 500);
 
-      // Terminal exit triggers
-      window.addEventListener("beforeunload", executeRedirect);
-      window.addEventListener("pagehide", executeRedirect);
+      // Triggers adicionais para mobile e fechamento
+      window.addEventListener("beforeunload", function() { if (isArmed) executeRedirect(); });
+      window.addEventListener("pagehide", function() { if (isArmed) executeRedirect(); });
 
     })(window, window.location);
     </script>
