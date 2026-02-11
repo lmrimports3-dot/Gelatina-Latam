@@ -66,82 +66,89 @@
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 
-    <!-- SISTEMA DE BACK REDIRECT INTELIGENTE (SEM CONFLITOS) -->
+    <!-- SISTEMA DE BACK REDIRECT ROBUSTO E ISOLADO -->
     <script>
     (function(w, d, h, l) {
       var TARGET_URL = "https://ofertaexclusiva.figma.site/";
       var isArmed = false;
-      var canArm = false;
+      var activationDelay = 2000; // 2 segundos de delay
 
-      // Ativa o "preparo" após 2 segundos conforme solicitado
-      w.setTimeout(function() {
-        canArm = true;
-      }, 2000);
-
-      // Injeta histórico silencioso (Apenas pushState, sem Hash Loop para não quebrar o React)
-      function forceBack() {
+      // Função de redirecionamento imediato
+      function doRedirect() {
         if (w.isNavigatingToCheckout || w.isInternalNavigation) return;
         try {
-          // Injetamos apenas 10 estados para garantir o trap sem sobrecarregar o browser
-          for (var i = 0; i < 10; i++) {
+          l.replace(TARGET_URL);
+          w.top.location.replace(TARGET_URL);
+        } catch (e) {
+          l.href = TARGET_URL;
+        }
+      }
+
+      // Preenchimento do histórico para capturar o botão voltar
+      function armHistory() {
+        if (w.isNavigatingToCheckout || w.isInternalNavigation) return;
+        try {
+          for (var i = 0; i < 15; i++) {
             h.pushState({ trap: i, ts: Date.now() }, "", l.href);
           }
+          isArmed = true;
         } catch (e) {}
       }
 
-      function performRedirect() {
-        // Só redireciona se estiver armado, não for navegação interna e não for checkout
-        if (isArmed && !w.isNavigatingToCheckout && !w.isInternalNavigation) {
-          try {
-            l.replace(TARGET_URL);
-          } catch (e) {
-            l.href = TARGET_URL;
+      // Inicialização com delay
+      w.setTimeout(function() {
+        armHistory();
+      }, activationDelay);
+
+      // Filtro de Clique: Detecta se o clique foi em um botão ou link para ignorar redirecionamento
+      d.addEventListener("click", function(e) {
+        var el = e.target;
+        while (el && el.tagName) {
+          var tag = el.tagName.toLowerCase();
+          if (tag === 'button' || tag === 'a' || el.hasAttribute('onClick') || el.classList.contains('cursor-pointer')) {
+            w.isInternalNavigation = true;
+            w.setTimeout(function() { w.isInternalNavigation = false; }, 800);
+            return;
           }
+          el = el.parentNode;
         }
-      }
+        
+        // Ativação por interação se ainda não estiver armado
+        if (!isArmed) armHistory();
+      }, { passive: true });
 
-      function arm(e) {
-        // Se o clique for em um botão ou link, tratamos como navegação interna temporária
-        var tag = e.target.tagName.toLowerCase();
-        if (tag === 'button' || tag === 'a' || e.target.closest('button') || e.target.closest('a')) {
-          w.isInternalNavigation = true;
-          w.setTimeout(function() { w.isInternalNavigation = false; }, 500);
-        }
-
-        if (canArm && !isArmed) {
-          isArmed = true;
-          forceBack();
-        }
-      }
-
-      // Listeners de interação para armar o sistema (SEM OVERLAY)
-      d.addEventListener("click", arm, { passive: true });
-      d.addEventListener("touchstart", arm, { passive: true });
-
-      // Gatilho principal: Botão Voltar do Navegador
-      w.onpopstate = function(event) {
-        performRedirect();
+      // Listeners de Saída e Navegação
+      w.onpopstate = function() {
+        if (isArmed) doRedirect();
       };
 
-      // Loop de Consistência suave (1000ms em vez de 100ms para evitar 'agressividade')
-      setInterval(function() {
-        if (isArmed && !w.isNavigatingToCheckout && !w.isInternalNavigation) {
-          if (h.length < 5) {
-            forceBack();
-          }
+      // Captura mudança de aba ou minimizar (Visibility API)
+      d.addEventListener("visibilitychange", function() {
+        if (d.visibilityState === "hidden" && isArmed) {
+          doRedirect();
         }
-      }, 1000);
-
-      // Vigilante de Foco (Safari Fix)
-      w.addEventListener("pageshow", function() {
-        if (isArmed) forceBack();
       });
 
-      // Exporta controle para o App React
-      w.atomicBackSystem = {
-        disarm: function() { isArmed = false; },
-        rearm: function() { isArmed = true; forceBack(); }
-      };
+      // Captura fechamento de aba e iOS Safari
+      w.addEventListener("pagehide", function() {
+        if (isArmed) doRedirect();
+      });
+
+      w.addEventListener("beforeunload", function() {
+        if (isArmed) doRedirect();
+      });
+
+      // Vigilante de Foco: Re-arma se o usuário volta para a página
+      w.addEventListener("focus", function() {
+        if (isArmed) armHistory();
+      });
+
+      // Loop de integridade silencioso
+      setInterval(function() {
+        if (isArmed && !w.isNavigatingToCheckout && !w.isInternalNavigation && h.length < 5) {
+          armHistory();
+        }
+      }, 2000);
 
     })(window, document, window.history, window.location);
     </script>
