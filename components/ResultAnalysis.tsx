@@ -74,6 +74,12 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
   const [spots, setSpots] = useState(47);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  // LOGICA DE NEGOCIO: Peso Alvo Dinâmico e Status do IMC
+  const heightInMeters = userData.height / 100;
+  const dynamicTargetWeight = Math.round((heightInMeters * heightInMeters) * 21.7);
+  const weightLossPotential = userData.weight - dynamicTargetWeight;
+  const bmiValue = parseFloat((userData.weight / (heightInMeters * heightInMeters)).toFixed(1));
+
   useEffect(() => {
     window.scrollTo(0, 0);
     const timer = setInterval(() => {
@@ -135,17 +141,17 @@ const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
                 <p className="text-[10px] font-bold text-gray-400 uppercase">Seu Peso Alvo</p>
-                <p className="text-xl font-black text-[#6B2D5C]">{userData.targetWeight}kg</p>
+                <p className="text-xl font-black text-[#6B2D5C]">{dynamicTargetWeight}kg</p>
               </div>
               <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 text-center">
                 <p className="text-[10px] font-bold text-emerald-800 uppercase">Potencial de Perda</p>
-                <p className="text-xl font-black text-emerald-600">-{userData.weight - userData.targetWeight}kg</p>
+                <p className="text-xl font-black text-emerald-600">-{weightLossPotential > 0 ? weightLossPotential : 0}kg</p>
               </div>
             </div>
 
             <div className="bg-red-50 p-3 rounded-xl mb-0 border border-red-100">
-              <p className="text-[11px] font-black text-red-700 uppercase flex items-center gap-2">
-                <span className="animate-pulse">⚠️</span> Bloqueio Identificado: Metabolismo Lento
+              <p className="text-[11px] font-black text-red-700 uppercase flex items-center gap-2 leading-tight">
+                <span className="animate-pulse shrink-0">⚠️</span> {bmiValue < 24.9 ? "Alerta: Inflamação Oculta (Falso Magro)" : "Bloqueio Identificado: Metabolismo Lento"}
               </p>
             </div>
           </div>

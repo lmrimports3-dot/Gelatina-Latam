@@ -6,8 +6,8 @@ const Diagnosis: React.FC<{ userData: any, onNext: () => void }> = ({ userData, 
   const bmi = (userData.weight / ((userData.height/100) * (userData.height/100))).toFixed(1);
   
   const getBmiStatus = (v: number) => {
-    if (v < 18.5) return { l: "Abaixo do peso", c: "text-blue-500" };
-    if (v < 25) return { l: "Normal", c: "text-green-500" };
+    // Lógica Anti-Normal: Se estiver abaixo de 24.9, entra em Alerta (Falso Magro)
+    if (v < 24.9) return { l: "⚠️ Alerta: Inflamação Oculta (Falso Magro)", c: "text-orange-600" };
     if (v < 30) return { l: "Sobrepeso", c: "text-orange-500" };
     return { l: "Obesidade", c: "text-red-500" };
   };
@@ -41,8 +41,8 @@ const Diagnosis: React.FC<{ userData: any, onNext: () => void }> = ({ userData, 
             <span className="text-4xl font-['Montserrat'] font-black text-[#6B2D5C] tracking-tighter">{bmi}</span>
             <p className="text-[11px] font-bold text-gray-400 uppercase">Seu IMC Atual</p>
           </div>
-          <div className="text-right">
-             <span className={`text-lg font-black uppercase ${status.c}`}>{status.l}</span>
+          <div className="text-right max-w-[60%]">
+             <span className={`text-[14px] leading-tight font-black uppercase inline-block ${status.c}`}>{status.l}</span>
              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Status Metabólico</p>
           </div>
         </div>
