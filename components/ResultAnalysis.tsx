@@ -1,373 +1,239 @@
+import React, { useState, useEffect, useRef } from 'react';
 
-import React, { useState, useEffect } from 'react';
+const CHECKOUT_URL = "https://lastlink.com/p/CDD52DF74/checkout-payment/";
 
 interface ResultAnalysisProps {
-  userData: {
-    name: string;
-    weight: number;
-    height: number;
-    targetWeight: number;
-  };
+  userData: any;
   onNext: () => void;
 }
 
-const CHECKOUT_URL = "https://lastlink.com/p/CDD52DF74/checkout-payment";
+const GoogleReviewsCarousel: React.FC = () => {
+  const [scrollX, setScrollX] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const reviews = [
+    { name: "Mariana S.", time: "há 2 dias", text: "Gente, funciona mesmo! Em 15 dias minha barriga desinchou muito. O suporte no whats é ótimo." },
+    { name: "Roberta F.", time: "há 5 horas", text: "Melhor investimento que fiz esse ano. O app é super intuitivo e a gelatina é deliciosa." },
+    { name: "Carla M.", time: "há 1 semana", text: "Finalmente algo que não é enganação. Já perdi 4kg sem passar fome." },
+    { name: "Juliana T.", time: "há 3 dias", text: "Estava cética, mas os resultados falam por si só. Minhas roupas voltaram a servir!" },
+    { name: "Fernanda L.", time: "há 1 dia", text: "Adorei a comunidade das alunas, a gente se ajuda muito. Vale cada centavo." }
+  ];
 
-const REVIEWS = [
-  { name: "Carla", age: 34, city: "Curitiba", text: "Meu inchaço sumiu em 10 dias. Hoje minha barriga está visivelmente mais chapada.", img: "https://randomuser.me/api/portraits/women/32.jpg" },
-  { name: "Renata", age: 41, city: "Rio de Janeiro", text: "Eu não acreditava que algo tão simples poderia funcionar. Já eliminei 6kg.", img: "https://randomuser.me/api/portraits/women/44.jpg" },
-  { name: "Juliana", age: 29, city: "Salvador", text: "A sensação de estar estufada desapareceu por completo.", img: "https://randomuser.me/api/portraits/women/68.jpg" },
-  { name: "Mariana", age: 45, city: "São Paulo", text: "Finalmente encontrei algo que não agride meu estômago e funciona de verdade.", img: "https://randomuser.me/api/portraits/women/50.jpg" }
-];
-
-const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
-  const name = (userData?.name || '').trim();
-  const [timeLeft, setTimeLeft] = useState(600); 
-  const [reviewIndex, setReviewIndex] = useState(0);
-
-  const track = (name: string) => {
-    if (typeof window !== 'undefined') {
-      if ((window as any).fbq) (window as any).fbq('trackCustom', name);
-      if ((window as any).utmify?.track) (window as any).utmify.track(name);
-    }
-  };
-
-  useEffect(() => {
-    track('quiz_result_view');
-    window.scrollTo(0, 0);
-  }, []);
-
-  // Timer de urgência
-  useEffect(() => {
-    if (timeLeft <= 0) return;
-    const timer = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft]);
-
-  // Carrossel automático de reviews
   useEffect(() => {
     const interval = setInterval(() => {
-      setReviewIndex((prev) => (prev + 1) % REVIEWS.length);
-    }, 4000);
+      if (containerRef.current) {
+        const maxScroll = containerRef.current.scrollWidth - containerRef.current.clientWidth;
+        if (containerRef.current.scrollLeft >= maxScroll - 5) {
+          containerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          containerRef.current.scrollBy({ left: 280, behavior: 'smooth' });
+        }
+      }
+    }, 3000);
+
     return () => clearInterval(interval);
   }, []);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  return (
+    <div className="w-full mt-4 mb-8">
+      <div className="flex items-center gap-2 mb-4 px-1">
+        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" width="92" height="30" loading="lazy" className="h-4 object-contain opacity-70" />
+        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Avaliações Verificadas</span>
+      </div>
+      
+      <div 
+        ref={containerRef}
+        className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 snap-x snap-mandatory"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {reviews.map((review, i) => (
+          <div 
+            key={i} 
+            className="min-w-[260px] max-w-[260px] bg-white p-5 rounded-2xl shadow-sm border border-gray-100 snap-center flex flex-col"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex text-[#FFC107] text-xs">
+                {"★★★★★".split("").map((s, si) => <span key={si}>{s}</span>)}
+              </div>
+              <span className="text-[10px] text-gray-400 font-medium">{review.time}</span>
+            </div>
+            <p className="text-[12px] font-bold text-gray-800 mb-2">{review.name}</p>
+            <p className="text-[13px] text-gray-500 leading-relaxed">"{review.text}"</p>
+          </div>
+        ))}
+      </div>
+      
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+      `}</style>
+    </div>
+  );
+};
+
+const ResultAnalysis: React.FC<ResultAnalysisProps> = ({ userData }) => {
+  const [spots, setSpots] = useState(47);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const timer = setInterval(() => {
+      setSpots(prev => (prev > 7 ? prev - Math.floor(Math.random() * 2) : prev));
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleCta = () => {
+    (window as any).isNavigatingToCheckout = true;
+    window.location.replace(CHECKOUT_URL);
   };
 
-  const handleCheckoutClick = () => {
-    // SINALIZAÇÃO CRÍTICA PARA O SISTEMA DE BACKREDIRECT (EXCEÇÃO ÚNICA)
-    (window as any).isNavigatingToCheckout = true;
-    
-    track('quiz_cta_click');
-    try {
-      const url = new URL(CHECKOUT_URL);
-      const currentParams = new URLSearchParams(window.location.search);
-      currentParams.forEach((value, key) => url.searchParams.set(key, value));
-      // Redirecionamento direto e limpo para o checkout
-      window.location.replace(url.toString()); 
-    } catch (e) {
-      window.location.replace(CHECKOUT_URL);
-    }
-  };
+  const faqItems = [
+    { q: "Vai realmente funcionar para mim?", a: "Sim. O app é personalizado para VOCÊ. Ele analisa suas respostas no quiz e cria um protocolo único baseado na sua idade, tipo de barriga e metabolismo. Se não ver resultado em 15 dias, devolvemos seu dinheiro." },
+    { q: "Quanto tempo leva para ver resultado?", a: "Muitas mulheres sentem desinchaço em 7 dias. Perda de peso real (8-14kg) ocorre entre 30 a 60 dias seguindo o protocolo." },
+    { q: "Preciso fazer exercício?", a: "Não é obrigatório. O protocolo foca na ativação metabólica noturna através da alimentação estratégica." },
+    { q: "Quanto custa o acesso?", a: "Apenas R$ 19,90 UMA VEZ. Acesso vitalício, sem mensalidades ou taxas escondidas." }
+  ];
+
+  const modules = [
+    { icon: '🧬', title: 'PROTOCOLO PERSONALIZADO', desc: 'A receita exata da Gelatina Noturna e o modo de preparo para o seu tipo de barriga (Moon Belly).' },
+    { icon: '🍽️', title: 'CARDÁPIO DE 30 DIAS', desc: 'Lista de compras e refeições que combinam com a gelatina para acelerar a queima de gordura.' },
+    { icon: '📊', title: 'DASHBOARD DE EVOLUÇÃO', desc: 'Acompanhe seu peso, medidas e veja seu corpo mudar com gráficos automáticos.' },
+    { icon: '🎥', title: 'BIBLIOTECA DE VÍDEOS', desc: 'Passo a passo em vídeo sobre metabolismo, hormônios e preparo.' },
+    { icon: '👩‍👩‍👧‍👦', title: 'COMUNIDADE VIP', desc: 'Suporte e motivação com mais de 312 mil mulheres que já transformaram seus corpos.' },
+    { icon: '🤖', title: 'AJUSTE INTELIGENTE', desc: 'O sistema ajusta seu protocolo semanalmente conforme seu progresso real.' },
+    { icon: '🎁', title: 'BÔNUS GRÁTIS', desc: '7 guias extras inclusos hoje (Valor original: R$ 197).' }
+  ];
 
   return (
-    <div className="w-full max-w-lg mx-auto flex flex-col items-center bg-white min-h-screen animate-fadeIn pb-24 font-sans text-gray-900 overflow-x-hidden">
+    <div className="w-full min-h-screen bg-[#F5F5F5] font-['Poppins']">
       
-      {/* ⏳ BLOCO DE ESCASSEZ NO TOPO */}
-      <section className="w-full bg-white border-b border-red-100 pt-6 pb-6 px-6 flex flex-col items-center text-center shadow-sm">
-        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight px-4 leading-tight mb-4">
-          Seu protocolo foi gerado com base nas suas respostas e pode ser removido se você sair desta página.
-        </p>
-        
-        <div className="flex items-center gap-3 text-red-500 bg-red-50 px-5 py-2 rounded-full border border-red-100">
-          <span className="text-[11px] font-black uppercase tracking-wider">Seu perfil expira em:</span>
-          <span className="text-lg font-black tabular-nums">{formatTime(timeLeft)}</span>
+      {/* SEÇÃO 1: HEADLINE + DIAGNÓSTICO */}
+      <section className="w-full bg-roxo-grad pt-4 pb-8 px-6 flex flex-col items-center">
+        <div className="w-full max-w-lg mb-6">
+          <div className="flex justify-between items-center mb-1 px-1">
+            <span className="text-white text-[10px] font-bold opacity-60">Análise concluída</span>
+            <span className="text-[#E91E63] text-[10px] font-black uppercase tracking-widest">Protocolo Liberado</span>
+          </div>
+          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-[#E91E63] w-full shadow-[0_0_8px_#E91E63]"></div>
+          </div>
         </div>
-      </section>
 
-      {/* 🎯 PRIMEIRA DOBRA */}
-      <section className="w-full px-6 pt-10 pb-10 bg-white shadow-sm rounded-b-[40px] border-b border-gray-100 flex flex-col items-center text-center">
-        <h1 className="text-[24px] md:text-[26px] font-black leading-tight mb-4 px-2">
-          🎉 Seu Protocolo da <span className="text-purple-600">Gelatina Noturna</span> foi gerado para você.
-        </h1>
-        
-        <p className="text-[14px] text-gray-500 font-medium leading-relaxed mb-10 px-4">
-          Com base nas suas respostas, você apresenta sinais comuns de <strong>inchaço abdominal e metabolismo lento</strong> — por isso esse protocolo noturno foi adaptado para você{name ? `, ${name}` : ''}.
-        </p>
-
-        {/* 📊 BLOCO VISUAL DE RESULTADO SIMULADO */}
-        <div className="w-full space-y-4 mb-8">
-          {[
-            { label: "Primeiros resultados", text: "Redução do inchaço", icon: "✨", color: "bg-purple-50", textCol: "text-purple-700" },
-            { label: "Em 2 semanas", text: "Leveza e melhora digestiva", icon: "🕒", color: "bg-blue-50", textCol: "text-blue-700" },
-            { label: "Em 4 semanas", text: "Redução visível da gordura", icon: "📏", color: "bg-emerald-50", textCol: "text-emerald-700" }
-          ].map((item, i) => (
-            <div key={i} className="flex items-center gap-4 text-left bg-white border border-gray-100 p-4 rounded-2xl shadow-sm">
-              <div className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center text-xl`}>{item.icon}</div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">{item.label}</p>
-                <p className={`text-[13px] font-black ${item.textCol}`}>{item.text}</p>
+        <div className="max-w-lg w-full text-center">
+          <h1 className="font-['Montserrat'] font-black text-[28px] leading-tight text-white mb-4">
+            SEU <span className="text-[#E91E63]">PLANO DE QUEIMA</span> ESTÁ PRONTO
+          </h1>
+          
+          <div className="bg-white rounded-[24px] p-5 text-left shadow-2xl border-b-4 border-gray-200 mb-6">
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
+                <p className="text-[10px] font-bold text-gray-400 uppercase">Seu Peso Alvo</p>
+                <p className="text-xl font-black text-[#6B2D5C]">{userData.targetWeight}kg</p>
+              </div>
+              <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 text-center">
+                <p className="text-[10px] font-bold text-emerald-800 uppercase">Potencial de Perda</p>
+                <p className="text-xl font-black text-emerald-600">-{userData.weight - userData.targetWeight}kg</p>
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* CTA NA PRIMEIRA DOBRA */}
-        <button 
-          onClick={handleCheckoutClick} 
-          className="w-full py-5 btn-gradient text-white font-black text-lg rounded-2xl shadow-2xl active:scale-95 transition-all uppercase flex items-center justify-center gap-2 mb-2"
-        >
-          <span>Acessar meu protocolo agora</span>
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-        </button>
-        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Início imediato</p>
+            <div className="bg-red-50 p-3 rounded-xl mb-0 border border-red-100">
+              <p className="text-[11px] font-black text-red-700 uppercase flex items-center gap-2">
+                <span className="animate-pulse">⚠️</span> Bloqueio Identificado: Metabolismo Lento
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* ⭐ SEÇÃO 1 — PROVA SOCIAL MASSIVA */}
-      <section className="w-full px-6 py-16 bg-white overflow-hidden">
-        <h2 className="text-xl font-black text-center mb-2 px-4 leading-tight">
-          Mais de <span className="text-purple-600">350.000 mulheres</span> já usam o Truque da Gelatina Noturna
-        </h2>
-        <p className="text-sm text-gray-500 font-medium text-center mb-10 px-6">
-          Resultados reais de mulheres que também sofriam com barriga inchada e digestão lenta.
-        </p>
+      {/* SEÇÃO 2: MÓDULOS COMPACTOS (ACCORDION STYLE LIST) */}
+      <section className="w-full bg-white py-10 px-6 flex flex-col items-center border-t border-gray-100">
+        <div className="max-w-lg w-full">
+          <h2 className="font-['Montserrat'] font-bold text-[22px] text-[#6B2D5C] text-center mb-8 uppercase tracking-tight">
+            📱 O QUE VOCÊ RECEBE NO APP:
+          </h2>
+          
+          <div className="space-y-4">
+            {modules.map((mod, idx) => (
+              <div key={idx} className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100 shadow-sm">
+                <span className="text-3xl shrink-0 mt-1">{mod.icon}</span>
+                <div>
+                  <h3 className="font-bold text-[15px] text-gray-800 leading-none mb-1">{mod.title}</h3>
+                  <p className="text-[13px] text-gray-500 leading-snug">{mod.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        <div className="relative w-full min-h-[220px]">
-          <div 
-            className="flex transition-transform duration-700 ease-in-out"
-            style={{ transform: `translateX(-${reviewIndex * 100}%)` }}
+      {/* SEÇÃO 3: PREÇO E CTA DIRETO */}
+      <section className="w-full bg-rosa-roxo-grad py-12 px-6 flex flex-col items-center text-white">
+        <div className="max-w-lg w-full text-center">
+          <p className="text-[#FFC107] font-black text-sm uppercase tracking-widest mb-2">Oferta Exclusiva - Vagas Limitadas</p>
+          
+          <div className="flex flex-col items-center mb-6">
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-bold opacity-60">R$</span>
+              <span className="text-[68px] font-black text-[#FFC107] leading-none">19,90</span>
+            </div>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] mt-2 text-white/80">Acesso Vitalício</p>
+          </div>
+
+          <div className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 rounded-full py-2 px-4 mb-8 inline-block animate-pulse">
+            <p className="text-[11px] font-black uppercase">⚠️ Apenas {spots} vagas restantes nesse valor</p>
+          </div>
+
+          <button 
+            onClick={handleCta}
+            className="w-full py-6 bg-[#FFC107] text-black font-['Montserrat'] font-black text-[22px] rounded-[24px] shadow-[0_15px_35px_rgba(255,193,7,0.3)] active:scale-95 transition-all uppercase mb-6"
           >
-            {REVIEWS.map((d, i) => (
-              <div key={i} className="w-full flex-shrink-0 px-2">
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl flex flex-col gap-4">
-                  <div className="flex items-center gap-3">
-                    <img src={d.img} className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm" alt={d.name} />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-1">
-                        <p className="text-[14px] font-black text-gray-900">{d.name}</p>
-                        <span className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center text-[6px] text-white">✓</span>
-                      </div>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{d.city}, Brasil</p>
-                    </div>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg" className="w-4 h-4 opacity-20" alt="Google" />
-                  </div>
-                  
-                  <div className="flex flex-col gap-1">
-                    <div className="flex gap-0.5">
-                      {[1, 2, 3, 4, 5].map(s => (
-                        <svg key={s} className="w-4 h-4 text-orange-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                      ))}
-                    </div>
-                    <p className="text-[11px] font-bold text-gray-400">Publicado há 2 semanas</p>
-                  </div>
-
-                  <p className="text-[13px] text-gray-700 leading-relaxed font-medium">
-                    "{d.text}"
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-center gap-1.5 mt-6">
-            {REVIEWS.map((_, i) => (
-              <div 
-                key={i} 
-                className={`h-1.5 rounded-full transition-all duration-300 ${reviewIndex === i ? 'w-6 bg-purple-600' : 'w-1.5 bg-gray-200'}`}
-              ></div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 🧪 SEÇÃO 2 — POR QUE FUNCIONA */}
-      <section className="w-full px-6 py-16 bg-purple-50">
-        <h2 className="text-xl font-black text-center mb-10">Por que a <span className="text-purple-600">Gelatina Noturna</span> funciona?</h2>
-        <div className="grid grid-cols-1 gap-4">
-          {[
-            { t: "Estimula o ritmo digestivo noturno", i: "🔄" },
-            { t: "Ajuda a reduzir a retenção e o inchaço", i: "💧" },
-            { t: "Favorece a saciedade e o equilíbrio", i: "⚖️" }
-          ].map((item, i) => (
-            <div key={i} className="bg-white p-5 rounded-[24px] border border-purple-100 flex items-center gap-4 shadow-sm">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-2xl">{item.i}</div>
-              <p className="text-[13px] font-bold text-gray-700 leading-tight">{item.t}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 🎁 SEÇÃO 3 — BÔNUS */}
-      <section className="w-full px-6 py-16">
-        <h2 className="text-xl font-black text-center mb-10 leading-tight px-4">
-          Ao entrar hoje, você recebe <span className="text-purple-600">bônus exclusivos</span>
-        </h2>
-        
-        <div className="space-y-6">
-          {[
-            { title: "Guia Anti-Inchaço Express", value: "R$ 49,00", desc: "Dicas alimentares que aceleram a redução do inchaço.", icon: "📖" },
-            { title: "Cardápio Desinchante 7 Dias", value: "R$ 57,00", desc: "Sugestões práticas para potencializar o protocolo.", icon: "🥗" },
-            { title: "Lista Inteligente de Ingredientes", value: "R$ 27,00", desc: "Facilita as compras e evita erros comuns.", icon: "🛒" }
-          ].map((bonus, i) => (
-            <div key={i} className="bg-white rounded-3xl p-6 border border-gray-100 shadow-md flex items-start gap-4">
-              <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0 shadow-inner">{bonus.icon}</div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start mb-1">
-                  <h3 className="text-sm font-black text-gray-900 pr-2">{bonus.title}</h3>
-                  <span className="text-[10px] font-black text-purple-600 bg-purple-50 px-2 py-0.5 rounded-lg whitespace-nowrap">{bonus.value}</span>
-                </div>
-                <p className="text-[11px] text-gray-500 font-medium leading-relaxed">{bonus.desc}</p>
-                <p className="text-[9px] font-black text-emerald-500 uppercase mt-2 tracking-widest">Incluso grátis ✨</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 📱 SEÇÃO 3.5 — O QUE VOCÊ VAI RECEBER */}
-      <section className="w-full px-6 py-16 bg-white border-t border-gray-50">
-        <h2 className="text-2xl font-black text-center mb-4">O que você vai receber</h2>
-        <p className="text-sm text-gray-500 font-medium text-center mb-10 px-4 leading-relaxed">
-          Você vai receber tudo que precisa para começar hoje mesmo e transformar suas noites com o Truque da Gelatina Noturna!
-        </p>
-
-        <div className="w-full bg-purple-50 rounded-[40px] p-6 mb-8 border border-purple-100 shadow-inner overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-full -mr-16 -mt-16 opacity-50"></div>
-          
-          <img 
-            src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_ki4ot9ki4ot9ki4o.png" 
-            alt="Mockup do App" 
-            className="w-full h-auto rounded-3xl shadow-2xl mb-10 relative z-10"
-          />
-          
-          <div className="space-y-4 relative z-10">
-            {[
-              "**Aplicativo 100% completo** com interface simples e fácil de usar",
-              "**Acompanhamento passo a passo** para preparar suas gelatinas noturnas",
-              "**Receitas exclusivas e testadas** que aceleram os resultados",
-              "**Alertas e lembretes automáticos** para não perder nenhum dia do protocolo",
-              "**Suporte rápido** para qualquer dúvida durante o uso"
-            ].map((bullet, i) => (
-              <div key={i} className="flex items-start gap-3 bg-white/70 backdrop-blur-sm p-4 rounded-2xl border border-white/50 shadow-sm">
-                <span className="text-emerald-500 text-lg flex-shrink-0">✅</span>
-                <p className="text-[13px] text-gray-700 leading-tight">
-                  {bullet.split('**').map((part, index) => index % 2 === 1 ? <strong key={index} className="font-black text-gray-900">{part}</strong> : part)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 💰 SEÇÃO 4 — ANCORAGEM DE VALOR */}
-      <section className="w-full px-6 py-12 bg-gray-900 text-white rounded-[40px] mb-16">
-        <h2 className="text-lg font-black text-center mb-8 uppercase tracking-tighter">Sua Oferta Especial</h2>
-        <div className="w-full space-y-3 mb-10 px-4">
-          <div className="flex justify-between text-sm opacity-60">
-            <span>Protocolo Gelatina Noturna</span>
-            <span className="line-through">R$ 99,00</span>
-          </div>
-          <div className="flex justify-between text-sm opacity-60">
-            <span>Guia Anti-Inchaço</span>
-            <span className="line-through">R$ 49,00</span>
-          </div>
-          <div className="flex justify-between text-sm opacity-60">
-            <span>Cardápio 7 Dias</span>
-            <span className="line-through">R$ 57,00</span>
-          </div>
-          <div className="flex justify-between text-sm opacity-60">
-            <span>Lista de Ingredientes</span>
-            <span className="line-through">R$ 27,00</span>
-          </div>
-          <div className="pt-4 border-t border-white/10 flex justify-between items-baseline">
-            <span className="text-xs font-bold uppercase">Total Real</span>
-            <span className="text-xl font-black text-red-400">R$ 232,00</span>
-          </div>
-        </div>
-
-        <div className="w-full bg-white/5 rounded-3xl p-8 text-center border border-white/10">
-          <p className="text-[12px] font-black text-purple-400 uppercase mb-4 tracking-[0.2em]">Sua Oferta Exclusiva</p>
-          <div className="flex items-baseline justify-center gap-1 mb-6">
-            <span className="text-sm font-black text-purple-400 mr-1">Por apenas</span>
-            <span className="text-2xl font-black text-purple-400">R$</span>
-            <span className="text-6xl font-black text-purple-400 tracking-tighter">19,90</span>
-          </div>
-          
-          <button onClick={handleCheckoutClick} className="w-full py-5 btn-gradient text-white font-black text-xl rounded-2xl shadow-2xl active:scale-95 transition-all uppercase flex items-center justify-center gap-2 mb-4 animate-pulse">
-            <span>EU QUERO ESSA OFERTA</span>
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+            QUERO COMEÇAR AGORA 👉
           </button>
 
-          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Pagamento único • Acesso vitalício</p>
-        </div>
-      </section>
+          {/* NOVO CARROSSEL DE DEPOIMENTOS ABAIXO DO CTA */}
+          <GoogleReviewsCarousel />
 
-      {/* 🛡️ SEÇÃO 5 — GARANTIA */}
-      <section className="w-full px-6 py-16 text-center">
-        <div className="w-full bg-[#FFFBEB] border border-[#FDE68A] rounded-[32px] p-8 flex flex-col items-center">
-          <div className="w-20 h-20 mb-6 flex items-center justify-center relative">
-            <div className="absolute inset-0 bg-yellow-400/20 rounded-full animate-ping"></div>
-            <svg className="w-full h-full text-yellow-500 relative z-10" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm3.707 6.707l-4 4a1 1 0 01-1.414 0l-2-2a1 1 0 111.414-1.414L9 10.586l3.293-3.293a1 1 0 011.414 1.414z"/>
-            </svg>
-          </div>
-          <h3 className="text-xl font-black text-gray-900 mb-4">Garantia Blindada de 30 Dias</h3>
-          <p className="text-[13px] text-gray-600 leading-relaxed font-bold mb-4">
-            Use o protocolo completo. Se não perceber redução do inchaço ou melhora digestiva, devolvemos 100% do seu dinheiro.
-          </p>
-          <div className="flex flex-col gap-1">
-            <span className="text-[11px] font-black text-yellow-700 uppercase">Sem perguntas.</span>
-            <span className="text-[11px] font-black text-yellow-700 uppercase">Sem burocracia.</span>
+          <div className="flex items-center justify-center gap-6 opacity-60">
+             <img src="https://img.icons8.com/color/48/000000/visa.png" width="48" height="24" loading="lazy" className="h-6 object-contain grayscale brightness-200" alt="Visa" />
+             <img src="https://img.icons8.com/color/48/000000/mastercard.png" width="48" height="24" loading="lazy" className="h-6 object-contain grayscale brightness-200" alt="Master" />
+             <img src="https://img.icons8.com/color/48/000000/pix.png" width="48" height="24" loading="lazy" className="h-6 object-contain grayscale brightness-200" alt="Pix" />
           </div>
         </div>
       </section>
 
-      {/* ⚡ SEÇÃO 6 — FAQ */}
-      <section className="w-full px-6 py-16 bg-white">
-        <h2 className="text-xl font-black text-center mb-10">Dúvidas Frequentes</h2>
-        <div className="w-full space-y-4">
-          {[
-            { q: "Funciona para qualquer idade?", a: "Sim, o protocolo é adaptável e seguro para qualquer idade." },
-            { q: "Preciso fazer dieta restritiva?", a: "Não. O foco é ativar seu metabolismo através da rotina noturna." },
-            { q: "É necessário fazer exercícios?", a: "Não é obrigatório. Os resultados vêm da ativação hormonal natural." },
-            { q: "É difícil de preparar?", a: "Extremamente simples. Leva menos de 5 minutos na sua cozinha." }
-          ].map((faq, i) => (
-            <div key={i} className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
-              <h4 className="text-[13px] font-black text-gray-900 mb-2">{faq.q}</h4>
-              <p className="text-[12px] text-gray-600 leading-relaxed font-medium">→ {faq.a}</p>
-            </div>
-          ))}
+      {/* SEÇÃO 4: GARANTIA & FAQ COMPACTO */}
+      <section className="w-full bg-white py-12 px-6 flex flex-col items-center border-t border-gray-100">
+        <div className="max-w-lg w-full text-center">
+          <div className="flex flex-col items-center mb-10">
+            <div className="text-5xl mb-4">🛡️</div>
+            <h3 className="font-black text-xl text-gray-800 uppercase mb-2">RISCO ZERO</h3>
+            <p className="text-sm text-gray-500 leading-relaxed px-4">
+              Garantia incondicional de 15 dias. Se não desinchar ou não gostar, devolvemos seu dinheiro. Sem perguntas.
+            </p>
+          </div>
+
+          <div className="space-y-3 text-left">
+            {faqItems.map((item, i) => (
+              <div key={i} className="border-b border-gray-100 pb-3">
+                <button 
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full py-2 text-left flex justify-between items-center"
+                >
+                  <span className="font-bold text-[15px] text-gray-700">{item.q}</span>
+                  <span className="text-xl text-gray-400">{openFaq === i ? '−' : '+'}</span>
+                </button>
+                {openFaq === i && (
+                  <p className="text-[14px] text-gray-500 py-2 animate-fadeIn">{item.a}</p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* 🔥 CTA FINAL */}
-      <section className="w-full px-6 py-16 bg-white border-t border-gray-100 flex flex-col items-center">
-        <button onClick={handleCheckoutClick} className="w-full py-6 btn-gradient text-white font-black text-[18px] rounded-2xl shadow-2xl active:scale-95 transition-all uppercase">
-          SIM, QUERO ACESSAR MEU PROTOCOLO COMPLETO
-        </button>
-
-        <div className="flex items-center gap-4 opacity-40 mt-4">
-           <div className="flex flex-col items-center">
-             <span className="text-xl">🔒</span>
-             <span className="text-[8px] font-black uppercase">Seguro</span>
-           </div>
-           <div className="flex flex-col items-center">
-             <span className="text-xl">💳</span>
-             <span className="text-[8px] font-black uppercase">Imediato</span>
-           </div>
-           <div className="flex flex-col items-center">
-             <span className="text-xl">🛡️</span>
-             <span className="text-[8px] font-black uppercase">Garantido</span>
-           </div>
-        </div>
-      </section>
-
+      <footer className="w-full bg-black py-10 px-6 text-center text-white/30 text-[10px] font-bold uppercase tracking-widest">
+        © 2026 Protocolo Gelatina Noturna • Todos os direitos reservados
+      </footer>
     </div>
   );
 };

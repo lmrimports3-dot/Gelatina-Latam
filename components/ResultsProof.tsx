@@ -20,11 +20,14 @@ const ResultsProof: React.FC<ResultsProofProps> = ({ onNext }) => {
         </h1>
       </div>
 
-      {/* Hero Image - Layout corrigido: centralizado, max-width 92%, respiro visual (padding 12px), bordas arredondadas (12px) */}
+      {/* Hero Image */}
       <div className="w-full px-[12px] max-w-[92%] mx-auto mb-10">
         <img 
           src={IMAGE_URL} 
           alt="Resultados Reais" 
+          width="400"
+          height="500"
+          loading="lazy"
           className="w-full h-auto block rounded-[12px] object-contain"
         />
       </div>

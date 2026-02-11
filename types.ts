@@ -1,19 +1,24 @@
-
 export enum AppStep {
   LANDING = 'LANDING',
-  TRANSITION = 'TRANSITION',
   QUIZ = 'QUIZ',
   CALCULATING = 'CALCULATING',
-  ATTENTION_AUDIO = 'ATTENTION_AUDIO',
-  DIAGNOSIS_LOADING = 'DIAGNOSIS_LOADING',
   DIAGNOSIS = 'DIAGNOSIS',
-  DISCOUNT_SCRATCH = 'DISCOUNT_SCRATCH',
-  RESULTS_PROOF = 'RESULTS_PROOF',
-  RESULT = 'RESULT'
+  EXPERT_AUDIO = 'EXPERT_AUDIO',
+  PRE_SALES_LOADING = 'PRE_SALES_LOADING',
+  FINAL_PROOF = 'FINAL_PROOF'
 }
 
 export interface QuizQuestion {
   id: number;
   question: string;
-  options: string[];
+  questionHighlight?: string;
+  subtext: string;
+  options: {
+    id: string;
+    label: string;
+    subtext?: string;
+    icon?: string;
+    image?: string;
+  }[];
+  type: 'text' | 'image' | 'weight_height' | 'goal';
 }
