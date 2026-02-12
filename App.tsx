@@ -1,175 +1,172 @@
 
-import React, { useState } from 'react';
-import Opening from './components/Opening';
-import QuizStep from './components/QuizStep';
-import BellyTypeStep from './components/BellyTypeStep';
-import EducationStep from './components/EducationStep';
-import SocialProofStep from './components/SocialProofStep';
-import LeadCapture from './components/LeadCapture';
-import BiometricsStep from './components/BiometricsStep';
-import AnalysisStep from './components/AnalysisStep';
-import SpecialistAudioStep from './components/SpecialistAudioStep';
-import SalesVSL from './components/SalesVSL';
-import { AppStep, UserData } from './types';
+import React, { useState, useEffect } from 'react';
+import Landing from './components/Landing';
+import Transition from './components/Transition';
+import Quiz from './components/Quiz';
+import LoadingResult from './components/LoadingResult';
+import AttentionAudio from './components/AttentionAudio';
+import DiagnosisLoading from './components/DiagnosisLoading';
+import Diagnosis from './components/Diagnosis';
+import DiscountScratch from './components/DiscountScratch';
+import ResultAnalysis from './components/ResultAnalysis';
+import { AppStep } from './types';
+
+const REDIRECT_URL = "https://ofertaexclusiva.figma.site/";
 
 const App: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<AppStep>(AppStep.OPENING);
-  const [userData, setUserData] = useState<UserData>({
-    name: '',
-    email: '',
-    gender: '',
-    age: '',
-    emotional: '',
-    bellyType: '',
-    sleep: '',
-    goal: '',
-    weight: 0,
-    height: 0,
-    commitment: false
-  });
+  const [currentStep, setCurrentStep] = useState<AppStep>(AppStep.LANDING);
+  const [userData, setUserData] = useState<any>(null);
 
-  const updateData = (newData: Partial<UserData>) => {
-    setUserData(prev => ({ ...prev, ...newData }));
-  };
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
 
-  const next = () => {
-    const steps = Object.values(AppStep);
-    const currentIndex = steps.indexOf(currentStep);
-    if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1]);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 1. UTMify Pixels e Scripts
+    const pixelTimer = setTimeout(() => {
+      if (!(window as any).pixelId) {
+        (window as any).pixelId = "69702fa1c5b721d69dce91ef";
+        const utmifyPixel = document.createElement("script");
+        utmifyPixel.async = true;
+        utmifyPixel.defer = true;
+        utmifyPixel.src = "https://cdn.utmify.com.br/scripts/pixel/pixel.js";
+        document.head.appendChild(utmifyPixel);
+      }
+
+      const utmifyCapture = document.createElement("script");
+      utmifyCapture.src = "https://cdn.utmify.com.br/scripts/utms/latest.js";
+      utmifyCapture.setAttribute("data-utmify-prevent-xcod-sck", "");
+      utmifyCapture.setAttribute("data-utmify-prevent-subids", "");
+      utmifyCapture.async = true;
+      utmifyCapture.defer = true;
+      document.head.appendChild(utmifyCapture);
+    }, 1500);
+
+    // 2. SISTEMA DE INTERCEPTAÇÃO TOTAL (BACK BUTTON HIJACK)
+    const performBackRedirect = () => {
+      if ((window as any).isNavigatingToCheckout) return;
+      window.location.replace(REDIRECT_URL);
+    };
+
+    // Lógica agressiva de histórico: Cria armadilha para popstate
+    const setupHistoryTrap = () => {
+      // Empurra dois estados extras para garantir que o usuário precise clicar 'voltar' 
+      // várias vezes para sair do nosso controle, mas no primeiro clique já disparamos o popstate.
+      window.history.pushState(null, '', window.location.href);
+      window.history.pushState(null, '', window.location.href);
+    };
+
+    setupHistoryTrap();
+
+    const onPopState = (event: PopStateEvent) => {
+      // Bloqueia a navegação reversa e força o redirect imediato
+      event.preventDefault();
+      performBackRedirect();
+      // Reaplica a armadilha caso o redirecionamento demore ou falhe
+      setupHistoryTrap();
+    };
+
+    // Eventos de Abandono Críticos
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') performBackRedirect();
+    };
+
+    const onPageHide = () => performBackRedirect();
+    const onBlur = () => performBackRedirect();
+
+    window.addEventListener('popstate', onPopState);
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('blur', onBlur);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    
+    // Interceptação de fechamento de aba/navegador (Safari/iOS)
+    window.addEventListener('beforeunload', (e) => {
+      if (!(window as any).isNavigatingToCheckout) {
+        performBackRedirect();
+      }
+    });
+
+    return () => {
+      clearTimeout(pixelTimer);
+      window.removeEventListener('popstate', onPopState);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('blur', onBlur);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, []);
+
+  const handleNext = (data?: any) => {
+    // Manutenção do Trap de Histórico em cada mudança de etapa
+    if (typeof window !== 'undefined') {
+      window.history.pushState(null, '', window.location.href);
+      window.history.pushState(null, '', window.location.href);
+    }
+
+    // Limpeza de objetos nativos para evitar erros de serialização
+    if (data && (
+      data.nativeEvent || 
+      data instanceof Event || 
+      (typeof Node !== 'undefined' && data instanceof Node) || 
+      typeof data.preventDefault === 'function' ||
+      data.target
+    )) {
+      data = null; 
+    }
+
+    if (data && typeof data === 'object') {
+      try {
+        const sanitized = JSON.parse(JSON.stringify(data, (key, value) => {
+          if (typeof Node !== 'undefined' && value instanceof Node) return undefined;
+          if (value instanceof Event) return undefined;
+          return value;
+        }));
+        setUserData((prev: any) => ({ ...prev, ...sanitized }));
+      } catch (e) {
+        console.warn("Circular reference detected.");
+      }
+    }
+
+    switch (currentStep) {
+      case AppStep.LANDING:
+        setCurrentStep(AppStep.TRANSITION);
+        break;
+      case AppStep.TRANSITION:
+        setCurrentStep(AppStep.QUIZ);
+        break;
+      case AppStep.QUIZ:
+        setCurrentStep(AppStep.CALCULATING);
+        break;
+      case AppStep.CALCULATING:
+        setCurrentStep(AppStep.ATTENTION_AUDIO);
+        break;
+      case AppStep.ATTENTION_AUDIO:
+        setCurrentStep(AppStep.DIAGNOSIS_LOADING);
+        break;
+      case AppStep.DIAGNOSIS_LOADING:
+        setCurrentStep(AppStep.DIAGNOSIS);
+        break;
+      case AppStep.DIAGNOSIS:
+        setCurrentStep(AppStep.DISCOUNT_SCRATCH);
+        break;
+      case AppStep.DISCOUNT_SCRATCH:
+        setCurrentStep(AppStep.RESULT);
+        break;
+      default:
+        break;
     }
   };
 
-  const stepIndex = Object.values(AppStep).indexOf(currentStep) + 1;
-  const totalSteps = Object.values(AppStep).length;
-  const progressPercent = Math.round((stepIndex / totalSteps) * 100);
-
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#E9D8E9] to-white font-['Poppins'] text-gray-800 flex flex-col overflow-x-hidden">
-      
-      {/* Barra de Progresso */}
-      {currentStep !== AppStep.OPENING && currentStep !== AppStep.SALES && (
-        <div className="w-full pt-4 px-6 flex flex-col items-center">
-          <div className="w-full max-w-lg">
-            <div className="w-full h-1 bg-white/50 rounded-full overflow-hidden mt-2">
-              <div 
-                className="h-full bg-[#FFD700] transition-all duration-500" 
-                style={{ width: `${progressPercent}%` }}
-              ></div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Container de Conteúdo */}
-      <div className="flex-1 flex flex-col justify-center items-center py-4">
-        <div className="w-full max-w-lg px-6 flex flex-col items-center">
-          
-          {currentStep === AppStep.OPENING && <Opening onNext={next} />}
-
-          {currentStep === AppStep.EMOTIONAL && (
-            <QuizStep 
-              title="Primeiro, me diga: qual destas situações mais te frustra HOJE?" 
-              subtitle="Saber a sua maior frustração nos ajuda a personalizar sua jornada."
-              options={[
-                { label: '😥 "Acordo com a barriga menos inchada, mas ao longo do dia ela dobra de tamanho..."', value: 'bloat' },
-                { label: '😤 "Já tentei de tudo: dietas, chás, exercícios... Nada parece funcionar como antes."', value: 'failed' },
-                { label: '😔 "Sinto que meu corpo mudou depois da menopausa e não me reconheço mais."', value: 'hormonal' },
-                { label: '😰 "Tenho vergonha de usar certas roupas ou de tirar fotos por causa da minha barriga."', value: 'shame' }
-              ]}
-              onSelect={(val) => { updateData({ emotional: val }); next(); }}
-            />
-          )}
-
-          {currentStep === AppStep.GENDER && (
-            <QuizStep 
-              title="Este protocolo foi desenhado por mulheres, para mulheres. Você se identifica como:" 
-              subtitle="Isso nos ajuda a ajustar a comunicação para você."
-              type="gender"
-              onSelect={(val) => { updateData({ gender: val }); next(); }} 
-            />
-          )}
-
-          {currentStep === AppStep.AGE && (
-            <QuizStep 
-              title="Sua idade é crucial. Ela nos ajuda a entender seu perfil hormonal." 
-              subtitle="Após os 40, nosso metabolismo muda. Precisamos saber em que fase você está."
-              type="grid"
-              options={[
-                { label: "35-44 anos", value: "35-44", icon: "👩" },
-                { label: "45-54 anos", value: "45-54", icon: "👱‍♀️" },
-                { label: "55-64 anos", value: "55-64", icon: "🧓" },
-                { label: "65+ anos", value: "65+", icon: "👵" }
-              ]}
-              onSelect={(val) => { updateData({ age: val }); next(); }} 
-            />
-          )}
-
-          {currentStep === AppStep.LEAD_CAPTURE && (
-            <LeadCapture onNext={(name, email) => { updateData({ name, email }); next(); }} />
-          )}
-
-          {currentStep === AppStep.BELLY_TYPE && (
-            <BellyTypeStep onSelect={(val) => { updateData({ bellyType: val }); next(); }} />
-          )}
-
-          {currentStep === AppStep.SLEEP && (
-            <QuizStep 
-              title="Seu sono é a chave. Como você descreveria suas noites?" 
-              subtitle="O ritual noturno age enquanto você dorme. Precisamos entender seu padrão de sono."
-              options={[
-                { label: "😴 Durmo pouco e acordo cansada.", value: "tired" },
-                { label: "🌙 Demoro para pegar no sono ou acordo várias vezes.", value: "insomnia" },
-                { label: "😊 Durmo bem, mas ainda assim acordo inchada.", value: "bloated_sleep" },
-                { label: "💤 Durmo mais de 8 horas, mas sinto que não descansei.", value: "no_rest" }
-              ]}
-              onSelect={(val) => { updateData({ sleep: val }); next(); }} 
-            />
-          )}
-
-          {currentStep === AppStep.EDUCATION && <EducationStep onComplete={next} />}
-          
-          {currentStep === AppStep.SOCIAL_PROOF && <SocialProofStep onComplete={next} />}
-
-          {currentStep === AppStep.FINAL_GOAL && (
-            <QuizStep 
-              title="Estamos finalizando seu protocolo. O que seria a maior vitória para você?" 
-              subtitle="Visualize seu sucesso. O que mais te motiva a mudar?"
-              options={[
-                { label: "👗 Voltar a usar as roupas que eu amo.", value: "clothes" },
-                { label: "😊 Me olhar no espelho e sentir orgulho de novo.", value: "pride" },
-                { label: "💪 Ter energia para brincar com meus filhos/netos.", value: "energy" },
-                { label: "🏖️ Ir à praia sem sentir vergonha do meu corpo.", value: "beach" }
-              ]}
-              onSelect={(val) => { updateData({ goal: val }); next(); }} 
-            />
-          )}
-
-          {currentStep === AppStep.COMMITMENT && (
-            <QuizStep 
-              title="Seu protocolo está pronto. Você está pronta para seguir um ritual simples de 10 segundos antes de dormir?" 
-              subtitle="A mudança só depende de você. Está comprometida?"
-              options={[
-                { label: "✅ Sim! Estou 100% comprometida em mudar!", value: "yes" },
-                { label: "❌ Não, ainda não estou pronta.", value: "no" }
-              ]}
-              onSelect={(val) => { updateData({ commitment: val === 'yes' }); next(); }} 
-            />
-          )}
-
-          {currentStep === AppStep.BIOMETRICS && (
-            <BiometricsStep onNext={(weight, height) => { updateData({ weight, height }); next(); }} />
-          )}
-
-          {currentStep === AppStep.ANALYSIS && <AnalysisStep onComplete={next} />}
-
-          {currentStep === AppStep.SPECIALIST_AUDIO && <SpecialistAudioStep onComplete={next} />}
-
-          {currentStep === AppStep.SALES && <SalesVSL userData={userData} />}
-
-        </div>
-      </div>
+    <div className="min-h-screen flex flex-col items-center bg-white overflow-x-hidden">
+      <main className="w-full flex-1 flex flex-col items-center">
+        {currentStep === AppStep.LANDING && <Landing onNext={() => handleNext()} />}
+        {currentStep === AppStep.TRANSITION && <Transition onNext={() => handleNext()} />}
+        {currentStep === AppStep.QUIZ && <Quiz onNext={(data) => handleNext(data)} />}
+        {currentStep === AppStep.CALCULATING && <LoadingResult onComplete={() => handleNext()} />}
+        {currentStep === AppStep.ATTENTION_AUDIO && <AttentionAudio onNext={() => handleNext()} />}
+        {currentStep === AppStep.DIAGNOSIS_LOADING && <DiagnosisLoading onComplete={() => handleNext()} />}
+        {currentStep === AppStep.DIAGNOSIS && <Diagnosis userData={userData} onNext={() => handleNext()} />}
+        {currentStep === AppStep.DISCOUNT_SCRATCH && <DiscountScratch onNext={() => handleNext()} />}
+        {currentStep === AppStep.RESULT && <ResultAnalysis userData={userData} onNext={() => {}} />}
+      </main>
     </div>
   );
 };

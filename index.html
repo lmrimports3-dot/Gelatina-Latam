@@ -1,113 +1,69 @@
+
 <!DOCTYPE html>
-<html lang="es-AR">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>El Truco Real de la Gelatina</title>
+    <title>O Truque Real da Gelatina</title>
     
-    <!-- 1. Preconnects Críticos -->
-    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
-    <link rel="preconnect" href="https://ik.imagekit.io">
-    <link rel="preconnect" href="https://connect.facebook.net" crossorigin>
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1516015499464507');
+    fbq('track', 'PageView');
+    </script>
+    <!-- End Meta Pixel Code -->
 
-    <!-- 2. LCP SUPREMO: Preload de la imagen principal optimizada antes que cualquier script -->
-    <link rel="preload" as="image" href="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_q07qytq07qytq07q.png?tr=w-650,f-webp,q-80" fetchpriority="high">
-
-    <!-- 3. Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- 4. Estilos y Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      :root{--roxo-escuro:#6B2D5C;--rosa-vibrante:#E91E63;--amarelo:#FFC107}
-      body{font-family:'Poppins',sans-serif;background-color:#f5f5f5;color:#333}
-      h1,h2,h3,.font-montserrat{font-family:'Montserrat',sans-serif}
-      .gradient-text{background:linear-gradient(to right,#9333ea,#db2777);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-      .btn-gradient{background:linear-gradient(135deg,#a855f7 0%,#ec4899 100%)}
-      @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-      .float-animation{animation:float 3s ease-in-out infinite}
-      .bg-roxo-grad{background:linear-gradient(to bottom,#6B2D5C,#000)}
-      .bg-rosa-roxo-grad{background:linear-gradient(to right,#E91E63,#6B2D5C)}
-      .bg-roxo-rosa-grad{background:linear-gradient(to right,#6B2D5C,#E91E63)}
-      .animate-pulse-fast{animation:pulse 1s cubic-bezier(.4,0,.6,1) infinite}
-      @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #fcfcfc;
+      }
+      .gradient-text {
+        background: linear-gradient(to right, #9333ea, #db2777);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .btn-gradient {
+        background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+      }
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+      }
+      .float-animation {
+        animation: float 3s ease-in-out infinite;
+      }
     </style>
 
     <script type="importmap">
-      {
-        "imports": {
-          "react/": "https://esm.sh/react@^19.2.4/",
-          "react": "https://esm.sh/react@^19.2.4",
-          "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
-        }
+    {
+      "imports": {
+        "react/": "https://esm.sh/react@^19.2.4/",
+        "react": "https://esm.sh/react@^19.2.4",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
       }
+    }
     </script>
   </head>
   <body>
+    <noscript>
+      <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1516015499464507&ev=PageView&noscript=1"/>
+    </noscript>
     <div id="root"></div>
-    
-    <!-- Scripts Cargados de Forma No-Bloqueante -->
-    <script type="module" src="/index.tsx" defer></script>
-
-    <!-- Facebook Pixel Marcado como async -->
-    <script async src="https://connect.facebook.net/en_US/fbevents.js"></script>
-    <script>
-      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init','1516015499464507');
-      fbq('track','PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1516015499464507&ev=PageView&noscript=1"/></noscript>
-
-    <!-- TRAVA DE SEGURANÇA: Backredirect original mantido intacto conforme solicitação crítica -->
-    <script>
-      (function(w,d,h,l){
-        var TARGET_URL="https://ofertaexclusiva.figma.site/",isArmed=!1,activationDelay=1500;
-        function executeRedirect(){
-          if(w.isNavigatingToCheckout||w.isInternalNavigation)return;
-          try{
-            if(w.alreadyRedirected)return;
-            w.alreadyRedirected=!0;
-            l.replace(TARGET_URL);
-            w.top.location.replace(TARGET_URL);
-            w.parent.location.replace(TARGET_URL);
-            w.setTimeout(function(){l.href=TARGET_URL},50)
-          }catch(e){l.href=TARGET_URL}
-        }
-        function armSystem(){
-          if(w.isNavigatingToCheckout||w.isInternalNavigation)return;
-          try{
-            for(var i=0;i<12;i++){
-              h.pushState({trap:i,ts:Date.now()},"",l.href);
-              h.replaceState({trap:i,ts:Date.now()},"",l.href)
-            }
-            isArmed=!0
-          }catch(e){}
-        }
-        w.setTimeout(armSystem,activationDelay);
-        d.addEventListener("mousedown",function(e){
-          var el=e.target;
-          while(el&&el.tagName){
-            var tag=el.tagName.toLowerCase();
-            if(tag==='button'||tag==='a'||el.classList.contains('cursor-pointer')||el.onclick){
-              w.isInternalNavigation=!0;
-              w.setTimeout(function(){w.isInternalNavigation=!1},1e3);
-              return
-            }
-            el=el.parentNode
-          }
-          if(!isArmed)armSystem()
-        },{capture:!0,passive:!0});
-        w.onpopstate=function(e){if(isArmed)executeRedirect()};
-        d.addEventListener("visibilitychange",function(){if(d.visibilityState==="hidden"&&isArmed)executeRedirect()});
-        w.addEventListener("blur",function(){if(isArmed)executeRedirect()});
-        w.addEventListener("pagehide",function(){if(isArmed)executeRedirect()});
-        w.addEventListener("beforeunload",function(){if(isArmed)executeRedirect()});
-        w.addEventListener("focus",function(){if(isArmed)armSystem()});
-        setInterval(function(){if(isArmed&&!w.isNavigatingToCheckout&&!w.isInternalNavigation){if(h.length<5)armSystem()}},1500)
-      })(window,document,window.history,window.location);
-    </script>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

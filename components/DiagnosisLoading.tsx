@@ -36,10 +36,10 @@ const DiagnosisLoading: React.FC<DiagnosisLoadingProps> = ({ onComplete }) => {
       {/* Headlines */}
       <div className="text-center mb-12">
         <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-4 leading-tight">
-          Diagnóstico do Seu Corpo — <span className="text-purple-600">Análise Concluída</span>
+          Gerando seu <span className="text-purple-600">Mapa Metabólico</span> Personalizado...
         </h2>
         <p className="text-[16px] font-bold text-gray-500 leading-relaxed px-4">
-          Com base nas suas respostas, identificamos os principais fatores que estão impedindo seu corpo de desinchar e emagrecer.
+          Aguarde enquanto nossa tecnologia identifica os bloqueios hormonais que estão impedindo seu corpo de desinchar naturalmente.
         </p>
       </div>
 
@@ -54,7 +54,7 @@ const DiagnosisLoading: React.FC<DiagnosisLoadingProps> = ({ onComplete }) => {
         <div className="flex flex-col items-center gap-1">
           <span className="text-sm font-black text-purple-600">{progress}%</span>
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest animate-pulse">
-            Sistematizando Dados Biométricos...
+            Cruzando dados com o Protocolo da Gelatina Noturna...
           </span>
         </div>
       </div>

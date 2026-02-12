@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface LandingProps {
@@ -6,72 +7,42 @@ interface LandingProps {
 
 const Landing: React.FC<LandingProps> = ({ onNext }) => {
   return (
-    <div className="w-full min-h-screen bg-gradient-to-b from-[#6B2D5C] to-black flex flex-col items-center text-white overflow-hidden">
-      {/* Top Scarcity */}
-      <div className="w-full bg-[#FFC107] py-1.5 px-4 text-center">
-        <p className="text-[9px] font-black text-black uppercase tracking-widest">
-          ⏰ DIAGNÓSTICO RÁPIDO - VÁLIDO SÓLO POR HOY
-        </p>
+    <div className="w-full max-w-lg mx-auto flex flex-col items-center px-6 py-10">
+      {/* Headline principal */}
+      <h1 className="text-xl md:text-2xl font-extrabold text-center text-gray-900 leading-tight mb-6">
+        Finalmente Revelado: O <span className="text-purple-600">Ritual Noturno Japonês</span> de 10 Segundos que Desincha a Barriga de Mulheres Enquanto Elas Dormem
+      </h1>
+
+      {/* Imagen principal */}
+      <div className="relative mb-8 w-full bg-white rounded-3xl shadow-2xl flex items-center justify-center p-1 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-pink-50 to-transparent rounded-3xl -z-10"></div>
+        <img 
+          src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_k24e9tk24e9tk24e%20(1).png?updatedAt=1770846320166" 
+          alt="Alerta Saúde" 
+          className="rounded-2xl w-full h-auto float-animation shadow-sm"
+        />
       </div>
 
-      <div className="flex-1 flex flex-col items-center px-5 pt-4 pb-8 max-w-lg w-full">
-        {/* Main Image - Optimized Height & Performance (LCP) */}
-        <div className="w-full max-h-[180px] sm:max-h-[220px] mb-3 overflow-hidden rounded-2xl shadow-xl border border-white/10">
-          <img 
-            src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_q07qytq07qytq07q.png?tr=w-650,f-webp,q-80" 
-            alt="Alerta de Intoxicación Metabólica" 
-            width="650"
-            height="220"
-            fetchPriority="high"
-            loading="eager"
-            className="w-full h-full object-cover float-animation"
-          />
-        </div>
+      {/* Transição para oferta */}
+      <p className="text-[15px] text-center text-gray-700 mb-10 max-w-[360px] leading-relaxed font-semibold">
+        Descubra qual dos 3 Tipos de <span className="text-red-600">"Inchaço Hormonal"</span> está impedindo você de emagrecer (e como reverter isso hoje, sem dietas ou exercícios).
+      </p>
 
-        {/* Headline - Refined typography for readability and space */}
-        <h1 className="text-[22px] font-black text-center leading-[1.3] mb-2 text-[#E91E63] drop-shadow-md">
-          ALERTA: <span className="text-white">¿Presentás alguno de estos 4 signos de 'Intoxicación Metabólica'?</span>
-        </h1>
+      {/* CTA Principal */}
+      <button 
+        onClick={(e) => {
+          e.stopPropagation();
+          onNext();
+        }}
+        className="w-full btn-gradient text-white font-extrabold text-lg py-5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all mb-3 flex flex-col items-center justify-center uppercase"
+      >
+        <span>GERAR MEU PROTOCOLO NOTURNO</span>
+      </button>
 
-        {/* Subtitle */}
-        <p className="text-[14px] font-medium text-center text-gray-300 mb-5 leading-snug">
-          Seleccioná lo que sentís y descubrí por qué no podés bajar de peso<br/>
-          (Incluso comiendo poco y haciendo ejercicio)
-        </p>
-
-        {/* Options - Compacted padding for "Slim" look */}
-        <div className="w-full space-y-2.5 mb-5">
-          {[
-            { id: '1', icon: '😴', text: 'Me despierto con la panza chata, pero termino hinchada', sub: '(Incluso comiendo normal)' },
-            { id: '2', icon: '😤', text: 'Ya probé TODO: dieta, ejercicio, tés, remedios...', sub: '(Nada parece funcionar)' },
-            { id: '3', icon: '🔥', text: 'Mi metabolismo se frenó después de los 30', sub: '(Antes bajaba rápido, ahora es imposible)' },
-            { id: '4', icon: '💊', text: 'Tengo miedo a las agujas / Ozempic / remedios', sub: '(Busco algo natural y seguro)' }
-          ].map((opt) => (
-            <button 
-              key={opt.id}
-              onClick={onNext}
-              className="w-full flex items-center gap-3 bg-white/10 hover:bg-white/20 border border-white/15 py-2.5 px-4 rounded-xl text-left transition-all active:scale-[0.98]"
-            >
-              <span className="text-2xl shrink-0">{opt.icon}</span>
-              <div className="flex-1">
-                <p className="text-[12px] font-bold text-white leading-tight">{opt.text}</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">{opt.sub}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest text-center">
-          ⏱ Lleva 90 segundos • Resultado Personalizado • Sin Spam
-        </p>
-      </div>
-
-      {/* Footer minimal info */}
-      <div className="w-full py-3 text-center border-t border-white/5 bg-black/50">
-        <p className="text-[9px] font-black text-gray-600 uppercase tracking-tighter italic">
-          EL TRUCO DE LA GELATINA NOCTURNA
-        </p>
-      </div>
+      {/* Micro copy */}
+      <p className="text-[11px] font-bold text-gray-400 text-center uppercase tracking-tight mb-8">
+        ⏱ LEVA MENOS DE 2 MINUTOS • TESTE GRATUITO • RESULTADO PERSONALIZADO
+      </p>
     </div>
   );
 };

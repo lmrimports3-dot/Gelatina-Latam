@@ -1,62 +1,90 @@
 
 import React, { useEffect, useState } from 'react';
 
+interface LoadingResultProps {
+  onComplete: () => void;
+}
+
 const STEPS = [
-  "Analisando seu perfil...",
-  "Calculando IMC...",
-  "Identificando seus bloqueios...",
-  "Gerando seu diagnóstico personalizado...",
-  "Buscando depoimentos de mulheres similares..."
+  "Analisando suas respostas...",
+  "Comparando perfis metabólicos...",
+  "Calculando doses de gelatina...",
+  "Finalizando seu plano personalizado..."
 ];
 
-const LoadingResult: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
-  const [step, setStep] = useState(0);
+const LoadingResult: React.FC<LoadingResultProps> = ({ onComplete }) => {
+  const [stepIndex, setStepIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress(prev => {
+    const stepInterval = setInterval(() => {
+      setStepIndex((prev) => (prev < STEPS.length - 1 ? prev + 1 : prev));
+    }, 2000);
+
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(interval);
+          clearInterval(progressInterval);
+          clearInterval(stepInterval);
           setTimeout(onComplete, 500);
           return 100;
         }
         return prev + 1;
       });
-    }, 40);
-
-    const stepInterval = setInterval(() => {
-      setStep(prev => (prev < STEPS.length - 1 ? prev + 1 : prev));
-    }, 800);
+    }, 50);
 
     return () => {
-      clearInterval(interval);
       clearInterval(stepInterval);
+      clearInterval(progressInterval);
     };
-  }, []);
+  }, [onComplete]);
 
   return (
-    <div className="w-full min-h-screen bg-black flex flex-col items-center justify-center px-8 text-white">
-      <div className="relative w-24 h-24 mb-12">
-        <div className="absolute inset-0 border-4 border-[#E91E63]/20 rounded-full"></div>
-        <div className="absolute inset-0 border-4 border-[#E91E63] border-t-transparent rounded-full animate-spin"></div>
-        <div className="absolute inset-0 flex items-center justify-center text-2xl animate-pulse">⏳</div>
+    <div className="w-full max-w-lg mx-auto flex flex-col items-center justify-center px-6 py-20 min-h-screen animate-fadeIn">
+      {/* Circular Spinner */}
+      <div className="relative w-24 h-24 mb-10">
+        <svg className="w-full h-full animate-spin">
+          <circle
+            cx="48"
+            cy="48"
+            r="42"
+            stroke="currentColor"
+            strokeWidth="6"
+            fill="transparent"
+            strokeDasharray="264"
+            strokeDashoffset="80"
+            className="text-purple-500"
+            strokeLinecap="round"
+          />
+        </svg>
       </div>
 
-      <h2 className="text-2xl font-black text-center mb-10 tracking-tight">
-        ANALISANDO SEU PERFIL...
-      </h2>
+      {/* Headline */}
+      <div className="text-center mb-10">
+        <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-2 px-4">
+          Preparando seu protocolo personalizado...
+        </h2>
+        <p className="text-[15px] font-bold text-purple-400">
+          Preparando a receita ideal da **Gelatina Noturna** para você...
+        </p>
+      </div>
 
+      {/* Progress Bar */}
       <div className="w-full max-w-xs flex flex-col items-center">
-        <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden mb-4 shadow-inner">
-          <div className="h-full bg-gradient-to-r from-[#E91E63] to-[#6B2D5C] transition-all duration-300" style={{ width: `${progress}%` }}></div>
+        <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-3">
+          <div 
+            className="h-full bg-purple-500 transition-all duration-150 ease-linear rounded-full"
+            style={{ width: `${progress}%` }}
+          ></div>
         </div>
-        <div className="flex flex-col items-center gap-1">
-          <span className="text-[#E91E63] font-black text-lg">{progress}%</span>
-          <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest animate-pulse h-4">
-            {STEPS[step]}
-          </p>
-        </div>
+        <span className="text-xs font-black text-gray-500">{progress}%</span>
+      </div>
+
+      {/* Dynamic Cycling Message */}
+      <div className="mt-12 h-6">
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">
+          {STEPS[stepIndex]}
+        </p>
       </div>
     </div>
   );
