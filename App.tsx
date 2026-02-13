@@ -40,67 +40,45 @@ const App: React.FC = () => {
       document.head.appendChild(utmifyCapture);
     }, 1500);
 
-    // 2. SISTEMA DE INTERCEPTAÇÃO TOTAL (BACK BUTTON HIJACK)
-    const performBackRedirect = () => {
-      if ((window as any).isNavigatingToCheckout) return;
-      window.location.replace(REDIRECT_URL);
-    };
+    // 2. SISTEMA DE BACK REDIRECT INTELIGENTE (Otimizado para CRO)
+    let popstateHandler: (event: PopStateEvent) => void;
 
-    // Lógica agressiva de histórico: Cria armadilha para popstate
-    const setupHistoryTrap = () => {
-      // Empurra dois estados extras para garantir que o usuário precise clicar 'voltar' 
-      // várias vezes para sair do nosso controle, mas no primeiro clique já disparamos o popstate.
-      window.history.pushState(null, '', window.location.href);
-      window.history.pushState(null, '', window.location.href);
-    };
+    const setupBackRedirect = () => {
+      // Checagem de robustez da History API
+      if (window.history && window.history.pushState) {
+        
+        // Delay de estritamente 1500ms antes de intervir no histórico
+        // Isso permite que o Quiz e o React completem a hidratação sem travamentos
+        setTimeout(() => {
+          // Cria o "trap" no histórico
+          window.history.pushState(null, '', window.location.href);
+          window.history.pushState(null, '', window.location.href);
 
-    setupHistoryTrap();
+          popstateHandler = (event: PopStateEvent) => {
+            // Verifica se o usuário não está indo para o checkout
+            if ((window as any).isNavigatingToCheckout) return;
 
-    const onPopState = (event: PopStateEvent) => {
-      // Bloqueia a navegação reversa e força o redirect imediato
-      event.preventDefault();
-      performBackRedirect();
-      // Reaplica a armadilha caso o redirecionamento demore ou falhe
-      setupHistoryTrap();
-    };
+            // Redirecionamento limpo e imediato
+            window.location.replace(REDIRECT_URL);
+          };
 
-    // Eventos de Abandono Críticos
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') performBackRedirect();
-    };
-
-    const onPageHide = () => performBackRedirect();
-    const onBlur = () => performBackRedirect();
-
-    window.addEventListener('popstate', onPopState);
-    window.addEventListener('pagehide', onPageHide);
-    window.addEventListener('blur', onBlur);
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    
-    // Interceptação de fechamento de aba/navegador (Safari/iOS)
-    window.addEventListener('beforeunload', (e) => {
-      if (!(window as any).isNavigatingToCheckout) {
-        performBackRedirect();
+          window.addEventListener('popstate', popstateHandler);
+        }, 1500);
       }
-    });
+    };
+
+    setupBackRedirect();
 
     return () => {
       clearTimeout(pixelTimer);
-      window.removeEventListener('popstate', onPopState);
-      window.removeEventListener('pagehide', onPageHide);
-      window.removeEventListener('blur', onBlur);
-      document.removeEventListener('visibilitychange', onVisibilityChange);
+      if (popstateHandler) {
+        window.removeEventListener('popstate', popstateHandler);
+      }
     };
   }, []);
 
   const handleNext = (data?: any) => {
-    // Manutenção do Trap de Histórico em cada mudança de etapa
-    if (typeof window !== 'undefined') {
-      window.history.pushState(null, '', window.location.href);
-      window.history.pushState(null, '', window.location.href);
-    }
-
-    // Limpeza de objetos nativos para evitar erros de serialização
+    // Mantém o histórico limpo para transições internas de etapa sem disparar o redirect
     if (data && (
       data.nativeEvent || 
       data instanceof Event || 
