@@ -7,42 +7,83 @@ interface LandingProps {
 
 const Landing: React.FC<LandingProps> = ({ onNext }) => {
   return (
-    <div className="w-full max-w-lg mx-auto flex flex-col items-center px-6 py-10">
-      {/* Headline principal */}
-      <h1 className="text-xl md:text-2xl font-extrabold text-center text-gray-900 leading-tight mb-6">
-        Finalmente Revelado: O <span className="text-purple-600">Ritual Noturno Japonês</span> de 10 Segundos que Desincha a Barriga de Mulheres Enquanto Elas Dormem
-      </h1>
-
-      {/* Imagen principal */}
-      <div className="relative mb-8 w-full bg-white rounded-3xl shadow-2xl flex items-center justify-center p-1 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-pink-50 to-transparent rounded-3xl -z-10"></div>
-        <img 
-          src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_k24e9tk24e9tk24e%20(1).png?updatedAt=1770846320166" 
-          alt="Alerta Saúde" 
-          className="rounded-2xl w-full h-auto float-animation shadow-sm"
-        />
+    <div className="w-full max-w-lg mx-auto flex flex-col items-center px-4 pt-6 pb-8 h-[100dvh] justify-between overflow-hidden bg-white">
+      {/* Topo: Headline de Alto Impacto - Mantida em Português */}
+      <div className="w-full text-center">
+        <h1 className="text-[24px] md:text-[30px] font-black text-gray-900 leading-[1] mb-1 px-1 tracking-tight">
+          Finalmente Revelado: O <span className="text-purple-600">Ritual Noturno Japonês</span> de 10 Segundos que Desincha a Barriga Enquanto Você Dorme
+        </h1>
       </div>
 
-      {/* Transição para oferta */}
-      <p className="text-[15px] text-center text-gray-700 mb-10 max-w-[360px] leading-relaxed font-semibold">
-        Descubra qual dos 3 Tipos de <span className="text-red-600">"Inchaço Hormonal"</span> está impedindo você de emagrecer (e como reverter isso hoje, sem dietas ou exercícios).
-      </p>
+      {/* Meio: Imagem Maximizada com Seta Redirecionada (Apontando para Baixo) */}
+      <div className="relative w-full flex-1 flex items-center justify-center overflow-hidden my-2">
+        <div className="relative w-full h-full max-h-[58vh] aspect-[4/3] bg-white rounded-[2.5rem] shadow-2xl flex items-center justify-center p-0.5 overflow-hidden border border-gray-100">
+          <img 
+            src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_k24e9tk24e9tk24e%20(1).png?updatedAt=1770846320166" 
+            alt="Ritual Japonês" 
+            className="w-full h-full object-cover object-top rounded-[2.35rem]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+          
+          {/* Badge de Destaque Flutuante - Método 2026 */}
+          <div className="absolute top-5 right-5 bg-purple-600 text-white text-[11px] font-black px-4 py-1.5 rounded-full shadow-lg animate-pulse uppercase tracking-wider">
+            Método 2026
+          </div>
 
-      {/* CTA Principal */}
-      <button 
-        onClick={(e) => {
-          e.stopPropagation();
-          onNext();
-        }}
-        className="w-full btn-gradient text-white font-extrabold text-lg py-5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all mb-3 flex flex-col items-center justify-center uppercase"
-      >
-        <span>GERAR MEU PROTOCOLO NOTURNO</span>
-      </button>
+          {/* Seta Vermelha Translúcida - Reposicionada para apontar DIRETAMENTE para baixo (CTA) */}
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 opacity-90 pointer-events-none animate-bounce-arrow">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2V22M12 22L19 15M12 22L5 15" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+        </div>
+      </div>
 
-      {/* Micro copy */}
-      <p className="text-[11px] font-bold text-gray-400 text-center uppercase tracking-tight mb-8">
-        ⏱ LEVA MENOS DE 2 MINUTOS • TESTE GRATUITO • RESULTADO PERSONALIZADO
-      </p>
+      {/* Base: Sub-headline + CTA Persuasivo (Grosso) */}
+      <div className="w-full flex flex-col items-center">
+        <p className="text-[17px] md:text-[19px] text-center text-gray-800 mb-4 leading-tight font-black px-1 mt-1">
+          Descubra qual dos 3 Tipos de <span className="text-red-600">"Inchaço Hormonal"</span> está impedindo você de emagrecer e como reverter isso agora.
+        </p>
+
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            onNext();
+          }}
+          className="w-full bg-[#10b981] hover:bg-[#059669] text-white font-black text-[25px] py-6 rounded-3xl shadow-[0_15px_45px_rgba(16,185,129,0.5)] active:scale-95 transition-all mb-3 flex flex-col items-center justify-center uppercase tracking-tighter animate-bounce-subtle border-b-[8px] border-emerald-800"
+        >
+          <span className="py-0.5 tracking-tight">QUERO DESINCHAR AGORA</span>
+          <span className="text-[13px] opacity-100 font-extrabold -mt-1 tracking-normal normal-case">Toque para ver seu diagnóstico gratuito. 👆</span>
+        </button>
+
+        {/* Rodapé: Contraste aumentado para Preto Sólido conforme solicitado */}
+        <div className="flex items-center justify-center gap-1.5 opacity-100 mt-1">
+          <div className="flex -space-x-1 mr-1">
+            <div className="w-2.5 h-2.5 bg-purple-600 rounded-full border border-white"></div>
+            <div className="w-2.5 h-2.5 bg-emerald-600 rounded-full border border-white"></div>
+          </div>
+          <p className="text-[10px] font-black text-black uppercase tracking-tight">
+            PROTOCOLO PERSONALIZADO • GRÁTIS
+          </p>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes bounce-subtle {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+        @keyframes bounce-arrow {
+          0%, 100% { transform: translate(-50%, 0); }
+          50% { transform: translate(-50%, 12px); }
+        }
+        .animate-bounce-subtle {
+          animation: bounce-subtle 2.5s infinite ease-in-out;
+        }
+        .animate-bounce-arrow {
+          animation: bounce-arrow 1.2s infinite ease-in-out;
+        }
+      `}</style>
     </div>
   );
 };
