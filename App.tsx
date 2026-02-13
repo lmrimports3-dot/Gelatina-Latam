@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Landing from './components/Landing';
-import Transition from './components/Transition';
 import Quiz from './components/Quiz';
 import LoadingResult from './components/LoadingResult';
 import AttentionAudio from './components/AttentionAudio';
@@ -69,9 +68,6 @@ const App: React.FC = () => {
 
     switch (currentStep) {
       case AppStep.LANDING:
-        setCurrentStep(AppStep.TRANSITION);
-        break;
-      case AppStep.TRANSITION:
         setCurrentStep(AppStep.QUIZ);
         break;
       case AppStep.QUIZ:
@@ -101,7 +97,6 @@ const App: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center bg-white overflow-x-hidden">
       <main className="w-full flex-1 flex flex-col items-center">
         {currentStep === AppStep.LANDING && <Landing onNext={() => handleNext()} />}
-        {currentStep === AppStep.TRANSITION && <Transition onNext={() => handleNext()} />}
         {currentStep === AppStep.QUIZ && <Quiz onNext={(data) => handleNext(data)} />}
         {currentStep === AppStep.CALCULATING && <LoadingResult onComplete={() => handleNext()} />}
         {currentStep === AppStep.ATTENTION_AUDIO && <AttentionAudio onNext={() => handleNext()} />}

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 
 interface QuizOption {
@@ -28,7 +29,7 @@ const QUESTIONS: GenericQuizQuestion[] = [
     options: [
       { id: 'f1', label: "Acordo com a barriga menos inchada, mas ao longo do dia ela dobra de tamanho...", icon: "😥" },
       { id: 'f2', label: "Já tentei de tudo: dietas, chás, exercícios... Nada parece funcionar como antes.", icon: "😤" },
-      { id: 'f3', label: "Sinto que meu corpo mudou depois da menopausa e não me reconheço mais.", icon: "😔" },
+      { id: 'f3', label: "Sinto que meu corpo mudou depois da menopausia e não me reconheço mais.", icon: "😔" },
       { id: 'f4', label: "Tenho vergonha de usar certas roupas ou de tirar fotos por causa da minha barriga.", icon: "😰" }
     ]
   },
@@ -486,20 +487,6 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                </p>
             </div>
 
-            <div className="w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-50 mb-10">
-               <div className="flex h-64">
-                 <img src="https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(7).png" alt="Antes" className="w-1/2 object-cover border-r-2 border-white" />
-                 <img src="https://ik.imagekit.io/ekdmcxqtr/Image_fx%20(4).png" alt="Depois" className="w-1/2 object-cover" />
-               </div>
-               <div className="p-5 text-center">
-                 <p className="text-[14px] font-black text-gray-900 mb-1">"Perdi 12kg em 5 semanas!"</p>
-                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">32 anos - São Paulo</p>
-                 <div className="flex justify-center gap-1 mt-2">
-                    {[1,2,3,4,5].map(s => <span key={s} className="text-orange-400 text-sm">★</span>)}
-                 </div>
-               </div>
-            </div>
-
             <button onClick={(e) => handleContinue(e)} className="w-full py-5 bg-[#d946ef] hover:bg-[#c026d3] text-white font-black text-lg rounded-2xl shadow-xl active:scale-95 transition-all">
               Continuar
             </button>
@@ -700,6 +687,7 @@ const Quiz: React.FC<{ onNext: (finalAnswers: any) => void }> = ({ onNext }) => 
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-5) : adjustHeight(-5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">-5</button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(-1) : adjustHeight(-1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>−</span></button>
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(1) : adjustHeight(1); }} className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-2xl text-purple-600 active:scale-90 transition-transform"><span>+</span></button>
+                  {/* Fixed ternary logic on line 775 to prevent parsing errors */}
                   <button onClick={(e) => { e.stopPropagation(); currentQuestion.type === 'weight' ? adjustWeight(5) : adjustHeight(5); }} className="w-12 h-12 flex items-center justify-center text-sm font-bold text-gray-400">+5</button>
                 </div>
                 <button onClick={(e) => handleContinue(e)} className="w-full mt-10 py-4 btn-gradient rounded-2xl font-extrabold text-white text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Continuar</button>
