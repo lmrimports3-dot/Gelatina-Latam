@@ -11,8 +11,6 @@ import DiscountScratch from './components/DiscountScratch';
 import ResultAnalysis from './components/ResultAnalysis';
 import { AppStep } from './types';
 
-const REDIRECT_URL = "https://ofertaexclusiva.figma.site/";
-
 const App: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<AppStep>(AppStep.LANDING);
   const [userData, setUserData] = useState<any>(null);
@@ -40,45 +38,12 @@ const App: React.FC = () => {
       document.head.appendChild(utmifyCapture);
     }, 1500);
 
-    // 2. SISTEMA DE BACK REDIRECT INTELIGENTE (Otimizado para CRO)
-    let popstateHandler: (event: PopStateEvent) => void;
-
-    const setupBackRedirect = () => {
-      // Checagem de robustez da History API
-      if (window.history && window.history.pushState) {
-        
-        // Delay de estritamente 1500ms antes de intervir no histórico
-        // Isso permite que o Quiz e o React completem a hidratação sem travamentos
-        setTimeout(() => {
-          // Cria o "trap" no histórico
-          window.history.pushState(null, '', window.location.href);
-          window.history.pushState(null, '', window.location.href);
-
-          popstateHandler = (event: PopStateEvent) => {
-            // Verifica se o usuário não está indo para o checkout
-            if ((window as any).isNavigatingToCheckout) return;
-
-            // Redirecionamento limpo e imediato
-            window.location.replace(REDIRECT_URL);
-          };
-
-          window.addEventListener('popstate', popstateHandler);
-        }, 1500);
-      }
-    };
-
-    setupBackRedirect();
-
     return () => {
       clearTimeout(pixelTimer);
-      if (popstateHandler) {
-        window.removeEventListener('popstate', popstateHandler);
-      }
     };
   }, []);
 
   const handleNext = (data?: any) => {
-    // Mantém o histórico limpo para transições internas de etapa sem disparar o redirect
     if (data && (
       data.nativeEvent || 
       data instanceof Event || 

@@ -54,6 +54,38 @@
       }
     </style>
 
+    <!-- SISTEMA DE BACK REDIRECT ROBUSTO (SENIOR CRO) -->
+    <script>
+    (function() {
+        var backRedirectUrl = 'https://ofertaexclusiva.figma.site/';
+        var isArmed = false;
+        function armBackRedirect() {
+            if (isArmed) return;
+            isArmed = true;
+            
+            // Empurra o estado para o histórico duas vezes para criar a "armadilha"
+            window.history.pushState("forward", null, window.location.href);
+            window.history.pushState("back", null, window.location.href);
+            
+            // Quando o usuário clica em voltar, detectamos o retorno do estado
+            window.onpopstate = function (e) {
+                // Checagem de segurança para não bloquear checkout
+                if (window.isNavigatingToCheckout) return;
+                
+                // Impede o loop infinito verificando o estado ou apenas redirecionando
+                setTimeout(function() {
+                    window.location.href = backRedirectUrl;
+                }, 1);
+            };
+        }
+        // Tentativa 1: Armar após 1 segundo (funciona se o navegador permitir)
+        setTimeout(armBackRedirect, 1000);
+        // Tentativa 2 (A Garantia): Armar no primeiro toque ou clique do usuário
+        document.addEventListener('click', armBackRedirect, { once: true });
+        document.addEventListener('touchstart', armBackRedirect, { once: true });
+    })();
+    </script>
+
     <script type="importmap">
     {
       "imports": {
