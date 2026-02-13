@@ -22,6 +22,9 @@ const Landing: React.FC<LandingProps> = ({ onNext }) => {
             src="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_k24e9tk24e9tk24e%20(1).png?updatedAt=1770846320166" 
             alt="Ritual Japonês" 
             className="w-full h-full object-cover object-top rounded-[2.35rem]"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
           

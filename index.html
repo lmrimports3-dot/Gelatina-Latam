@@ -3,7 +3,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>O Truque Real da Gelatina</title>
     
     <!-- Meta Pixel Code -->
@@ -24,11 +24,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Otimização LCP: Preload da imagem principal -->
+    <link rel="preload" as="image" href="https://ik.imagekit.io/ekdmcxqtr/Gemini_Generated_Image_k24e9tk24e9tk24e%20(1).png?updatedAt=1770846320166" fetchpriority="high">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       body {
         font-family: 'Inter', sans-serif;
         background-color: #fcfcfc;
+        overflow-x: hidden;
+        -webkit-tap-highlight-color: transparent;
       }
       .gradient-text {
         background: linear-gradient(to right, #9333ea, #db2777);
